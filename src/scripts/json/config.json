@@ -1,0 +1,11 @@
+{
+    "serverUrl": "http://119.23.73.38:7999/GuiLin_20170801/DigitalMusBaseServices",
+    "musServerUrl": "http://119.23.73.38:7999/GuiLin_20170801/DigitalMusService/Services.aspx",
+    "resourcesUrl": "http://119.23.73.38:7999/GuiLin_20170801/DigitalMusBaseServices",
+    "museumID": "5101-0010",
+    "displayID": "5101-0010-0001",
+    "firstPanoID": "J301-20170724000001",
+    "data": {
+
+    }
+}
