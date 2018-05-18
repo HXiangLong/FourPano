@@ -1,87 +1,46 @@
-第四代全景
-编程语法 es6以上
-技术路线 React + webpack + express + mysql
-分别为单机版和联网版都能对应编辑版、PC版、手机版、触摸屏版
-区别在于数据来源json文件或数据库
-编辑版本包含 添加楼层、楼层点、添加/删除/移动箭头、添加/删除热点标注、添加视频标注等
-PC版包含所有展示功能。
+工程目录
 
-Pano
-│  main.js
-│  package.json
-│  README.md
-│  webpack.config.dev.js
-│  webpack.config.js
-│
-├─src
-│  │  index.html
-│  │
-│  ├─css
-│  │  │  editor.css
-│  │  │  pc.css
-│  │  │  phone.css
-│  │  │  touchScreen.css
-│  │  │
-│  │  ├─commons
-│  │  │      common.css
-│  │  │
-│  │  └─lib
-│  ├─img
-│  │  ├─exhlist
-│  │  └─help
-│  ├─libs//外部插件
-│  │      Detector.js
-│  │      Stats.js
-│  │      tween.min.js
-│  │
-│  ├─scripts
-│  │  │  SWPano.js
-│  │  │
-│  │  ├─data//服务器来的数据对象
-│  │  │      ArrowInfo.js
-│  │  │      ExhibitsInfo.js
-│  │  │      FacadeByPanoIDInfo.js
-│  │  │      FloorsInfo.js
-│  │  │      FloorsMarkerInfo.js
-│  │  │      MarkerInfo.js
-│  │  │      MultiDataByParentIDInfo.js
-│  │  │      StationInfo.js
-│  │  │      ThumbnailsInfo.js
-│  │  │
-│  │  ├─json//配置文件  
-│  │  │      config.json
-│  │  │
-│  │  ├─modules
-│  │  ├─page
-│  │  │      editor.js
-│  │  │      pc.js
-│  │  │      phone.js
-│  │  │      touchScreen.js
-│  │  │
+PC  phone  触屏  编辑  单机版
+
+UI界面三套
+PC  phone 编辑版
+
+触屏用PC的界面  操作用phone的操作模式 
+单机版是PC phone 触屏版 的另一种表现形式 无激光点云时可以采用
+
+综上所述 
+界面3个
+一个共有css  单独3个css
+
+ProjectFiles  		工程名
+├─app
+│  ├─commons		共用的
+│  │  ├─css			
+│  │  ├─font
+│  │  ├─img
+│  │  └─json
+│  ├─src			代码处
+│  │  ├─data
+│  │  ├─module
 │  │  ├─server
-│  │  │      ServerData.js
-│  │  │
-│  │  └─tools
-│  │          Constants.js
-│  │          ExternalConst.js
-│  │          HashTable.js
-│  │          SWViewGesture.js
-│  │          Tool.js
-│  │
-│  ├─server//客户端链接服务器
-│  └─views //页面
-│          editor.html
-│          pc.html
-│          phone.html
-│          touchScreen.html
-│
-└─webpack-config //配置文件夹
-        devServer.config.js
-        entry.config.js
-        module.config.js
-        module.product.config.js
-        output.config.js
-        path.config.js
-        plugins.config.js
-        plugins.product.config.js
-        resolve.config.js
+│  │  └─tool
+│  └─views			页面分层
+│      ├─Edit
+│      │  ├─css
+│      │  ├─img
+│      │  └─web
+│      ├─PC
+│      │  ├─css
+│      │  ├─img
+│      │  └─web
+│      ├─Phone
+│      │  ├─css
+│      │  ├─img
+│      │  └─web
+│      └─Touch
+│          ├─css
+│          ├─img
+│          └─web
+├─config			配置
+│  ├─entry
+│  └─webpack
