@@ -1,23 +1,30 @@
 module.exports = [
     {
-        name: 'index',
-        path: 'index/Index.jsx',
-        title: '首页',
-        keywords: '首页,xxx',
+        name: 'PC',
+        path: 'PC/web/index.jsx',
+        title: '电脑版',
+        keywords: '电脑版,xxx',
         description: '这是我们的首页'
     },
     {
-        name: 'shop',
-        path: 'shop/Index.jsx',
-        title: '商城',
-        keywords: '商城,xxx',
+        name: 'Phone',
+        path: 'Phone/web/index.jsx',
+        title: '手机版',
+        keywords: '电脑版,xxx',
         description: '这是我们的商城'
     },
     {
-        name: 'demo',
-        path: 'demo/Index.jsx',
-        title: 'demo',
-        keywords: 'demo,xxx',
+        name: 'Edit',
+        path: 'Edit/web/index.jsx',
+        title: '编辑版',
+        keywords: '编辑版,xxx',
+        description: '这是我们的demo'
+    },
+    {
+        name: 'Touch',
+        path: 'Touch/web/index.jsx',
+        title: '触屏版',
+        keywords: '触屏版,xxx',
         description: '这是我们的demo'
     }
 ];

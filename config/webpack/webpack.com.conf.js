@@ -1,5 +1,5 @@
 let titleFun = function(chunkName,title){
-    let titleDef = 'XXX网站';
+    let titleDef = '全景';
     if(chunkName.indexOf('index') !==-1){
         return titleDef;
     }else{
