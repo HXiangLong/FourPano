@@ -4,20 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "devBuildHtml": "node config/webpack/webpack.devBuildHtml.conf.js",
-    "entry": "node config/entry/entryBuild.js",
-    "devNew": "npm run entry && npm run devBuildHtml",
-    "dev": "webpack-dev-server --devtool eval --progress --colors --profile --config config/webpack/webpack.dev.conf.js",
-    "p": "SET BABEL_ENV=production && webpack --progress --colors --config config/webpack/webpack.prod.conf.js",
-    "ptp": "npm run p && gulp buildTime zip test pre",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pc_dev": "webpack-dev-server --devtool eval --progress --colors --profile --config config/PC/webpack.dev.PC.js",
+    "pc_prod": "SET BABEL_ENV=production && webpack --progress --colors --config config/PC/webpack.prod.PC.js",
+    "phone_dev": "webpack-dev-server --devtool eval --progress --colors --profile --config config/Phone/webpack.dev.Phone.js",
+    "phone_prod": "SET BABEL_ENV=production && webpack --progress --colors --config config/Phone/webpack.prod.Phone.js",
+    "edit_dev": "webpack-dev-server --devtool eval --progress --colors --profile --config config/Edit/webpack.dev.Edit.js",
+    "edit_prod": "SET BABEL_ENV=production && webpack --progress --colors --config config/Edit/webpack.prod.Edit.js",
+    "touch_dev": "webpack-dev-server --devtool eval --progress --colors --profile --config config/Touch/webpack.dev.Touch.js",
+    "touch_prod": "SET BABEL_ENV=production && webpack --progress --colors --config config/Touch/webpack.prod.Touch.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "jquery": "^3.3.1",
     "react": "^16.3.2",
-    "react-dom": "^16.3.2"
+    "react-dom": "^16.3.2",
+    "three": "^0.92.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
