@@ -1,0 +1,384 @@
+import * as constants from './SWConstants';
+import SWViewGesture from './SWViewGesture';
+
+/**
+ * 屏幕坐标转世界坐标
+ * @param {number} dx 鼠标X坐标
+ * @param {number} dy 鼠标Y坐标
+ */
+export function getSceneToWorld(dx, dy) {
+    let mouse3D = new THREE.Vector3(dx / window.innerWidth * 2 - 1, -dy / window.innerHeight * 2 + 1, 0.5);
+    mouse3D.project(constants.camera);
+    return mouse3D;
+};
+
+/**
+ * 世界坐标转屏幕坐标
+ * @param {THREE.Vector3} v3 世界坐标
+ */
+export function getWorldToScene(v3) {
+    let vector = v3.clone();
+    let windowWidth = window.innerWidth;
+    let minWidth = 1280;
+
+    if (windowWidth < minWidth) {
+        windowWidth = minWidth;
+    }
+
+    let widthHalf = (windowWidth / 2);
+    let heightHalf = (window.innerHeight / 2);
+
+    vector.project(camera);
+
+    vector.x = (vector.x * widthHalf) + widthHalf;
+    vector.y = -(vector.y * heightHalf) + heightHalf;
+
+    return vector;
+};
+
+/**
+ * 三维坐标转视点坐标
+ * @param {THREE.Vector3} v3 
+ */
+export function Vector3ToVP(v3) {
+    var yaw = Math.atan2(v3.x, v3.z);
+    var pitch = Math.atan2(v3.y, (v3.x / Math.sin(yaw)));
+    yaw = THREE.Math.radToDeg(yaw);
+    if (yaw < 0) {
+        yaw = 360 + yaw;
+    }
+    yaw = (yaw + 90) % 360;
+    var swvg = new SWViewGesture(yaw, THREE.Math.radToDeg(pitch), 0);
+    return swvg;
+};
+
+/**
+ * 视点转三维坐标
+ * @param {SWViewGesture} vp 
+ */
+export function VPToVector3(vp) {
+    var vec = new THREE.Vector3(0, 0, 0);
+    vec.y = Math.sin(THREE.Math.degToRad(vp.getPitch())) * constants.c_FaceDistance * 0.5;
+    var m = Math.cos(THREE.Math.degToRad(vp.getPitch())) * constants.c_FaceDistance * 0.5;
+    vec.x = Math.sin(THREE.Math.degToRad((vp.getYaw() - 90))) * m;
+    vec.z = Math.cos(THREE.Math.degToRad((vp.getYaw() - 90))) * m;
+    return vec;
+};
+
+/**
+ * 让数值在0~360之间
+ * @param {number} n 
+ */
+export function getNumberMax360(n) {
+    n = n % 360;
+    if (n < 0) {
+        n = 360 + n;
+    }
+    return n;
+};
+
+/**
+ * 两点距离
+ * @param {number} x1 
+ * @param {number} y1 
+ * @param {number} x2 
+ * @param {number} y2 
+ */
+export function getDistance(x1, y1, x2, y2) {
+    var xx = x2 - x1;
+    var yy = y2 - y1;
+    return Math.pow((xx * xx + yy * yy), 0.5);
+};
+
+/**
+ * 通过水平fov获得垂直fov
+ * @param {number} wfov 
+ * @param {number} aspect 
+ */
+export function getHfov(wfov, aspect) {
+    return THREE.Math.radToDeg(Math.atan(Math.tan(THREE.Math.degToRad(wfov) / 2) / aspect) * 2);
+};
+
+/**
+ * 通过垂直fov获得水平fov
+ * @param {number} hfov 
+ * @param {number} aspect 
+ */
+export function getWfov(hfov, aspect) {
+    return THREE.Math.radToDeg(2 * Math.atan(Math.tan(THREE.Math.degToRad(hfov) / 2) * aspect));
+};
+
+/**
+ * 获取当前面当前放大值瓦片WH数
+ * @param {number} lzoom 
+ */
+export function getFaceTileMatrixWH(lzoom) {
+    var wh = new THREE.Vector3();
+    wh.x = wh.y = Math.pow(2, lzoom);
+    return wh;
+};
+
+/**
+ * 获取点是否在屏幕上
+ * @param {THREE.Vector3} sceneXY 
+ */
+export function getPintIFScene(sceneXY) {
+    var boo = false;
+    if ((Math.abs(sceneXY.x) != Infinity && sceneXY.x != NaN && (sceneXY.x >= -100 && sceneXY.x <= window.innerWidth + 100)) &&
+        (Math.abs(sceneXY.y) != Infinity && sceneXY.y != NaN && ((window.innerHeight - sceneXY.y) >= -100 && (window.innerHeight - sceneXY.y) <= window.innerHeight + 100)) &&
+        (Math.abs(sceneXY.z) != Infinity && sceneXY.z != NaN && sceneXY.z < 1)) {
+        boo = true;
+    }
+    return boo;
+};
+
+/**
+ * 获取随机颜色值
+ * */
+export function getRandomColor() {
+    return '#' + (Math.random() * 0xffffff << 0).toString(16);
+};
+
+/**
+ * 墙面探面角度值
+ * @param {THREE.Object} obj 
+ */
+export function getWallProbeSurfaceAngle(obj) {
+    var normal = obj.face.normal.clone();
+    var vv = new THREE.Vector3(0, 0, 1);
+    var angle = THREE.Math.radToDeg(vv.angleTo(normal));
+    var tan = vv.clone().cross(normal).dot(new THREE.Vector3(0, 1, 0));
+    if (tan > 0) {
+        angle = 360 - angle;
+    }
+    return angle;
+};
+
+/**
+ * 获取显示的距离
+ * @param {THREE.Object} obj 
+ */
+export function getProbeSurfaceDistance(obj) {
+    return Math.abs(1.5 * obj.distance / obj.point.y);
+};
+
+/**
+ * 获取现实中的坐标
+ * @param {THREE.Object} obj 
+ * @param {number} rph 
+ */
+export function getPanoRealPoint(obj, rph) {
+    var v = Math.asin(obj.point.y / obj.distance); //垂直角度
+    var h = Math.atan2(obj.point.z, obj.point.x) - THREE.Math.degToRad(90); //水平角度
+
+    var rp = Math.abs(rph / Math.tan(v));
+    var x = rp * Math.cos(h);
+    var z = -rp * Math.sin(h);
+    var y = rph;
+    var v3 = new THREE.Vector3(x, y, z).applyMatrix4(constants.c_OpenGLToDS3Mx4);
+    var realPoint = constants.c_StationInfo.point.clone().add(v3);
+    return realPoint;
+};
+
+/**
+ * 获得墙面点击的真实坐标
+ * @param {THREE.Object} obj 
+ */
+export function getWallRealPoint(obj) {
+    var drc = obj.point.clone().applyMatrix4(obj.object.matrix).applyMatrix4(constants.c_OpenGLToDS3Mx4);
+    var dx = drc.x / constants.c_WallDisplaySize * 2;
+    var dy = drc.y / constants.c_WallDisplaySize * 2;
+    var dz = drc.z / constants.c_WallDisplaySize * 2;
+    var realPoint = constants.c_StationInfo.point.clone().add(new THREE.Vector3(dx, dy, dz));
+    return realPoint;
+};
+
+/**
+ * 获取是否跳转还是放大
+ * @param {THREE.Object} obj 
+ * @param {int} type 
+ */
+export function getJudgeOrZoom(obj, type) {
+    var distances;
+    var dis = 0;
+    if (type == 1) {
+        distances = getPanoRealPoint(obj, 2.5);
+        dis = -1;
+    } else {
+        distances = getWallRealPoint(obj);
+    }
+    var dis0 = Math.sqrt(Math.pow((distances.x - constants.c_StationInfo.nx), 2) + Math.pow((distances.y - constants.c_StationInfo.ny), 2)) + dis;
+    for (var i = 0; i < constants.c_AdjacentPanoInfoArr.length; i++) {
+        var dis1 = Math.sqrt(Math.pow((distances.x - constants.c_AdjacentPanoInfoArr[i].nX), 2) +
+            Math.pow((distances.y - constants.c_AdjacentPanoInfoArr[i].nY), 2));
+        if (dis1 <= dis0) {
+            return false;
+        }
+    }
+    return true;
+};
+
+/**
+ * 获取两个站点坐标点的夹角
+ * @param v1 当前站点
+ * @param v2 下一站点
+ * */
+export function getArrowsAngle(v1, v2) {
+    var p2 = new THREE.Vector3(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z).applyMatrix4(constants.c_DS3ToOpenGLMx4);
+    var v4 = new THREE.Vector3(-1, 0, 0);
+    var angle = p2.angleTo(v4);
+    angle = THREE.Math.radToDeg(angle); //转换为角度
+    var tan = p2.clone().cross(v4).dot(new THREE.Vector3(0, 1, 0));
+    if (tan > 0) {
+        angle = 360 - angle;
+    }
+    return angle;
+};
+
+/**
+ * 清空对象缓存
+ * @param node 对象
+ * @param ifParent 是否用父类删除自己
+ * */
+export function disposeNode(node, ifParent = true) {
+    if (node instanceof THREE.Mesh || node instanceof THREE.Sprite || node instanceof THREE.Line || node instanceof THREE.BoxHelper) {
+        if (node.geometry) {
+            node.geometry.dispose();
+        }
+        if (node.material) {
+            if (node.material instanceof THREE.MeshFaceMaterial || node.material instanceof THREE.MultiMaterial) {
+                $.each(node.material.materials, function(idx, mtrl) {
+                    if (mtrl.map) mtrl.map.dispose();
+                    if (mtrl.lightMap) mtrl.lightMap.dispose();
+                    if (mtrl.bumpMap) mtrl.bumpMap.dispose();
+                    if (mtrl.normalMap) mtrl.normalMap.dispose();
+                    if (mtrl.specularMap) mtrl.specularMap.dispose();
+                    if (mtrl.envMap) mtrl.envMap.dispose();
+
+                    mtrl.dispose(); // disposes any programs associated with the material
+                });
+            } else {
+                if (node.material.map) node.material.map.dispose();
+                if (node.material.lightMap) node.material.lightMap.dispose();
+                if (node.material.bumpMap) node.material.bumpMap.dispose();
+                if (node.material.normalMap) node.material.normalMap.dispose();
+                if (node.material.specularMap) node.material.specularMap.dispose();
+                if (node.material.envMap) node.material.envMap.dispose();
+
+                node.material.dispose(); // disposes any programs associated with the material
+            }
+        }
+        if (ifParent) {
+            if (node.parent) {
+                node.parent.remove(node);
+            }
+            node = null;
+        }
+    }
+};
+
+/**
+ * 清楚新增文本div层
+ * @param {*} textdiv 
+ */
+export function delectTextDiv(textdiv) {
+    if (textdiv && document.body.children.indexOf(textdiv) != -1) {
+        document.body.removeChild(textdiv);
+    }
+};
+
+
+/**
+ * 全屏
+ * */
+export function getFullScreen() {
+    if (!document.fullscreenElement // alternative standard method
+        &&
+        !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement) { // current working methods
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.msRequestFullscreen) { //IE11
+            document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+};
+
+/**
+ * DIV文本显示
+ * @param {*} labelPos 
+ * @param {*} fontSize 
+ * @param {*} text 
+ */
+export function TextDiv(labelPos, fontSize, text) {
+    labelPos.copy(getWorldToScene(labelPos));
+    this.textDiv = document.createElement("div");
+    var fs = fontSize || 14;
+    this.textDiv.style.fontSize = fs + "px";
+    this.textDiv.style.color = "#fff";
+    this.textDiv.style.position = "absolute";
+    this.textDiv.id = "" + text;
+    this.textDiv.style.pointerEvents = "none";
+    if (!text) {
+        this.textDiv.style.left = "-100px";
+        this.textDiv.style.top = "-100px";
+    } else {
+        this.textDiv.style.left = labelPos.x + "px";
+        this.textDiv.style.top = labelPos.y + "px";
+    }
+    this.textDiv.innerHTML = text;
+    document.body.appendChild(this.textDiv);
+    return this.textDiv;
+}
+
+/**
+ * GIF动画
+ * @param {THREE.Texture} texture 贴图对象
+ * @param {number} tilesHoriz 横向
+ * @param {number} tilesVert 竖向
+ * @param {number} numTiles 数量
+ * @param {number} tileDispDuration 间隔时间 
+ */
+export function TextureAnimator(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration) {
+    this.tilesHorizontal = tilesHoriz;
+    this.tilesVertical = tilesVert;
+    this.numberOfTiles = numTiles;
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(1 / this.tilesHorizontal, 1 / this.tilesVertical);
+    this.tileDisplayDuration = tileDispDuration;
+    this.currentDisplayTime = 0;
+    this.currentTile = 0;
+
+    this.update = function(milliSec) {
+        this.currentDisplayTime += milliSec;
+        while (this.currentDisplayTime > this.tileDisplayDuration) {
+            this.currentDisplayTime -= this.tileDisplayDuration;
+            this.currentTile++;
+            if (this.currentTile == this.numberOfTiles)
+                this.currentTile = 0;
+            var currentColumn = this.currentTile % this.tilesHorizontal;
+            texture.offset.x = currentColumn / this.tilesHorizontal;
+            var currentRow = Math.floor(this.currentTile / this.tilesHorizontal);
+            texture.offset.y = currentRow / this.tilesVertical;
+        }
+    }
+}

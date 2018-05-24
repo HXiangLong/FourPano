@@ -1,8 +1,9 @@
 // import * as Detector from '../libs/Detector';
-import * as constants from "./tools/Constants";
-import * as tool from './tools/Tool';
-import Stats from '../libs/Stats';
-import serverData from './server/ServerData';
+import * as constants from "./tool/SWConstants";
+import * as tool from './tool/SWTool';
+import Stats from './libs/Stats';
+import serverData from './server/SWServerData';
+const TWEEN = require('@tweenjs/tween.js');
 
 /**
  * 性能监测
@@ -101,17 +102,17 @@ const initBox = () => {
         .start(); // Start the tween immediately.
 }
 
-/**
- * 初始化
- */
-function init() {
-    initClass();
-    initStats();
-    initScene();
-    initCamera();
-    initRenderer();
-    initLight();
-    Animate();
-    initBox();
-}
-export default init;
+// /**
+//  * 初始化
+//  */
+// function init() {
+// initClass();
+// initStats();
+// initScene();
+// initCamera();
+// initRenderer();
+// initLight();
+// Animate();
+// initBox();
+// }
+export { initStats, initClass, initScene, initCamera, initRenderer, initLight, Animate, initBox };

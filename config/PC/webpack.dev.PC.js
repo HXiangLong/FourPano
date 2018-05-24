@@ -56,7 +56,7 @@ let config = merge(baseWebpackConfig, {
                 ],
                 exclude: [
                     path.resolve(__dirname, "../../node_modules")
-                ],
+                ]
             },
             {
                 test: /\.(js|jsx)$/,
@@ -92,16 +92,11 @@ let config = merge(baseWebpackConfig, {
             {
                 test: /\.(png|jpg|gif|ttf|eot|woff|woff2|svg|swf)$/,
                 loader: 'file-loader?name=[name].[ext]&outputPath=' + webpackFile.resource + '/'
-            },
-            {
-                test: /\.json$/,
-                loader: 'json-loader'
             }
         ]
     },
 
     plugins: [
-        // new HtmlWebpackPlugin(conf),
         //设置热更新
         new webpack.HotModuleReplacementPlugin(),
         //全局引入模块 ，这样其他模块就可以直接使用无需引入
