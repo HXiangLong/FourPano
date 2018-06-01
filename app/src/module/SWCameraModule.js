@@ -1,394 +1,444 @@
+import { camera, c_Maxfov, c_Minfov } from "../tool/SWConstants";
+import { YPRToVector3, getNumberMax360 } from '../tool/SWTool'
+
 /**
- * 相机控制类
+ * 相机控制类只有旋转和缩放，没有平移
  */
-class SWCameraManage {
+class SWCameraModule {
     constructor() {
         /**相机状态枚举 */
-        this.STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4, WALL_ZOOM: 5 };
+        this.STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
+
         /**相机目前状态 */
-        this._state = STATE.NONE;
-        /**是否启用 */
-        this.enabled = true;
-        /**初始朝向 */
-        this.target = new THREE.Vector3(0, 0, 0);
-        /**是否移动 */
-        this.noRotate = false;
-        /**是否缩放 */
-        this.noZoom = false;
-        /**移动起点 */
-        this._movePrev = new THREE.Vector2();
-        /**移动中点 */
-        this._moveCurr = new THREE.Vector2();
-        /**缩放两指之间的开始距离 */
-        this._touchZoomDistanceStart = 0;
-        /**缩放两指之间的中距 */
-        this._touchZoomDistanceEnd = 0;
-        /**缩放开始点 */
-        this._zoomStart = [new THREE.Vector2(), new THREE.Vector2()];
-        /**缩放中间点 */
-        this._zoomEnd = [new THREE.Vector2(), new THREE.Vector2()];
-        /**是缩小还是放大 */
-        this._zoomBoolen = false;
-        /**中间滚轴向前还是向后*/
-        this._wheelDelta = 1;
-        this._detailBrowser = 0;
-        /**缩放值 */
-        this._wheelNum = 0;
-        /**缩放次数 */
-        this._wheelNint = 0;
-        /**鼠标是否按下*/
-        this.isMousuDownBool = false;
-        /**鼠标按下坐标*/
-        this.onMouseDownMouseX = 0;
-        /**鼠标按下坐标*/
-        this.onMouseDownMouseY = 0;
-        /**鼠标按下俯相机的俯仰角*/
-        this.onMouseDownPitch = 0;
-        /**鼠标按下相机的偏航角*/
-        this.onMouseDownYaw = 0;
-        /**围绕X轴旋转，也叫做俯仰角*/
+        this.state = this.STATE.NONE;
+
+        /**更新条件 */
+        this.EPS = 0.000001;
+
+        /**鼠标按钮 */
+        this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
+
+        /**查看球的坐标*/
+        this.spherical = new THREE.Spherical();
+        /**操作球的坐标*/
+        this.sphericalDelta = new THREE.Spherical();
+
+        //这个选项实际上可以使进出进入; 为了向后兼容，保留为“缩放”。
+        /**设置为false以禁用缩放 */
+        this.enableZoom = true;
+        /**缩放速度 */
+        this.zoomSpeed = 2.0;
+
+        /**设置为false以禁用旋转 */
+        this.enableRotate = true;
+        /**旋转速度 */
+        this.rotateSpeed = 1.5;
+
+        /**自动旋转 */
+        this.autoRotate = true;
+        /**自动旋转速度，当fps为60时，每轮30秒 */
+        this.autoRotateSpeed = 2.0;
+
+        //缩放距离（仅适用于PerspectiveCamera）
+        this.minDistance = 100;
+        this.maxDistance = 500;
+
+        //相机水平上限和下限
+        //如果设置，则必须是区间[ - Math.PI，Math.PI]的子区间。
+        this.minAzimuthAngle = -Math.PI; // 弧度
+        this.maxAzimuthAngle = Math.PI; // 弧度
+
+        //相机垂直上限和下限
+        //范围从-Math.PI到Math.PI弧度。
+        this.minPolarAngle = -Math.PI / 2; // 弧度
+        this.maxPolarAngle = Math.PI / 2; // 弧度
+
+        //设置为true以启用阻尼（惯性）
+        //如果启用阻尼，则必须在动画循环中调用controls.update（）
+        this.enableDamping = true;
+        this.dampingFactor = 0.25;
+
+        this.scale = 1;
+        this.zoomChanged = false;
+
+        //旋转坐标值
+        this.rotateStart = new THREE.Vector2();
+        this.rotateEnd = new THREE.Vector2();
+        this.rotateDelta = new THREE.Vector2();
+
+        //缩放坐标值
+        this.dollyStart = new THREE.Vector2();
+        this.dollyEnd = new THREE.Vector2();
+        this.dollyDelta = new THREE.Vector2();
+
+        //可以放大或缩小多少（仅限OrthographicCamera）
+        this.minZoom = 0;
+        this.maxZoom = Infinity;
+
+        //“target”设置焦点的位置，对象绕过的位置
+        this.target = new THREE.Vector3();
+
+        this.offset = new THREE.Vector3();
+
+        // 所以camera.up是轨道轴
+        this.quat = new THREE.Quaternion().setFromUnitVectors(camera.up, new THREE.Vector3(0, 1, 0));
+        this.quatInverse = this.quat.clone().inverse();
+
+        this.lastPosition = new THREE.Vector3();
+        this.lastQuaternion = new THREE.Quaternion();
+
+        this.rotateYaw = 0;
+        this.rotatePitch = 0;
+
+        // 围绕X轴旋转，也叫做俯仰角
         this.maxPitch = 85;
-        /**围绕X轴旋转，也叫做俯仰角*/
+        //围绕X轴旋转，也叫做俯仰角
         this.minPitch = -85;
-        /**围绕Y轴旋转，也叫偏航角*/
+        //75.0179580971,//围绕Y轴旋转，也叫偏航角
         this.yaw_Camera = 0;
-        /**围绕X轴旋转，也叫做俯仰角*/
+        //围绕X轴旋转，也叫做俯仰角
         this.picth_Camera = 0;
-        /**围绕Z轴旋转，也叫翻滚角*/
+        //围绕Z轴旋转，也叫翻滚角
         this.roll_Camera = 0;
-        /**相机正前方（屏幕正中心）世界位置*/
-        this.cameraTargets = new THREE.Vector3(0, 0, 0);
+
     }
 
-    updateCameraManage() {
-        // if (!noRotate) {
-        //     _this.rotateModel();
+    update() {
+
+
+        // this.offset.copy(camera.position);
+
+        // // 将偏移量旋转到“y轴向上”空间
+        // this.offset.applyQuaternion(this.quat);
+
+        // // 从z轴绕y轴的角度
+        // this.spherical.setFromVector3(this.offset);
+
+        // if (this.autoRotate && this.state === this.STATE.NONE) {
+
+        //     this.rotateLeft(this.getAutoRotationAngle());
+
         // }
 
-        // if (!noZoom) {
-        //     _this.zoomModel();
+        // this.spherical.theta += this.sphericalDelta.theta;
+        // this.spherical.phi += this.sphericalDelta.phi;
+
+        // // 将θ限制在期望的限制之间
+        // this.spherical.theta = Math.max(this.minAzimuthAngle, Math.min(this.maxAzimuthAngle, this.spherical.theta));
+
+        // //限制phi在期望的限制之间
+        // this.spherical.phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this.spherical.phi));
+
+        // this.spherical.makeSafe();
+
+        // this.spherical.radius *= this.scale;
+
+        // //将半径限制在期望的限制之间
+        // this.spherical.radius = Math.max(this.minDistance, Math.min(this.maxDistance, this.spherical.radius));
+
+        // this.offset.setFromSpherical(this.spherical);
+
+        // //将偏移量旋转回“camera-up-vector-is-up”空间
+        // this.offset.applyQuaternion(this.quatInverse);
+
+        // // position.copy(this.target).add(this.offset);
+
+        // camera.lookAt(this.offset);
+
+        // if (this.enableDamping === true) {
+
+        //     this.sphericalDelta.theta *= (1 - this.dampingFactor);
+        //     this.sphericalDelta.phi *= (1 - this.dampingFactor);
+
+        // } else {
+        //     this.sphericalDelta.set(0, 0, 0);
         // }
+
+        // this.scale = 1;
+
+        // //更新条件是：
+        // // min（相机位移，相机以弧度旋转）^ 2> EPS
+        // //使用小角度逼近cos（x / 2）= 1 - x ^ 2/8
+        // if (this.zoomChanged ||
+        //     this.lastPosition.distanceToSquared(camera.position) > this.EPS ||
+        //     8 * (1 - this.lastQuaternion.dot(camera.quaternion)) > this.EPS) {
+
+        //     // this.dispatchEvent(this.changeEvent);
+
+        //     this.lastPosition.copy(camera.position);
+        //     this.lastQuaternion.copy(camera.quaternion);
+        //     this.zoomChanged = false;
+
+        //     return true;
+        // }
+        // return false;
     }
 
-    // rotateModel = (function() {
+    /**获得自动旋转角度 */
+    getAutoRotationAngle() {
+        return 2 * Math.PI / 60 / 60 * this.autoRotateSpeed;
+    }
 
-    //     var delta = new THREE.Vector3(),
-    //         dynamicDampingFactor = 0.2,
-    //         lastAngle,
-    //         angle,
-    //         wns,
-    //         hns, nx, ny;
+    /**设置缩放比例 */
+    getZoomScale() {
+        return Math.pow(2, this.zoomSpeed);
+    }
 
-    //     return function rotateModel() {
+    /**缩小 */
+    dollyIn(dollyScale) {
 
-    //         wns = camera.fov * 0.00125 * (100000 - window.innerWidth) * 0.000012;
-    //         hns = camera.fov * 0.00125 * (100000 - window.innerHeight) * 0.000012;
-    //         delta.set(_moveCurr.x - _movePrev.x, _moveCurr.y - _movePrev.y, 0);
-    //         angle = delta.length();
-    //         if (angle > 0) {
-    //             angle *= 0.1;
-    //             lastAngle = angle;
-    //             nx = -(_moveCurr.x - _movePrev.x) * 0.05;
-    //             ny = (_moveCurr.y - _movePrev.y) * 0.05;
-    //         }
-    //         if (lastAngle) {
-    //             lastAngle *= Math.sqrt(1.0 - dynamicDampingFactor);
-    //             _this.setHousesViewAngle(
-    //                 (-nx * lastAngle * wns + _this.yaw_Camera),
-    //                 (ny * lastAngle * hns + _this.picth_Camera));
-    //         }
-    //         _movePrev.copy(_moveCurr);
-    //     }
-    // }());
+        if (camera.isPerspectiveCamera) {
 
-    // this.zoomModel = (function() {
+            camera.fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov + dollyScale));
 
-    //     var delta = 0;
-    //     var factor = 0;
-    //     var x_y = 0;
-    //     var fovDiffer = 0;
-    //     var stalls = 0;
-    //     var zoomV = [new THREE.Vector2(), new THREE.Vector2()];
+        } else if (camera.isOrthographicCamera) {
 
-    //     return function zoomModel() {
-    //         if (_state === STATE.WALL_ZOOM) {
-    //             fovDiffer = (SWPanoView.maxfov - SWPanoView.minfov);
-    //             stalls = fovDiffer / 30;
-    //         } else {
-    //             fovDiffer = (SWPanoView.maxfov - SWPanoView.minfov) / 3;
-    //             stalls = fovDiffer / 30;
-    //         }
-    //         if (_state === STATE.ZOOM || _state === STATE.WALL_ZOOM) {
-    //             if (_detailBrowser == 1) {
-    //                 delta = _wheelDelta > 0 ? 1 : -1; //-_wheelDelta / 40;// WebKit / Opera / Explorer 9
-    //             } else if (_detailBrowser == 2) {
-    //                 delta = _wheelDelta > 0 ? -1 : 1; //_wheelDelta / 3;// Firefox
-    //             }
-    //             if (_wheelNint < 10) {
-    //                 _wheelNum = delta * stalls * 2;
-    //             } else if (_wheelNint >= 10 && _wheelNint < 20) {
-    //                 _wheelNum = delta * stalls;
-    //             }
-    //             camera.fov = Math.max(SWPanoView.minfov, Math.min(SWPanoView.maxfov, camera.fov - _wheelNum));
-    //             _wheelNint++;
-    //             if (_wheelNint >= 20) {
-    //                 _state = STATE.NONE;
-    //                 _wheelNum = 0;
-    //                 _wheelNint = 0;
-    //             }
-    //         } else if (_state === STATE.TOUCH_ZOOM_PAN) {
-    //             factor = _touchZoomDistanceEnd / _touchZoomDistanceStart;
-    //             _touchZoomDistanceStart = _touchZoomDistanceEnd;
-    //             zoomV[0].subVectors(_zoomEnd[0], _zoomStart[0]);
-    //             zoomV[1].subVectors(_zoomEnd[1], _zoomStart[1]);
-    //             x_y = zoomV[0].x * zoomV[1].x + zoomV[0].y * zoomV[1].y;
-    //             if (factor > 1 && x_y < -0.5) {
-    //                 _zoomBoolen = true;
-    //                 delta = (factor - 1) * 50;
-    //                 _wheelNint = 0;
-    //                 _wheelNum = _wheelNum > 0 ? _wheelNum * -1 : _wheelNum;
-    //             }
-    //             if (factor < 1 && x_y < -0.5) {
-    //                 _zoomBoolen = true;
-    //                 delta = -(1 - factor) * 50;
-    //                 _wheelNint = 0;
-    //                 _wheelNum = _wheelNum < 0 ? _wheelNum * -1 : _wheelNum;
-    //             }
-    //             if (_zoomBoolen) {
-    //                 if (_wheelNint < 10) {
-    //                     _wheelNum = delta * stalls * 2;
-    //                 } else if (_wheelNint >= 10 && _wheelNint < 20) {
-    //                     _wheelNum = delta * stalls;
-    //                 }
-    //                 camera.fov = Math.max(SWPanoView.minfov, Math.min(SWPanoView.maxfov, camera.fov - _wheelNum));
-    //                 _wheelNint++;
-    //                 if (_wheelNint >= 20) {
-    //                     _wheelNum = 0;
-    //                     _wheelNint = 0;
-    //                     _zoomBoolen = false;
-    //                 }
-    //             }
-    //         }
-    //         camera.updateProjectionMatrix();
-    //     }
-    // }());
+            camera.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, camera.zoom * dollyScale));
+            camera.updateProjectionMatrix();
+            this.zoomChanged = true;
 
-    // this.onDocumentMouseDown = function(evt) {
-    //     evt.preventDefault();
-    //     _this.isMousuDownBool = true;
-    //     evt = evt || window.event;
-    //     var x = 0,
-    //         y = 0;
-    //     //如果事件对象有pageX属性,对应firefox,opera,chrome,safari浏览器
-    //     if (evt.pageX) {
-    //         x = evt.pageX;
-    //         y = evt.pageY;
-    //     }
-    //     //如果对象有clientX属性,对应IE浏览器
-    //     else if (evt.clientX) {
-    //         var offsetX = 0,
-    //             offsetY = 0;
-    //         //IE6及其以上版本
-    //         if (document.documentElement.scrollLeft) {
-    //             offsetX = document.documentElement.scrollLeft;
-    //             offsetY = document.documentElement.scrollTop;
-    //         }
-    //         //IE较旧的版本
-    //         else if (document.body) {
-    //             offsetX = document.body.scrollLeft;
-    //             offsetY = document.body.scrollTop;
-    //         }
-    //         x = evt.clientX + offsetX;
-    //         y = evt.clientY + offsetY;
-    //     }
-    //     noRotate = true;
-    //     _moveCurr.copy(new THREE.Vector2(x, y));
-    //     _movePrev.copy(_moveCurr);
-    //     _this.onMouseDownMouseX = x;
-    //     _this.onMouseDownMouseY = y;
-    //     _this.onMouseDownYaw = _this.yaw_Camera;
-    //     _this.onMouseDownPitch = _this.picth_Camera;
-    // };
+        } else {
+            this.enableZoom = false;
+        }
+    }
 
-    // this.onDocumentMouseMove = function(evt) {
-    //     evt.preventDefault();
-    //     if (!_this.isMousuDownBool) return;
-    //     _movePrev.copy(_moveCurr);
-    //     _moveCurr.copy(new THREE.Vector2(evt.clientX, evt.clientY));
-    //     var wns = camera.fov * 0.00125 * (100000 - window.innerWidth) * 0.000012;
-    //     var hns = camera.fov * 0.00125 * (100000 - window.innerHeight) * 0.000012;
-    //     _this.setHousesViewAngle(-(_this.onMouseDownMouseX - evt.clientX) * wns + _this.onMouseDownYaw,
-    //         (evt.clientY - _this.onMouseDownMouseY) * hns + _this.onMouseDownPitch);
-    // };
+    /**放大 */
+    dollyOut(dollyScale) {
 
-    // this.onDocumentMouseUp = function(evt) {
-    //     evt.preventDefault();
-    //     _this.isMousuDownBool = false;
-    //     noRotate = false;
-    //     //_moveCurr.copy(new THREE.Vector2(evt.clientX, evt.clientY));
-    //     _this.onMouseDownMouseX = 0;
-    //     _this.onMouseDownMouseY = 0;
-    // };
+        if (camera.isPerspectiveCamera) {
 
-    // //设置相机视角
-    // this.setHousesViewAngle = function(yy, pp, move) {
-    //     if (move == null || move == false) {
-    //         _this.picth_Camera = Math.max(this.minPitch, Math.min(this.maxPitch, pp));
-    //         _this.yaw_Camera = SWPanoView.getNumberMax360(yy);
-    //         _this.CameraLookAt();
-    //     }
-    // };
+            camera.fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov - dollyScale));
 
-    // //相机查看
-    // this.CameraLookAt = function(yaws, pitchs) {
-    //     if (yaws) _this.yaw_Camera = yaws;
-    //     if (pitchs) _this.picth_Camera = pitchs;
+        } else if (camera.isOrthographicCamera) {
 
-    //     if (SWPanoView.swMinMap) {
-    //         SWPanoView.swMinMap.RadarPointAngle(_this.yaw_Camera);
-    //     }
+            camera.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, camera.zoom / dollyScale));
+            camera.updateProjectionMatrix();
+            this.zoomChanged = true;
 
-    //     //var phi = THREE.Math.degToRad(90 - _this.picth_Camera);//degToRad方法返回与参数degrees所表示的角度相等的弧度值.
-    //     //var theta = THREE.Math.degToRad(_this.yaw_Camera);
-    //     //_this.cameraTargets.x = 500 * Math.sin(phi) * Math.cos(theta);
-    //     //_this.cameraTargets.y = 500 * Math.cos(phi);
-    //     //_this.cameraTargets.z = 500 * Math.sin(phi) * Math.sin(theta);
+        } else {
+            this.enableZoom = false;
+        }
+    }
 
-    //     _this.cameraTargets.y = Math.sin(THREE.Math.degToRad(_this.picth_Camera)) * SWPanoView.faceDistance * 0.5;
-    //     var m = Math.cos(THREE.Math.degToRad(_this.picth_Camera)) * SWPanoView.faceDistance * 0.5;
-    //     _this.cameraTargets.x = Math.sin(THREE.Math.degToRad((_this.yaw_Camera - 90))) * m;
-    //     _this.cameraTargets.z = Math.cos(THREE.Math.degToRad((_this.yaw_Camera - 90))) * m;
-    //     camera.lookAt(_this.cameraTargets);
-    // };
+    /**
+     * 鼠标按下
+     * @param {MouseEvent} event 
+     */
+    onMouseDown(event) {
 
-    // //鼠标控制相机的缩放
-    // this.onDocumentMouseWheel = function(evt) {
+        event.preventDefault();
 
-    //     if (enabled === false) return;
+        if (event.button == this.mouseButtons.ORBIT) {
 
-    //     evt.preventDefault();
-    //     evt.stopPropagation();
+            if (this.enableRotate === false) return;
 
-    //     if (evt.wheelDelta) {
-    //         _wheelDelta = evt.wheelDelta;
-    //         _detailBrowser = 1;
-    //     } else if (evt.detail) {
-    //         _wheelDelta = evt.detail;
-    //         _detailBrowser = 2;
-    //     }
-    //     _state = STATE.ZOOM;
-    //     _wheelNint = 0;
-    //     _wheelNum = 0;
-    // };
+            this.rotateStart.set(event.clientX, event.clientY);
 
+            this.state = this.STATE.ROTATE;
+        }
+    }
 
-    // //鼠标点击面片墙的缩放
-    // this.wallMoseWheel = function(type) {
-    //     if (type == 1) {
-    //         _wheelDelta = 120;
-    //         _detailBrowser = 1;
-    //         _state = STATE.ZOOM;
-    //     } else {
-    //         _wheelDelta = -120;
-    //         _detailBrowser = 1;
-    //         _state = STATE.WALL_ZOOM;
-    //     }
-    //     _wheelNint = 0;
-    //     _wheelNum = 0;
-    // };
+    /**
+     * 鼠标移动
+     * @param {MouseEvent} event 
+     */
+    onMouseMove(event) {
 
-    // this.onDocumentTouchStart = function(evt) {
+        event.preventDefault();
 
-    //     if (enabled === false) return;
-    //     evt.preventDefault();
-    //     evt.stopPropagation();
+        if (this.state == this.STATE.ROTATE) {
 
-    //     switch (evt.touches.length) {
-    //         case 1:
-    //             _state = STATE.TOUCH_ROTATE;
-    //             _moveCurr.copy(new THREE.Vector2(evt.touches[0].pageX, evt.touches[0].pageY));
-    //             _movePrev.copy(_moveCurr);
+            if (this.enableRotate === false) return;
 
-    //             noRotate = true;
-    //             _this.onMouseDownMouseX = evt.touches[0].pageX;
-    //             _this.onMouseDownMouseY = evt.touches[0].pageY;
-    //             _this.onMouseDownYaw = _this.yaw_Camera;
-    //             _this.onMouseDownPitch = _this.picth_Camera;
-    //             break;
-    //         case 2:
-    //             _state = STATE.TOUCH_ZOOM_PAN;
-    //             var dx = evt.touches[0].pageX - evt.touches[1].pageX;
-    //             var dy = evt.touches[0].pageY - evt.touches[1].pageY;
+            this.rotateEnd.set(event.clientX, event.clientY);
 
-    //             _touchZoomDistanceEnd = _touchZoomDistanceStart = Math.sqrt(dx * dx + dy * dy);
-    //             _zoomStart[0].set(evt.touches[0].pageX, evt.touches[0].pageY);
-    //             _zoomStart[1].set(evt.touches[1].pageX, evt.touches[1].pageY);
-    //             _zoomEnd[0].copy(_zoomStart[0]);
-    //             _zoomEnd[1].copy(_zoomStart[1]);
-    //             break;
-    //     }
-    // };
+            this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart).multiplyScalar(this.rotateSpeed);
 
-    // this.onDocumentTouchMove = function(evt) {
+            this.rotateYaw = THREE.Math.radToDeg(2 * Math.PI * this.rotateDelta.x / window.innerWidth); // 显示区域
 
-    //     if (enabled === false) return;
+            this.rotatePitch = THREE.Math.radToDeg(2 * Math.PI * this.rotateDelta.y / window.innerHeight);
 
-    //     evt.preventDefault();
-    //     evt.stopPropagation();
+            this.cameraLookAt(this.rotateYaw, this.rotatePitch);
 
-    //     switch (evt.touches.length) {
-    //         case 1:
-    //             _movePrev.copy(_moveCurr);
-    //             _moveCurr.copy(new THREE.Vector2(evt.touches[0].pageX, evt.touches[0].pageY));
+            this.rotateStart.copy(this.rotateEnd);
+        }
+    }
 
-    //             if (_state == STATE.TOUCH_ROTATE) {
-    //                 var wns = camera.fov * 0.00125 * (100000 - window.innerWidth) * 0.000012;
-    //                 var hns = camera.fov * 0.00125 * (100000 - window.innerHeight) * 0.000012;
-    //                 _this.setHousesViewAngle(
-    //                     (_this.onMouseDownMouseX - evt.touches[0].pageX) * wns + _this.onMouseDownYaw,
-    //                     (evt.touches[0].pageY - _this.onMouseDownMouseY) * hns + _this.onMouseDownPitch);
-    //             }
-    //             break;
-    //         case 2:
-    //             var dx = evt.touches[0].pageX - evt.touches[1].pageX;
-    //             var dy = evt.touches[0].pageY - evt.touches[1].pageY;
+    /**
+     * 鼠标弹起
+     * @param {MouseEvent} event 
+     */
+    onMouseUp(event) {
 
-    //             _touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy);
-    //             _zoomEnd[0].copy(_zoomStart[0]);
-    //             _zoomEnd[1].copy(_zoomStart[1]);
-    //             _zoomStart[0].set(evt.touches[0].pageX, evt.touches[0].pageY);
-    //             _zoomStart[1].set(evt.touches[1].pageX, evt.touches[1].pageY);
-    //             break;
-    //     }
-    // };
+        this.state = this.STATE.NONE;
 
-    // this.onDocumentTouchEnd = function(evt) {
+    }
 
-    //     if (enabled === false) return;
-    //     switch (event.touches.length) {
-    //         case 0:
-    //             if (_state == STATE.TOUCH_ROTATE) {
-    //                 noRotate = false;
-    //                 _this.onMouseDownMouseX = 0;
-    //                 _this.onMouseDownMouseY = 0;
-    //             }
-    //             _state = STATE.NONE;
-    //             _wheelNint = 0;
-    //             _wheelNum = 0;
-    //             _zoomBoolen = false;
-    //             break;
-    //         case 1:
-    //             _state = STATE.TOUCH_ROTATE;
-    //             _moveCurr.copy(new THREE.Vector2(evt.touches[0].pageX, evt.touches[0].pageY));
-    //             _movePrev.copy(_moveCurr);
+    /**
+     * 滚轮缩放
+     * @param {MouseEvent} event 
+     */
+    onMouseWheel(event) {
 
-    //             noRotate = true;
-    //             _this.onMouseDownMouseX = evt.touches[0].pageX;
-    //             _this.onMouseDownMouseY = evt.touches[0].pageY;
-    //             _this.onMouseDownYaw = _this.yaw_Camera;
-    //             _this.onMouseDownPitch = _this.picth_Camera;
+        if (this.enableZoom === false || (this.state !== this.STATE.NONE && this.state !== this.STATE.ROTATE)) return;
 
-    //             break;
-    //     }
-    // };
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (event.deltaY < 0) {
+
+            this.dollyOut(this.getZoomScale());
+
+        } else if (event.deltaY > 0) {
+
+            this.dollyIn(this.getZoomScale());
+
+        }
+    }
+
+    /**
+     * 手指按下
+     * @param {MouseEvent} event 
+     */
+    onTouchStart(event) {
+
+        event.preventDefault();
+
+        switch (event.touches.length) {
+
+            case 1: // 单指触摸：旋转
+
+                if (this.enableRotate === false) return;
+
+                this.rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
+
+                this.state = this.STATE.TOUCH_ROTATE;
+
+                break;
+
+            case 2: // 双指触摸：移动/缩放
+
+                if (this.enableZoom === false && this.enablePan === false) return;
+
+                if (this.enableZoom) {
+
+                    let dx = event.touches[0].pageX - event.touches[1].pageX;
+                    let dy = event.touches[0].pageY - event.touches[1].pageY;
+
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    this.dollyStart.set(0, distance);
+                }
+
+                this.state = this.STATE.TOUCH_DOLLY_PAN;
+
+                break;
+
+            default:
+                this.state = this.STATE.NONE;
+
+        }
+
+    }
+
+    /**
+     * 手指移动
+     * @param {MouseEvent} event 
+     */
+    onTouchMove(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        switch (event.touches.length) {
+
+            case 1: // 单指触摸：旋转
+
+                if (this.enableRotate === false) return;
+                if (this.state !== this.STATE.TOUCH_ROTATE) return; // is this needed?
+
+                this.rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
+
+                this.rotateDelta.subVectors(this.rotateEnd, this.rotateStart).multiplyScalar(this.rotateSpeed);
+
+                this.rotateYaw = THREE.Math.radToDeg(2 * Math.PI * this.rotateDelta.x / window.innerWidth); // 显示区域
+
+                this.rotatePitch = THREE.Math.radToDeg(2 * Math.PI * this.rotateDelta.y / window.innerHeight);
+
+                this.cameraLookAt(this.rotateYaw, this.rotatePitch);
+
+                this.rotateStart.copy(this.rotateEnd);
+
+                this.update();
+
+                break;
+
+            case 2: // 双指触摸：移动/缩放
+
+                if (this.enableZoom === false && this.enablePan === false) return;
+                if (this.state !== this.STATE.TOUCH_DOLLY_PAN) return; // is this needed?
+
+                let dx = event.touches[0].pageX - event.touches[1].pageX;
+                let dy = event.touches[0].pageY - event.touches[1].pageY;
+
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                this.dollyEnd.set(0, distance);
+
+                this.dollyDelta.set(0, Math.pow(this.dollyEnd.y / this.dollyStart.y, this.zoomSpeed));
+
+                this.dollyIn(this.dollyDelta.y);
+
+                this.dollyStart.copy(this.dollyEnd);
+                break;
+
+            default:
+
+                this.state = this.STATE.NONE;
+        }
+
+    }
+
+    /**
+     * 手指弹起
+     * @param {MouseEvent} event 
+     */
+    onTouchEnd(event) {
+
+        this.state = this.STATE.NONE;
+
+    }
+
+    /**
+     * 有激光点云时点击墙面会放大
+     * @param {Number} type 
+     */
+    setWallWheel(type) {
+
+    }
+
+    /**
+     * 这个是直接设置相机视角值
+     * @param {*} yaws 
+     * @param {*} pitch 
+     */
+    setHousesViewAngle(yaws, pitch) {
+        if (yaws) this.yaw_Camera = yaws;
+        if (pitch) this.picth_Camera = pitch;
+        camera.lookAt(YPRToVector3(this.yaw_Camera, this.picth_Camera, 0));
+    };
+
+    /**
+     * 这是设置累加值
+     * @param {*} yaws 
+     * @param {*} pitch 
+     */
+    cameraLookAt(yaws, pitch) {
+        this.picth_Camera = Math.max(this.minPitch, Math.min(this.maxPitch, this.picth_Camera + pitch));
+        this.yaw_Camera = getNumberMax360(this.yaw_Camera + yaws);
+
+        camera.lookAt(YPRToVector3(this.yaw_Camera, this.picth_Camera, 0));
+    };
 }
+
+export default SWCameraModule;

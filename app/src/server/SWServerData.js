@@ -31,6 +31,10 @@ class ServerData {
         this.featuresObj = {};
     }
 
+    getmusServerURL() {
+        return this.musServerURL;
+    }
+
     /**
      * 获取配置文件数据
      */
@@ -93,6 +97,7 @@ class ServerData {
                     if (!constants.c_StationInfo || (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != data.GetPanoByIDResult.ImageID)) {
                         constants.c_isPreviewImageLoadEnd = false;
                         constants.c_StationInfo = new StationInfo(data.GetPanoByIDResult);
+                        constants.sw_skyBox.loadThumbnail();
                         // if (SWPanoView.swSkySphere) {
                         //     SWPanoView.swSkySphere.initSkySphere();
                         // } else if (SWPanoView.swSkyBox) {

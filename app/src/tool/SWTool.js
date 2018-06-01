@@ -41,14 +41,14 @@ export function getWorldToScene(v3) {
  * @param {THREE.Vector3} v3 
  */
 export function Vector3ToVP(v3) {
-    var yaw = Math.atan2(v3.x, v3.z);
-    var pitch = Math.atan2(v3.y, (v3.x / Math.sin(yaw)));
+    let yaw = Math.atan2(v3.x, v3.z);
+    let pitch = Math.atan2(v3.y, (v3.x / Math.sin(yaw)));
     yaw = THREE.Math.radToDeg(yaw);
     if (yaw < 0) {
         yaw = 360 + yaw;
     }
     yaw = (yaw + 90) % 360;
-    var swvg = new SWViewGesture(yaw, THREE.Math.radToDeg(pitch), 0);
+    let swvg = new SWViewGesture(yaw, THREE.Math.radToDeg(pitch), 0);
     return swvg;
 };
 
@@ -57,13 +57,28 @@ export function Vector3ToVP(v3) {
  * @param {SWViewGesture} vp 
  */
 export function VPToVector3(vp) {
-    var vec = new THREE.Vector3(0, 0, 0);
+    let vec = new THREE.Vector3(0, 0, 0);
     vec.y = Math.sin(THREE.Math.degToRad(vp.getPitch())) * constants.c_FaceDistance * 0.5;
-    var m = Math.cos(THREE.Math.degToRad(vp.getPitch())) * constants.c_FaceDistance * 0.5;
+    let m = Math.cos(THREE.Math.degToRad(vp.getPitch())) * constants.c_FaceDistance * 0.5;
     vec.x = Math.sin(THREE.Math.degToRad((vp.getYaw() - 90))) * m;
     vec.z = Math.cos(THREE.Math.degToRad((vp.getYaw() - 90))) * m;
     return vec;
 };
+
+/**
+ * 球面坐标转三维坐标
+ * @param {Number} yaw 
+ * @param {Number} pitch 
+ * @param {Number} roll 
+ */
+export function YPRToVector3(yaw, pitch, roll) {
+    let vec = new THREE.Vector3(0, 0, 0);
+    vec.y = Math.sin(THREE.Math.degToRad(pitch)) * constants.c_FaceDistance * 0.5;
+    let m = Math.cos(THREE.Math.degToRad(pitch)) * constants.c_FaceDistance * 0.5;
+    vec.x = Math.sin(THREE.Math.degToRad((yaw - 90))) * m;
+    vec.z = Math.cos(THREE.Math.degToRad((yaw - 90))) * m;
+    return vec;
+}
 
 /**
  * 让数值在0~360之间
@@ -85,8 +100,8 @@ export function getNumberMax360(n) {
  * @param {number} y2 
  */
 export function getDistance(x1, y1, x2, y2) {
-    var xx = x2 - x1;
-    var yy = y2 - y1;
+    let xx = x2 - x1;
+    let yy = y2 - y1;
     return Math.pow((xx * xx + yy * yy), 0.5);
 };
 
@@ -113,7 +128,7 @@ export function getWfov(hfov, aspect) {
  * @param {number} lzoom 
  */
 export function getFaceTileMatrixWH(lzoom) {
-    var wh = new THREE.Vector3();
+    let wh = new THREE.Vector3();
     wh.x = wh.y = Math.pow(2, lzoom);
     return wh;
 };
@@ -123,7 +138,7 @@ export function getFaceTileMatrixWH(lzoom) {
  * @param {THREE.Vector3} sceneXY 
  */
 export function getPintIFScene(sceneXY) {
-    var boo = false;
+    let boo = false;
     if ((Math.abs(sceneXY.x) != Infinity && sceneXY.x != NaN && (sceneXY.x >= -100 && sceneXY.x <= window.innerWidth + 100)) &&
         (Math.abs(sceneXY.y) != Infinity && sceneXY.y != NaN && ((window.innerHeight - sceneXY.y) >= -100 && (window.innerHeight - sceneXY.y) <= window.innerHeight + 100)) &&
         (Math.abs(sceneXY.z) != Infinity && sceneXY.z != NaN && sceneXY.z < 1)) {
@@ -144,10 +159,10 @@ export function getRandomColor() {
  * @param {THREE.Object} obj 
  */
 export function getWallProbeSurfaceAngle(obj) {
-    var normal = obj.face.normal.clone();
-    var vv = new THREE.Vector3(0, 0, 1);
-    var angle = THREE.Math.radToDeg(vv.angleTo(normal));
-    var tan = vv.clone().cross(normal).dot(new THREE.Vector3(0, 1, 0));
+    let normal = obj.face.normal.clone();
+    let vv = new THREE.Vector3(0, 0, 1);
+    let angle = THREE.Math.radToDeg(vv.angleTo(normal));
+    let tan = vv.clone().cross(normal).dot(new THREE.Vector3(0, 1, 0));
     if (tan > 0) {
         angle = 360 - angle;
     }
@@ -168,15 +183,15 @@ export function getProbeSurfaceDistance(obj) {
  * @param {number} rph 
  */
 export function getPanoRealPoint(obj, rph) {
-    var v = Math.asin(obj.point.y / obj.distance); //垂直角度
-    var h = Math.atan2(obj.point.z, obj.point.x) - THREE.Math.degToRad(90); //水平角度
+    let v = Math.asin(obj.point.y / obj.distance); //垂直角度
+    let h = Math.atan2(obj.point.z, obj.point.x) - THREE.Math.degToRad(90); //水平角度
 
-    var rp = Math.abs(rph / Math.tan(v));
-    var x = rp * Math.cos(h);
-    var z = -rp * Math.sin(h);
-    var y = rph;
-    var v3 = new THREE.Vector3(x, y, z).applyMatrix4(constants.c_OpenGLToDS3Mx4);
-    var realPoint = constants.c_StationInfo.point.clone().add(v3);
+    let rp = Math.abs(rph / Math.tan(v));
+    let x = rp * Math.cos(h);
+    let z = -rp * Math.sin(h);
+    let y = rph;
+    let v3 = new THREE.Vector3(x, y, z).applyMatrix4(constants.c_OpenGLToDS3Mx4);
+    let realPoint = constants.c_StationInfo.point.clone().add(v3);
     return realPoint;
 };
 
@@ -185,11 +200,11 @@ export function getPanoRealPoint(obj, rph) {
  * @param {THREE.Object} obj 
  */
 export function getWallRealPoint(obj) {
-    var drc = obj.point.clone().applyMatrix4(obj.object.matrix).applyMatrix4(constants.c_OpenGLToDS3Mx4);
-    var dx = drc.x / constants.c_WallDisplaySize * 2;
-    var dy = drc.y / constants.c_WallDisplaySize * 2;
-    var dz = drc.z / constants.c_WallDisplaySize * 2;
-    var realPoint = constants.c_StationInfo.point.clone().add(new THREE.Vector3(dx, dy, dz));
+    let drc = obj.point.clone().applyMatrix4(obj.object.matrix).applyMatrix4(constants.c_OpenGLToDS3Mx4);
+    let dx = drc.x / constants.c_WallDisplaySize * 2;
+    let dy = drc.y / constants.c_WallDisplaySize * 2;
+    let dz = drc.z / constants.c_WallDisplaySize * 2;
+    let realPoint = constants.c_StationInfo.point.clone().add(new THREE.Vector3(dx, dy, dz));
     return realPoint;
 };
 
@@ -199,17 +214,17 @@ export function getWallRealPoint(obj) {
  * @param {int} type 
  */
 export function getJudgeOrZoom(obj, type) {
-    var distances;
-    var dis = 0;
+    let distances;
+    let dis = 0;
     if (type == 1) {
         distances = getPanoRealPoint(obj, 2.5);
         dis = -1;
     } else {
         distances = getWallRealPoint(obj);
     }
-    var dis0 = Math.sqrt(Math.pow((distances.x - constants.c_StationInfo.nx), 2) + Math.pow((distances.y - constants.c_StationInfo.ny), 2)) + dis;
-    for (var i = 0; i < constants.c_AdjacentPanoInfoArr.length; i++) {
-        var dis1 = Math.sqrt(Math.pow((distances.x - constants.c_AdjacentPanoInfoArr[i].nX), 2) +
+    let dis0 = Math.sqrt(Math.pow((distances.x - constants.c_StationInfo.nx), 2) + Math.pow((distances.y - constants.c_StationInfo.ny), 2)) + dis;
+    for (let i = 0; i < constants.c_AdjacentPanoInfoArr.length; i++) {
+        let dis1 = Math.sqrt(Math.pow((distances.x - constants.c_AdjacentPanoInfoArr[i].nX), 2) +
             Math.pow((distances.y - constants.c_AdjacentPanoInfoArr[i].nY), 2));
         if (dis1 <= dis0) {
             return false;
@@ -224,11 +239,11 @@ export function getJudgeOrZoom(obj, type) {
  * @param v2 下一站点
  * */
 export function getArrowsAngle(v1, v2) {
-    var p2 = new THREE.Vector3(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z).applyMatrix4(constants.c_DS3ToOpenGLMx4);
-    var v4 = new THREE.Vector3(-1, 0, 0);
-    var angle = p2.angleTo(v4);
+    let p2 = new THREE.Vector3(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z).applyMatrix4(constants.c_DS3ToOpenGLMx4);
+    let v4 = new THREE.Vector3(-1, 0, 0);
+    let angle = p2.angleTo(v4);
     angle = THREE.Math.radToDeg(angle); //转换为角度
-    var tan = p2.clone().cross(v4).dot(new THREE.Vector3(0, 1, 0));
+    let tan = p2.clone().cross(v4).dot(new THREE.Vector3(0, 1, 0));
     if (tan > 0) {
         angle = 360 - angle;
     }
@@ -332,7 +347,7 @@ export function getFullScreen() {
 export function TextDiv(labelPos, fontSize, text) {
     labelPos.copy(getWorldToScene(labelPos));
     this.textDiv = document.createElement("div");
-    var fs = fontSize || 14;
+    let fs = fontSize || 14;
     this.textDiv.style.fontSize = fs + "px";
     this.textDiv.style.color = "#fff";
     this.textDiv.style.position = "absolute";
@@ -375,10 +390,24 @@ export function TextureAnimator(texture, tilesHoriz, tilesVert, numTiles, tileDi
             this.currentTile++;
             if (this.currentTile == this.numberOfTiles)
                 this.currentTile = 0;
-            var currentColumn = this.currentTile % this.tilesHorizontal;
+            let currentColumn = this.currentTile % this.tilesHorizontal;
             texture.offset.x = currentColumn / this.tilesHorizontal;
-            var currentRow = Math.floor(this.currentTile / this.tilesHorizontal);
+            let currentRow = Math.floor(this.currentTile / this.tilesHorizontal);
             texture.offset.y = currentRow / this.tilesVertical;
         }
     }
+}
+
+/**
+ * 获取字体
+ * @param {string} fontUrl 字体地址 '../../../commons/font/optimer_regular.typeface.json'
+ * @param {Function} callFun 回调函数
+ */
+export function getFont(fontUrl) {
+    return new Promise((resolve, reject) => {
+        let loader = new THREE.FontLoader();
+        loader.load(fontUrl, (response) => {
+            resolve(response);
+        });
+    });
 }

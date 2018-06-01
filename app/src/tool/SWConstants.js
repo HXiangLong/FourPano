@@ -13,6 +13,7 @@ export var c_Minfov = 20; //最小视角
 export var c_ThumbnailSize = 128; //缩略图尺寸
 export var c_FaceDistance = 4096; //面距离
 export var c_WallDisplaySize = 20; //面片缩放比例
+export var c_groundDisplaySize = -500; //地面片缩放比例
 
 export var c_OpenGLToDS3Mx4 = new THREE.Matrix4().fromArray([1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1]); //坐标转换矩阵。坐标系 OpenGL -> 3DS
 export var c_DS3ToOpenGLMx4 = new THREE.Matrix4().getInverse(c_OpenGLToDS3Mx4); //坐标转换矩阵。坐标系 3DS -> OpenGL

@@ -4,7 +4,7 @@
 class HashTable {
     constructor() {
         this.size = 0;
-        this.entry = new Object();
+        this.entry = {};
     }
 
     /**
@@ -63,7 +63,7 @@ class HashTable {
      * 获取所有的值的数组
      */
     getValues() {
-        let values = new Array();
+        let values = [];
         for (let prop in this.entry) {
             values.push(this.entry[prop]);
         }
@@ -74,7 +74,7 @@ class HashTable {
      * 获取所有的key的数组
      */
     getKeys() {
-        let keys = new Array();
+        let keys = [];
         for (let prop in this.entry) {
             keys.push(prop);
         }
@@ -93,7 +93,7 @@ class HashTable {
      */
     clear() {
         this.size = 0;
-        this.entry = new Object();
+        this.entry = {};
     }
 }
 
