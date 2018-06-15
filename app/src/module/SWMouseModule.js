@@ -1,3 +1,5 @@
+/* global THREE*/
+
 import { camera, scene, sw_cameraManage } from '../tool/SWConstants'
 
 /**
@@ -9,24 +11,6 @@ class SWMouseModule {
     constructor(canvas) {
 
         this.canvas3d = canvas;
-
-        this.canvas3d.addEventListener("mousedown", this.mouseDown.bind(this), false); //鼠标按钮被按下
-        this.canvas3d.addEventListener("mouseup", this.mouseUp.bind(this), false); //鼠标按键被松开
-        this.canvas3d.addEventListener("mousemove", this.mouseMove.bind(this), false); //鼠标被移动
-
-        this.canvas3d.addEventListener("mouseover", this.mouseOver.bind(this), false); //鼠标移到某元素之上
-        this.canvas3d.addEventListener("mouseout", this.mouseOut.bind(this), false); //鼠标从某元素移开
-
-        this.canvas3d.addEventListener("wheel", this.mouseWheel.bind(this), false); //鼠标滚轮
-
-        document.addEventListener('contextmenu', this.contextMenu, false); //关闭右键事件
-
-        window.addEventListener('orientationchange', this.onScreenOrientationChangeEvent.bind(this), false); //陀螺仪旋转
-        window.addEventListener('deviceorientation', this.onDeviceOrientationChangeEvent.bind(this), false);
-
-        this.canvas3d.addEventListener("touchstart", this.touchStart.bind(this), false); //触摸按下
-        this.canvas3d.addEventListener("touchmove", this.touchMove.bind(this), false); //触摸移动
-        this.canvas3d.addEventListener("touchend", this.touchEnd.bind(this), false); //触摸结束
 
         /**是否按下鼠标 */
         this.ifMouseDownBoo = false;
@@ -40,17 +24,67 @@ class SWMouseModule {
         /**射线 */
         this.raycaster = new THREE.Raycaster();
 
-        /**射线检测到的对象 */
-        this.intersect;
+        this.addMosueEvent();
+        // this.addGyroEvent();
+        this.addTouchEvent();
+    }
 
-        camera.rotation.reorder('YXZ');
+    /**添加鼠标事件 */
+    addMosueEvent() {
+        this.canvas3d.addEventListener("mousedown", this.mouseDown.bind(this), false); //鼠标按钮被按下
+        this.canvas3d.addEventListener("mouseup", this.mouseUp.bind(this), false); //鼠标按键被松开
+        this.canvas3d.addEventListener("mousemove", this.mouseMove.bind(this), false); //鼠标被移动
 
-        this.enabled = true;
+        this.canvas3d.addEventListener("mouseover", this.mouseOver.bind(this), false); //鼠标移到某元素之上
+        this.canvas3d.addEventListener("mouseout", this.mouseOut.bind(this), false); //鼠标从某元素移开
 
-        this.deviceOrientation = {};
-        this.screenOrientation = 0;
+        this.canvas3d.addEventListener("wheel", this.mouseWheel.bind(this), false); //鼠标滚轮
 
-        this.alphaOffset = 0; // radians
+        document.addEventListener('contextmenu', this.contextMenu, false); //关闭右键事件
+    }
+
+    /**清除鼠标事件 */
+    deleteMouseEvent() {
+        this.canvas3d.removeEventListener("mousedown", this.mouseDown.bind(this), false); //鼠标按钮被按下
+        this.canvas3d.removeEventListener("mouseup", this.mouseUp.bind(this), false); //鼠标按键被松开
+        this.canvas3d.removeEventListener("mousemove", this.mouseMove.bind(this), false); //鼠标被移动
+
+        this.canvas3d.removeEventListener("mouseover", this.mouseOver.bind(this), false); //鼠标移到某元素之上
+        this.canvas3d.removeEventListener("mouseout", this.mouseOut.bind(this), false); //鼠标从某元素移开
+
+        this.canvas3d.removeEventListener("wheel", this.mouseWheel.bind(this), false); //鼠标滚轮
+
+    }
+
+    /**添加触摸事件 */
+    addTouchEvent() {
+        this.canvas3d.addEventListener("touchstart", this.touchStart.bind(this), false); //触摸按下
+        this.canvas3d.addEventListener("touchmove", this.touchMove.bind(this), false); //触摸移动
+        this.canvas3d.addEventListener("touchend", this.touchEnd.bind(this), false); //触摸结束
+    }
+
+    /**清除触摸事件 */
+    deleteTouchEvent() {
+        this.canvas3d.removeEventListener("touchstart", this.touchStart.bind(this), false); //触摸按下
+        this.canvas3d.removeEventListener("touchmove", this.touchMove.bind(this), false); //触摸移动
+        this.canvas3d.removeEventListener("touchend", this.touchEnd.bind(this), false); //触摸结束
+    }
+
+    /**添加手机陀螺仪事件 */
+    addGyroEvent() {
+        window.addEventListener('orientationchange', this.screenOrientationChangeEvent.bind(this), false); //浏览器横竖屏切换检测
+        //处理方向事件 接收设备方向变化信息
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', this.deviceOrientationChangeEvent.bind(this), false); //检测手机倾斜旋转
+        } else {
+            alert('本设备不支持deviceorientation事件');
+        }
+    }
+
+    /**清除手机陀螺仪事件 */
+    deleteGyroEvent() {
+        window.removeEventListener('orientationchange', this.screenOrientationChangeEvent.bind(this), false); //浏览器横竖屏切换检测
+        window.removeEventListener('deviceorientation', this.deviceOrientationChangeEvent.bind(this), false); //检测手机倾斜旋转
     }
 
     /**
@@ -102,7 +136,7 @@ class SWMouseModule {
      * @param {Event} e 
      */
     mouseWheel(e) {
-        // console.log("mouseWheel", e);
+
         sw_cameraManage.onMouseWheel(e);
 
     }
@@ -112,7 +146,6 @@ class SWMouseModule {
      * @param {Event} e 
      */
     mouseUp(e) {
-
         sw_cameraManage.onMouseUp(e);
 
         this.mousePosition(e.clientX, e.clientY);
@@ -183,8 +216,6 @@ class SWMouseModule {
      */
     mouseOut(e) {
 
-        // console.log("mouseOut", e);
-
         this.ifMouseOutBoo = true;
     }
 
@@ -193,8 +224,6 @@ class SWMouseModule {
      * @param {Event} e 
      */
     mouseOver(e) {
-
-        // console.log("mouseOver", e);
 
         this.ifMouseOutBoo = false;
     }
@@ -206,8 +235,6 @@ class SWMouseModule {
     touchStart(e) {
 
         sw_cameraManage.onTouchStart(e);
-
-        console.log("touchStart", e);
     }
 
     /**
@@ -217,8 +244,6 @@ class SWMouseModule {
     touchEnd(e) {
 
         sw_cameraManage.onTouchEnd(e);
-
-        console.log("touchEnd", e);
     }
 
     /**
@@ -228,21 +253,21 @@ class SWMouseModule {
     touchMove(e) {
 
         sw_cameraManage.onTouchMove(e);
-
-        console.log("touchMove", e);
     }
 
-    onDeviceOrientationChangeEvent(event) {
+    /**陀螺仪旋转事件-设备定位改变事件 */
+    deviceOrientationChangeEvent(event) {
 
-        this.deviceOrientation = event;
+        sw_cameraManage.onDeviceOrientationChangeEvent(event);
 
-    };
+    }
 
-    onScreenOrientationChangeEvent() {
+    /**陀螺仪旋转事件-屏幕方向改变事件 */
+    screenOrientationChangeEvent() {
 
-        this.screenOrientation = window.orientation || 0;
+        sw_cameraManage.onScreenOrientationChangeEvent();
 
-    };
+    }
 
     /**屏蔽右键 */
     contextMenu(e) {

@@ -1,9 +1,11 @@
+/* global THREE */
+
 import * as constants from "./tool/SWConstants";
 import * as tool from './tool/SWTool';
 import Stats from './libs/Stats';
 import serverData from './server/SWServerData';
 import SWCameraModule from './module/SWCameraModule'
-import SWBoxModule from './module/panoBox/SWBoxModule'
+import SWBoxJumpModule from './module/panoBox/SWBoxJumpModule'
 import SWMouseModule from './module/SWMouseModule'
 const TWEEN = require('@tweenjs/tween.js');
 
@@ -23,6 +25,12 @@ class SWPano {
     /**初始化相机*/
     initCamera() {
         constants.camera = new THREE.PerspectiveCamera(constants.c_Maxfov, window.innerWidth / window.innerHeight, 0.1, 10000);
+
+        //创建6个渲染到WebGLRenderTargetCube的相机。
+        //near - 近裁剪距离。 far - 裁剪距离远。 cubeResolution - 设置立方体边缘的长度
+        constants.cubeCamera = new THREE.CubeCamera(1, 10000, constants.c_FaceDistance * 0.5);
+        constants.cubeCamera.renderTarget.texture.minFilter = THREE.LinearMipMapLinearFilter;
+        constants.scene.add(constants.cubeCamera);
     }
 
     /**初始化灯光*/
@@ -38,7 +46,7 @@ class SWPano {
 
     /**初始化渲染*/
     initRenderer() {
-        constants.renderer = new THREE.WebGLRenderer({ antialias: true });
+        constants.renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, alpha: true });
         constants.renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas3d').appendChild(constants.renderer.domElement);
         constants.renderer.domElement.style.position = "absolute";
@@ -82,10 +90,10 @@ class SWPano {
 
     /**初始化天空盒子*/
     initSkyBox() {
-        constants.sw_skyBox = new SWBoxModule();
+        constants.sw_skyBox = new SWBoxJumpModule();
     }
 
-    /**初始化天空盒子*/
+    /**初始化鼠标操作控件*/
     initMouseModule() {
         let canvas = document.getElementById('canvas3d');
         constants.sw_mouseControl = new SWMouseModule(canvas);
@@ -143,7 +151,7 @@ class SWPano {
                 })
                 .start();
         } else {
-            constants.sw_cameraManage.cameraLookAt(yaws, pitch);
+            constants.sw_cameraManage.cameraLookAt(yaw, pitch);
         }
     }
 }

@@ -1,3 +1,4 @@
+/* global THREE*/
 import { scene, camera } from '../../tool/SWConstants'
 import { disposeNode, getFont } from '../../tool/SWTool'
 /**

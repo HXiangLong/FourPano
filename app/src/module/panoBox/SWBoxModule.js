@@ -1,36 +1,90 @@
-import { scene, c_StationInfo, c_FaceDistance, sw_getService } from '../../tool/SWConstants'
-import { disposeNode } from '../../tool/SWTool'
-import SWBoxFaceModule from './SWBoxFaceModule'
+/* global THREE */
+
+import {
+    scene,
+    c_StationInfo,
+    c_ThumbnailSize,
+    c_isPreviewImageLoadEnd
+} from '../../tool/SWConstants';
+import SWBoxFaceModule from './SWBoxFaceModule';
+import { disposeNode } from '../../tool/SWTool';
 
 /**
  * 全景盒子
  */
 class SWBoxModule {
-    constructor() {
+    constructor(url, textures) {
         this.box = new THREE.Group(); //全景内盒子
-        this.faceArr = [];
-        this.url = "";
-    }
 
-    loadThumbnail() {
-        this.url = `${sw_getService.getmusServerURL().split('/S')[0]}/panoImages/${c_StationInfo.panoID}`;
+        this.faceArr = []; //面集合
+
+        this.url = url; //贴图路径
+
+        this.textures = textures; //缩略贴图对象
+
+        this.box.rotation.y = THREE.Math.degToRad(90 - c_StationInfo.yaw); //每个站点都有一个校正值
+
         scene.add(this.box);
-        let path = `${this.url}/0/sw_0.jpg`;
-        let loader = new THREE.TextureLoader();
-        loader.load(path,
-            (texture) =>{
-                for (let i = 0; i < 6; i++) {
-                    let face = new SWBoxFaceModule(i, this.box, texture, this.url);
-                    this.faceArr.push(face);
-                }
-            },
-            (xhr)=> {},
-            (xhr)=> {
-                console.log(`图片加载失败：${path}`);
-            }
-        );
+
+        this.addFace();
     }
 
+    addFace() {
+        let dd = Date.now();
+
+        for (let i = 0; i < 6; i++) {
+
+            let canvas = document.createElement("canvas");
+
+            canvas.width = canvas.height = c_ThumbnailSize;
+
+            let context = canvas.getContext("2d");
+
+            //计算图片位置
+            let nint = Math.floor(i / 3);
+            let mint = i % 3;
+
+            context.drawImage(this.textures.image,
+
+                mint * c_ThumbnailSize,
+
+                nint * c_ThumbnailSize,
+
+                c_ThumbnailSize,
+
+                c_ThumbnailSize,
+
+                0,
+
+                0,
+                c_ThumbnailSize,
+
+                c_ThumbnailSize);
+
+            let texture1 = new THREE.Texture(canvas);
+
+            texture1.needsUpdate = true;
+
+            let face = new SWBoxFaceModule(i, this.box, texture1, this.url);
+
+            this.faceArr.push(face);
+
+        }
+
+        // c_isPreviewImageLoadEnd = false;
+
+        console.log(`缩略图贴面上耗时：${Date.now()-dd}ms`);
+    }
+
+    clearBox() {
+
+        this.faceArr.forEach((itme) => {
+            itme.clearTiles();
+        });
+
+        disposeNode(this.box);
+
+    }
 }
 
 export default SWBoxModule;

@@ -11,15 +11,12 @@ swPano.initScene();
 swPano.initCamera();
 swPano.initRenderer();
 swPano.initLight();
-swPano.initBox();
 swPano.initService();
+swPano.initMouseModule();
 swPano.initCameraManage();
 swPano.initSkyBox();
-swPano.initMouseModule();
 
 (function animate() {
     requestAnimationFrame(animate);
     swPano.Animate();
 })();
-
-swPano.setCameraAngle(200, 0, true);

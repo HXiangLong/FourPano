@@ -1,4 +1,6 @@
-import { c_StationInfo, c_FaceDistance } from '../../tool/SWConstants'
+/* global THREE*/
+
+import { c_FaceDistance } from '../../tool/SWConstants'
 import { disposeNode } from '../../tool/SWTool'
 import SWBoxTilesModule from './SWBoxTilesModule'
 /**
@@ -13,33 +15,38 @@ class SWBoxFaceModule {
      * @param {THREE.Group} path 图片链接的前半截地址
      */
     constructor(no, faceGroup, texture, path) {
-        this.faceNo = no;
-        this.boxPath = path;
-        this.levelplaneArr = []; //4等级面数组
-        // this.uvPosition = [
-        //     new THREE.Vector2(parseInt(no % 3) * (1 / 3), 1 - parseInt(no / 3) * 0.5),
-        //     new THREE.Vector2((parseInt(no % 3) + 1) * (1 / 3), 1 - parseInt(no / 3) * 0.5),
-        //     new THREE.Vector2((parseInt(no % 3) + 1) * (1 / 3), 1 - (parseInt(no / 3) + 1) * 0.5),
-        //     new THREE.Vector2(parseInt(no % 3) * (1 / 3), 1 - (parseInt(no / 3) + 1) * 0.5)
-        // ];
 
-        // this.uvPosition1 = [
-        //     new THREE.Vector2(0, 1),
-        //     new THREE.Vector2(1, 1),
-        //     new THREE.Vector2(1, 0),
-        //     new THREE.Vector2(0, 0)
-        // ];
-        this.geometry = new THREE.PlaneGeometry(c_FaceDistance, c_FaceDistance, 1, 1);
-        // this.geometry.faceVertexUvs[0][0] = [this.uvPosition[3], this.uvPosition[2], this.uvPosition[0]];
-        // this.geometry.faceVertexUvs[0][1] = [this.uvPosition[2], this.uvPosition[1], this.uvPosition[0]];
-        this.material = new THREE.MeshBasicMaterial({ map: texture });
-        this.thumbnails = new THREE.Mesh(this.geometry, this.material);
-        this.thumbnails.userData.depthlevel = 100;
-        faceGroup.add(this.thumbnails);
-        this.facePosition();
+        this.faceNo = no;
+
+        this.boxPath = path;
+
+        this.levelplaneArr = []; //4等级面数组
+
+        this.fourPoint = [];
+
+        this.faceGroup = faceGroup;
+
         this.loadTexture();
+
+        this.geometry = new THREE.PlaneGeometry(c_FaceDistance, c_FaceDistance, 1, 1);
+
+        this.material = new THREE.MeshBasicMaterial({ map: texture });
+
+        this.thumbnails = new THREE.Mesh(this.geometry, this.material);
+
+        this.thumbnails.userData.depthlevel = 100;
+
+        this.facePosition();
+
+        this.faceGroup.add(this.thumbnails);
+
+        this.faceFourVertices();
+
     }
 
+    /**
+     * 面位置及旋转
+     */
     facePosition() {
         switch (this.faceNo) {
             case 0:
@@ -72,26 +79,66 @@ class SWBoxFaceModule {
         }
     }
 
+    /**
+     * 当前瓦片四个顶点世界坐标
+     */
+    faceFourVertices() {
+        this.fourPoint.p1 = this.faceMatrix4(this.thumbnails.geometry.vertices[0]);
+
+        this.fourPoint.p2 = this.faceMatrix4(this.thumbnails.geometry.vertices[1]);
+
+        this.fourPoint.p3 = this.faceMatrix4(this.thumbnails.geometry.vertices[2]);
+
+        this.fourPoint.p4 = this.faceMatrix4(this.thumbnails.geometry.vertices[3]);
+    }
+
+    /**矩阵计算世界坐标 */
+    faceMatrix4(v3) {
+        let aa = v3.clone().applyMatrix4(new THREE.Matrix4().makeRotationFromEuler(this.thumbnails.rotation));
+
+        let v0 = aa.clone().add(this.thumbnails.position);
+
+        let d = v0.clone().applyMatrix4(new THREE.Matrix4().makeRotationFromEuler(this.faceGroup.rotation));
+
+        let b = d.clone().applyMatrix4(this.faceGroup.matrixWorld);
+
+        return b;
+    }
+
+    /**
+     * 加载高清图
+     */
     loadTexture() {
+        let dd = Date.now();
+
         let path = `${this.boxPath}/2/sw_${this.faceNo}.jpg`;
+
         // 实例化一个加载器
         let loader = new THREE.TextureLoader();
+
         // 加载资源
         loader.load(
             // 资源URL
             path,
             // 加载成功之后调用
             (texture) => {
-                // this.geometry.faceVertexUvs[0][0] = [this.uvPosition1[3], this.uvPosition1[2], this.uvPosition1[0]];
-                // this.geometry.faceVertexUvs[0][1] = [this.uvPosition1[2], this.uvPosition1[1], this.uvPosition1[0]];
+                console.log(`清晰图加载耗时：${Date.now()-dd}ms`);
+
+                console.log(texture);
+
                 texture.mapping = THREE.UVMapping;
+
                 texture.magFilter = THREE.LinearFilter;
+
                 texture.minFilter = THREE.LinearFilter;
+
                 texture.type = THREE.FloatType;
+
                 texture.anisotropy = 1;
+
                 this.thumbnails.material.map = texture;
+
                 this.thumbnails.material.map.needsUpdate = true;
-                // this.thumbnails.geometry = this.geometry;
             },
             // 加载中
             (xhr) => {},
@@ -102,11 +149,16 @@ class SWBoxFaceModule {
         );
     }
 
+    /**生成瓦片 */
     createTiles() {
         for (let x = 0; x < 8; x++) {
+
             for (let y = 0; y < 8; y++) {
-                let tiles = new SWBoxTilesModule(this.faceNo, 3, x + 1, y + 1, this.thumbnails, this.boxPath);
+
+                let tiles = new SWBoxTilesModule(this.faceNo, x + 1, y + 1, this.thumbnails, this.boxPath);
+
                 this.levelplaneArr.push(tiles);
+
             }
         }
     }
@@ -119,8 +171,17 @@ class SWBoxFaceModule {
 
     }
 
+    /**
+     * 清除瓦片及自身
+     */
     clearTiles() {
+        this.levelplaneArr.forEach((tile) => {
 
+            tile.clearTile();
+
+        });
+
+        disposeNode(this.thumbnails, true);
     }
 }
 

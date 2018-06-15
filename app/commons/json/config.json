@@ -1,7 +1,7 @@
 {
-    "serverUrl": "http://localhost:8090/GZXHGM/DigitalMusBaseServices",
-    "musServerUrl": "http://localhost:8090/GZXHGM/DigitalMusService/Services.aspx",
-    "resourcesUrl": "http://localhost:8090/GZXHGM/DigitalMusBaseServices",
+    "serverUrl": "http://192.168.10.63:8090/GZXHGM/DigitalMusBaseServices",
+    "musServerUrl": "http://192.168.10.63:8090/GZXHGM/DigitalMusService/Services.aspx",
+    "resourcesUrl": "http://192.168.10.63:8090/GZXHGM/DigitalMusBaseServices",
     "museumID": "5101-0010",
     "displayID": "5101-0010-0001",
     "firstPanoID": "A101-20180102000001",

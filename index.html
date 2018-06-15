@@ -1,23 +1,42 @@
 <html>
-    <head>
-    </head>
-    <body style=" margin: 0;padding: 0">
-        <div id="canvas" style="margin:0;padding:0;width:100%;height:100%;"></div>
 
-        <script>
-            var canvas = document.getElementById('canvas');
-            canvas.addEventListener("mouseover", mouseOver); //鼠标移到某元素之上
-            canvas.addEventListener("mouseout", mouseOut); //鼠标从某元素移开
+<head>
+</head>
 
-var i=0;
-            function mouseOut(e) {
-            	i++;
-                canvas.innerHTML=i;
+<body style=" margin: 0;padding: 0">
+    <div id="canvas" style="margin:0;padding:0;width:100%;height:100%;"></div>
+
+    <script>
+        var canvas = document.getElementById('canvas');
+        canvas.addEventListener("mouseover", mouseOver); //鼠标移到某元素之上
+        canvas.addEventListener("mouseout", mouseOut); //鼠标从某元素移开
+
+        var i = 0;
+
+        function mouseOut(e) {
+            i++;
+            canvas.innerHTML = i;
+        }
+
+        function mouseOver(e) {
+            console.log("mouseOver", e);
+        }
+    </script>
+
+    <script>
+        for (var i = 0; i < 2; i++) {
+            console.log("iiiii 1 " + i);
+
+            for (var j = 0; j < 2;) {
+                if (true) {
+                    j++;
+                    console.log("jjjjj  " + j);
+                }
             }
 
-            function mouseOver(e) {
-                console.log("mouseOver", e);
-            }
-        </script>
-    </body>
+            console.log("iiiii 2 " + i);
+        }
+    </script>
+</body>
+
 </html>

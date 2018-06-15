@@ -1,5 +1,7 @@
-import { camera, c_Maxfov, c_Minfov } from "../tool/SWConstants";
-import { YPRToVector3, getNumberMax360 } from '../tool/SWTool'
+/* global THREE*/
+
+import { camera, c_Maxfov, c_Minfov, c_maxPitch, c_minPitch } from "../tool/SWConstants";
+import { getSceneToWorld, YPRToVector3, getNumberMax360 } from '../tool/SWTool';
 
 /**
  * 相机控制类只有旋转和缩放，没有平移
@@ -12,16 +14,8 @@ class SWCameraModule {
         /**相机目前状态 */
         this.state = this.STATE.NONE;
 
-        /**更新条件 */
-        this.EPS = 0.000001;
-
         /**鼠标按钮 */
         this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
-
-        /**查看球的坐标*/
-        this.spherical = new THREE.Spherical();
-        /**操作球的坐标*/
-        this.sphericalDelta = new THREE.Spherical();
 
         //这个选项实际上可以使进出进入; 为了向后兼容，保留为“缩放”。
         /**设置为false以禁用缩放 */
@@ -32,151 +26,102 @@ class SWCameraModule {
         /**设置为false以禁用旋转 */
         this.enableRotate = true;
         /**旋转速度 */
-        this.rotateSpeed = 1.5;
+        this.rotateSpeed = 0.4;
 
         /**自动旋转 */
         this.autoRotate = true;
         /**自动旋转速度，当fps为60时，每轮30秒 */
         this.autoRotateSpeed = 2.0;
 
-        //缩放距离（仅适用于PerspectiveCamera）
-        this.minDistance = 100;
-        this.maxDistance = 500;
-
-        //相机水平上限和下限
-        //如果设置，则必须是区间[ - Math.PI，Math.PI]的子区间。
-        this.minAzimuthAngle = -Math.PI; // 弧度
-        this.maxAzimuthAngle = Math.PI; // 弧度
-
-        //相机垂直上限和下限
-        //范围从-Math.PI到Math.PI弧度。
-        this.minPolarAngle = -Math.PI / 2; // 弧度
-        this.maxPolarAngle = Math.PI / 2; // 弧度
-
         //设置为true以启用阻尼（惯性）
         //如果启用阻尼，则必须在动画循环中调用controls.update（）
-        this.enableDamping = true;
+        this.enableDamping = false;
         this.dampingFactor = 0.25;
-
-        this.scale = 1;
-        this.zoomChanged = false;
+        this.dampingTime = 0;
 
         //旋转坐标值
         this.rotateStart = new THREE.Vector2();
         this.rotateEnd = new THREE.Vector2();
         this.rotateDelta = new THREE.Vector2();
 
+        this.startTime = undefined;
+        this.speed = { yaw: 0, pitch: 0 };
+
         //缩放坐标值
         this.dollyStart = new THREE.Vector2();
         this.dollyEnd = new THREE.Vector2();
         this.dollyDelta = new THREE.Vector2();
 
-        //可以放大或缩小多少（仅限OrthographicCamera）
-        this.minZoom = 0;
-        this.maxZoom = Infinity;
-
-        //“target”设置焦点的位置，对象绕过的位置
-        this.target = new THREE.Vector3();
-
-        this.offset = new THREE.Vector3();
-
-        // 所以camera.up是轨道轴
-        this.quat = new THREE.Quaternion().setFromUnitVectors(camera.up, new THREE.Vector3(0, 1, 0));
-        this.quatInverse = this.quat.clone().inverse();
-
-        this.lastPosition = new THREE.Vector3();
-        this.lastQuaternion = new THREE.Quaternion();
-
         this.rotateYaw = 0;
         this.rotatePitch = 0;
 
-        // 围绕X轴旋转，也叫做俯仰角
-        this.maxPitch = 85;
-        //围绕X轴旋转，也叫做俯仰角
-        this.minPitch = -85;
-        //75.0179580971,//围绕Y轴旋转，也叫偏航角
+        //围绕Y轴旋转，也叫偏航角
         this.yaw_Camera = 0;
         //围绕X轴旋转，也叫做俯仰角
         this.picth_Camera = 0;
         //围绕Z轴旋转，也叫翻滚角
         this.roll_Camera = 0;
 
+        /**是否启用陀螺仪 */
+        this.enabledGyro = true;
+
+        this.deviceOrientation = {};
+        this.screenOrientation = 0;
+
+        this.alphaOffset = 0; // radians
+
+        this.zee = new THREE.Vector3(0, 0, 1);
+
+        this.euler = new THREE.Euler();
+
+        this.q0 = new THREE.Quaternion();
+
+        this.q1 = new THREE.Quaternion(-Math.sqrt(0.5), 0, 0, Math.sqrt(0.5)); // - PI/2 around the x-axis
+
+        this.startAlpha = 0;
+        this.startBeta = 0;
+        this.startGamma = 0;
+
+        this.lon = this.lat = 0;
+        this.moothFactor = 10;
+        this.boundary = 320;
+        this.lastLon = this.lastLat = undefined;
+
+        this.setHousesViewAngle(0, 0);
     }
 
     update() {
 
+        if (this.enableDamping) {
 
-        // this.offset.copy(camera.position);
+            this.speed.yaw = this.getAutoRotationAngle(this.speed.yaw);
 
-        // // 将偏移量旋转到“y轴向上”空间
-        // this.offset.applyQuaternion(this.quat);
+            this.speed.pitch = this.getAutoRotationAngle(this.speed.pitch);
 
-        // // 从z轴绕y轴的角度
-        // this.spherical.setFromVector3(this.offset);
+            if (Math.abs(this.speed.yaw) <= 0.2 && Math.abs(this.speed.pitch) <= 0.2) {
 
-        // if (this.autoRotate && this.state === this.STATE.NONE) {
+                this.enableDamping = false;
 
-        //     this.rotateLeft(this.getAutoRotationAngle());
+                return;
+            }
 
-        // }
+            this.setOverlayViewAngle(parseFloat(this.speed.yaw.toFixed(2)), Math.floor(this.speed.pitch));
 
-        // this.spherical.theta += this.sphericalDelta.theta;
-        // this.spherical.phi += this.sphericalDelta.phi;
-
-        // // 将θ限制在期望的限制之间
-        // this.spherical.theta = Math.max(this.minAzimuthAngle, Math.min(this.maxAzimuthAngle, this.spherical.theta));
-
-        // //限制phi在期望的限制之间
-        // this.spherical.phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this.spherical.phi));
-
-        // this.spherical.makeSafe();
-
-        // this.spherical.radius *= this.scale;
-
-        // //将半径限制在期望的限制之间
-        // this.spherical.radius = Math.max(this.minDistance, Math.min(this.maxDistance, this.spherical.radius));
-
-        // this.offset.setFromSpherical(this.spherical);
-
-        // //将偏移量旋转回“camera-up-vector-is-up”空间
-        // this.offset.applyQuaternion(this.quatInverse);
-
-        // // position.copy(this.target).add(this.offset);
-
-        // camera.lookAt(this.offset);
-
-        // if (this.enableDamping === true) {
-
-        //     this.sphericalDelta.theta *= (1 - this.dampingFactor);
-        //     this.sphericalDelta.phi *= (1 - this.dampingFactor);
-
-        // } else {
-        //     this.sphericalDelta.set(0, 0, 0);
-        // }
-
-        // this.scale = 1;
-
-        // //更新条件是：
-        // // min（相机位移，相机以弧度旋转）^ 2> EPS
-        // //使用小角度逼近cos（x / 2）= 1 - x ^ 2/8
-        // if (this.zoomChanged ||
-        //     this.lastPosition.distanceToSquared(camera.position) > this.EPS ||
-        //     8 * (1 - this.lastQuaternion.dot(camera.quaternion)) > this.EPS) {
-
-        //     // this.dispatchEvent(this.changeEvent);
-
-        //     this.lastPosition.copy(camera.position);
-        //     this.lastQuaternion.copy(camera.quaternion);
-        //     this.zoomChanged = false;
-
-        //     return true;
-        // }
-        // return false;
+        }
     }
 
     /**获得自动旋转角度 */
-    getAutoRotationAngle() {
-        return 2 * Math.PI / 60 / 60 * this.autoRotateSpeed;
+    getAutoRotationAngle(speed) {
+        if (speed !== 0) {
+            if (speed > 0) {
+                speed -= this.dampingFactor;
+                speed < 0 && (speed = 0);
+            } else {
+                speed += this.dampingFactor;
+                speed > 0 && (speed = 0);
+            }
+        }
+        return speed;
     }
 
     /**设置缩放比例 */
@@ -191,15 +136,10 @@ class SWCameraModule {
 
             camera.fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov + dollyScale));
 
-        } else if (camera.isOrthographicCamera) {
-
-            camera.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, camera.zoom * dollyScale));
             camera.updateProjectionMatrix();
-            this.zoomChanged = true;
 
-        } else {
-            this.enableZoom = false;
         }
+
     }
 
     /**放大 */
@@ -209,15 +149,9 @@ class SWCameraModule {
 
             camera.fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov - dollyScale));
 
-        } else if (camera.isOrthographicCamera) {
-
-            camera.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, camera.zoom / dollyScale));
             camera.updateProjectionMatrix();
-            this.zoomChanged = true;
-
-        } else {
-            this.enableZoom = false;
         }
+
     }
 
     /**
@@ -233,6 +167,8 @@ class SWCameraModule {
             if (this.enableRotate === false) return;
 
             this.rotateStart.set(event.clientX, event.clientY);
+
+            this.startTime = Date.now();
 
             this.state = this.STATE.ROTATE;
         }
@@ -258,14 +194,16 @@ class SWCameraModule {
 
             this.rotatePitch = THREE.Math.radToDeg(2 * Math.PI * this.rotateDelta.y / window.innerHeight);
 
-            this.cameraLookAt(this.rotateYaw, this.rotatePitch);
+            this.setOverlayViewAngle(this.rotateYaw, this.rotatePitch);
+
+            // this.slowMove(10);
 
             this.rotateStart.copy(this.rotateEnd);
         }
     }
 
     /**
-     * 鼠标弹起
+     * 鼠标弹起,旋转拖尾效果
      * @param {MouseEvent} event 
      */
     onMouseUp(event) {
@@ -312,6 +250,8 @@ class SWCameraModule {
 
                 this.rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
 
+                this.startTime = Date.now();
+
                 this.state = this.STATE.TOUCH_ROTATE;
 
                 break;
@@ -354,8 +294,7 @@ class SWCameraModule {
 
             case 1: // 单指触摸：旋转
 
-                if (this.enableRotate === false) return;
-                if (this.state !== this.STATE.TOUCH_ROTATE) return; // is this needed?
+                if (this.enableRotate === false || this.state !== this.STATE.TOUCH_ROTATE) return;
 
                 this.rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
 
@@ -365,18 +304,17 @@ class SWCameraModule {
 
                 this.rotatePitch = THREE.Math.radToDeg(2 * Math.PI * this.rotateDelta.y / window.innerHeight);
 
-                this.cameraLookAt(this.rotateYaw, this.rotatePitch);
+                this.setOverlayViewAngle(parseFloat(this.rotateYaw.toFixed(2)), Math.floor(this.rotatePitch));
+
+                this.slowMove(20);
 
                 this.rotateStart.copy(this.rotateEnd);
-
-                this.update();
 
                 break;
 
             case 2: // 双指触摸：移动/缩放
 
-                if (this.enableZoom === false && this.enablePan === false) return;
-                if (this.state !== this.STATE.TOUCH_DOLLY_PAN) return; // is this needed?
+                if (this.enableZoom === false || this.state !== this.STATE.TOUCH_DOLLY_PAN) return;
 
                 let dx = event.touches[0].pageX - event.touches[1].pageX;
                 let dy = event.touches[0].pageY - event.touches[1].pageY;
@@ -385,7 +323,7 @@ class SWCameraModule {
 
                 this.dollyEnd.set(0, distance);
 
-                this.dollyDelta.set(0, Math.pow(this.dollyEnd.y / this.dollyStart.y, this.zoomSpeed));
+                this.dollyDelta.set(0, -(this.dollyEnd.y - this.dollyStart.y) * 0.5 / this.zoomSpeed);
 
                 this.dollyIn(this.dollyDelta.y);
 
@@ -409,36 +347,115 @@ class SWCameraModule {
 
     }
 
+    slowMove(card) {
+
+        this.speed = { yaw: (this.rotateEnd.x - this.rotateStart.x), pitch: (this.rotateEnd.y - this.rotateStart.y) };
+
+        this.dampingTime = (Date.now() - this.startTime) / card;
+
+        let yy = (this.speed.yaw / this.dampingTime) > 0 ?
+            ((this.speed.yaw / this.dampingTime) > 8 ? 8 : (this.speed.yaw / this.dampingTime)) :
+            ((this.speed.yaw / this.dampingTime) < -8 ? -8 : (this.speed.yaw / this.dampingTime));
+
+        let pp = (this.speed.pitch / this.dampingTime) > 0 ?
+            ((this.speed.pitch / this.dampingTime) > 3 ? 3 : (this.speed.pitch / this.dampingTime)) :
+            ((this.speed.pitch / this.dampingTime) < -3 ? -3 : (this.speed.pitch / this.dampingTime));
+
+        this.speed = { yaw: yy, pitch: pp };
+
+        this.enableDamping = true;
+    }
+
     /**
-     * 有激光点云时点击墙面会放大
-     * @param {Number} type 
+     * 监听并接收设备方向变化信息,检测手机倾斜旋转
+     *         z   
+     *         |   y
+     *         |  /   
+     *         | /
+     *          ————————X
+     * @param {*} event 
      */
-    setWallWheel(type) {
+    onDeviceOrientationChangeEvent(event) {
+        if (this.enabledGyro) {
+
+            if (event) {
+
+                let alpha = event.alpha ? THREE.Math.degToRad(parseFloat((event.alpha - this.startAlpha).toFixed(2))) + this.alphaOffset : 0; // Z
+
+                let beta = event.beta ? THREE.Math.degToRad(parseFloat((event.beta - this.startBeta).toFixed(2))) : 0; // X'
+
+                let gamma = event.gamma ? THREE.Math.degToRad(parseFloat((event.gamma).toFixed(2))) : 0; // Y''
+
+                let orient = this.screenOrientation ? THREE.Math.degToRad(this.screenOrientation) : 0; // O
+
+                this.setObjectQuaternion(camera.quaternion, alpha, beta, gamma, orient);
+            }
+        }
+    }
+
+    /**
+     * 浏览器横竖屏切换检测
+     */
+    onScreenOrientationChangeEvent() {
+
+        this.screenOrientation = window.orientation || 0;
 
     }
 
     /**
+     * 重新定义相机的四元素
+     * @param {Quaternion} quaternion 相机的旋转四元素
+     * @param {Number} alpha 设备沿 Z 轴旋转的弧度值
+     * @param {Number} beta 设备在 x 轴上的旋转弧度值
+     * @param {Number} gamma 设备在 y 轴上的旋转弧度值
+     * @param {Number} orient 浏览器横竖屏朝向的弧度值
+     */
+    setObjectQuaternion(quaternion, alpha, beta, gamma, orient) {
+
+        this.euler.set(beta, alpha, -gamma, 'YXZ'); //欧拉角是绕坐标轴旋转的角度和顺序,按照heading , pitch , roll 的顺序，应该是 YXZ
+
+        quaternion.setFromEuler(this.euler); // 从欧拉角设置四元数
+
+        quaternion.multiply(this.q1); //四元数的乘法
+
+        quaternion.multiply(this.q0.setFromAxisAngle(this.zee, -orient)); // 从任意轴的旋转角设置四元数
+    }
+
+    /**
+     * 有激光点云时点击墙面会放大
+     */
+    setWallWheel() {
+        if (camera.isPerspectiveCamera) {
+            if (camera.fov > c_Minfov) { //放大
+                this.dollyOut((c_Maxfov - c_Minfov) / 3);
+            } else if (camera.fov == c_Minfov) { //还原
+                this.dollyIn(100);
+            }
+        }
+    }
+
+    /**
      * 这个是直接设置相机视角值
-     * @param {*} yaws 
-     * @param {*} pitch 
+     * @param {*} yaws 经度
+     * @param {*} pitch 纬度
      */
     setHousesViewAngle(yaws, pitch) {
         if (yaws) this.yaw_Camera = yaws;
         if (pitch) this.picth_Camera = pitch;
-        camera.lookAt(YPRToVector3(this.yaw_Camera, this.picth_Camera, 0));
-    };
+        camera.lookAt(YPRToVector3(this.yaw_Camera, this.picth_Camera));
+    }
 
     /**
-     * 这是设置累加值
-     * @param {*} yaws 
-     * @param {*} pitch 
+     * 叠加相机角度
+     * @param {*} yaws 经度
+     * @param {*} pitch 纬度
      */
-    cameraLookAt(yaws, pitch) {
-        this.picth_Camera = Math.max(this.minPitch, Math.min(this.maxPitch, this.picth_Camera + pitch));
+    setOverlayViewAngle(yaws, pitch) {
+        this.picth_Camera = Math.max(c_minPitch, Math.min(c_maxPitch, this.picth_Camera + pitch));
         this.yaw_Camera = getNumberMax360(this.yaw_Camera + yaws);
 
-        camera.lookAt(YPRToVector3(this.yaw_Camera, this.picth_Camera, 0));
-    };
+        this.setHousesViewAngle();
+    }
 }
 
 export default SWCameraModule;

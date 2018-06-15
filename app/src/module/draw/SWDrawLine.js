@@ -1,3 +1,4 @@
+/* global THREE*/
 import { scene, c_groundDisplaySize, c_WallDisplaySize } from '../../tool/SWConstants'
 import { disposeNode } from '../../tool/SWTool'
 
@@ -46,7 +47,7 @@ class SWDrawLine {
                 this.linePointArr.push(segment);
             }
             this.linePointArr.reverse();
-            lineTimeBoo = true;
+            this.lineTimeBoo = true;
         }
 
         //开始自我计时
@@ -54,7 +55,7 @@ class SWDrawLine {
             if (this.lineNum == this.lineAllNum) {
                 this.lineNum = 0;
                 clearInterval(this.lineTimeNum);
-                lineTimeBoo = false;
+                this.lineTimeBoo = false;
                 return;
             }
             this.drawLine(this.linePointArr[this.lineNum], ((this.lineNum + 1) >= this.lineAllNum) ? this.endPoint : this.linePointArr[this.lineNum + 1]);

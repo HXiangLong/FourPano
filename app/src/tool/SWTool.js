@@ -1,3 +1,5 @@
+/* global THREE,$*/
+
 import * as constants from './SWConstants';
 import SWViewGesture from './SWViewGesture';
 
@@ -28,7 +30,7 @@ export function getWorldToScene(v3) {
     let widthHalf = (windowWidth / 2);
     let heightHalf = (window.innerHeight / 2);
 
-    vector.project(camera);
+    vector.project(constants.camera);
 
     vector.x = (vector.x * widthHalf) + widthHalf;
     vector.y = -(vector.y * heightHalf) + heightHalf;
@@ -42,41 +44,62 @@ export function getWorldToScene(v3) {
  */
 export function Vector3ToVP(v3) {
     let yaw = Math.atan2(v3.x, v3.z);
+
     let pitch = Math.atan2(v3.y, (v3.x / Math.sin(yaw)));
+
     yaw = THREE.Math.radToDeg(yaw);
+
     if (yaw < 0) {
+
         yaw = 360 + yaw;
+
     }
     yaw = (yaw + 90) % 360;
+
     let swvg = new SWViewGesture(yaw, THREE.Math.radToDeg(pitch), 0);
+
     return swvg;
 };
 
 /**
- * 视点转三维坐标
- * @param {SWViewGesture} vp 
+ * 视点转三维坐标,P是从球面和Z轴的交点绕Y轴旋转theta，
+ * 然后在Y轴和其本身组成的平面上绕其过原点的法向量旋转phi得到，那么点P的坐标如下:
+ * x = r*cos(phi)*sin(theta);
+ * y = r*sin(phi);
+ * z = r*cos(phi)*cos(theta);
+ * @param {SWViewGesture} vp 球面坐标 yaw,pitch
  */
 export function VPToVector3(vp) {
     let vec = new THREE.Vector3(0, 0, 0);
-    vec.y = Math.sin(THREE.Math.degToRad(vp.getPitch())) * constants.c_FaceDistance * 0.5;
-    let m = Math.cos(THREE.Math.degToRad(vp.getPitch())) * constants.c_FaceDistance * 0.5;
-    vec.x = Math.sin(THREE.Math.degToRad((vp.getYaw() - 90))) * m;
-    vec.z = Math.cos(THREE.Math.degToRad((vp.getYaw() - 90))) * m;
+
+    vec.y = Math.sin(THREE.Math.degToRad(vp.Pitch)) * constants.c_FaceDistance * 0.5;
+
+    let m = Math.cos(THREE.Math.degToRad(vp.Pitch)) * constants.c_FaceDistance * 0.5;
+
+    vec.x = Math.sin(THREE.Math.degToRad(vp.Yaw - 90)) * m;
+
+    vec.z = Math.cos(THREE.Math.degToRad(vp.Yaw - 90)) * m;
+
     return vec;
 };
 
 /**
- * 球面坐标转三维坐标
- * @param {Number} yaw 
- * @param {Number} pitch 
- * @param {Number} roll 
+ * 相机看向球面坐标转三维坐标
+ * @param {Number} yaw 经度
+ * @param {Number} pitch 纬度
  */
-export function YPRToVector3(yaw, pitch, roll) {
+export function YPRToVector3(yaw, pitch) {
+
     let vec = new THREE.Vector3(0, 0, 0);
+
     vec.y = Math.sin(THREE.Math.degToRad(pitch)) * constants.c_FaceDistance * 0.5;
+
     let m = Math.cos(THREE.Math.degToRad(pitch)) * constants.c_FaceDistance * 0.5;
+
     vec.x = Math.sin(THREE.Math.degToRad((yaw - 90))) * m;
+
     vec.z = Math.cos(THREE.Math.degToRad((yaw - 90))) * m;
+
     return vec;
 }
 
@@ -363,39 +386,6 @@ export function TextDiv(labelPos, fontSize, text) {
     this.textDiv.innerHTML = text;
     document.body.appendChild(this.textDiv);
     return this.textDiv;
-}
-
-/**
- * GIF动画
- * @param {THREE.Texture} texture 贴图对象
- * @param {number} tilesHoriz 横向
- * @param {number} tilesVert 竖向
- * @param {number} numTiles 数量
- * @param {number} tileDispDuration 间隔时间 
- */
-export function TextureAnimator(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration) {
-    this.tilesHorizontal = tilesHoriz;
-    this.tilesVertical = tilesVert;
-    this.numberOfTiles = numTiles;
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(1 / this.tilesHorizontal, 1 / this.tilesVertical);
-    this.tileDisplayDuration = tileDispDuration;
-    this.currentDisplayTime = 0;
-    this.currentTile = 0;
-
-    this.update = function(milliSec) {
-        this.currentDisplayTime += milliSec;
-        while (this.currentDisplayTime > this.tileDisplayDuration) {
-            this.currentDisplayTime -= this.tileDisplayDuration;
-            this.currentTile++;
-            if (this.currentTile == this.numberOfTiles)
-                this.currentTile = 0;
-            let currentColumn = this.currentTile % this.tilesHorizontal;
-            texture.offset.x = currentColumn / this.tilesHorizontal;
-            let currentRow = Math.floor(this.currentTile / this.tilesHorizontal);
-            texture.offset.y = currentRow / this.tilesVertical;
-        }
-    }
 }
 
 /**

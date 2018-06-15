@@ -1,3 +1,5 @@
+/* global THREE*/
+
 import { c_stationInfo } from '../tool/SWConstants';
 import { getArrowsAngle } from '../tool/SWTool'
 /**

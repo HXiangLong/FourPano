@@ -17,7 +17,7 @@ class FloorsInfo {
         this.rasterMapMarkers = new HashTable(); //楼层所以点集合
         constants.c_FloorsMapTable.add(this.storey, this);
         Array.from(obj.RasterMapMarkers, (mapMarker) => {
-            var floorsMarkerInfo = new FloorsMarkerInfo(mapMarker);
+            let floorsMarkerInfo = new FloorsMarkerInfo(mapMarker);
             this.rasterMapMarkers.add(floorsMarkerInfo.markerID, floorsMarkerInfo);
         });
     }

@@ -1,3 +1,4 @@
+/* global THREE*/
 import { scene } from '../../tool/SWConstants'
 import { disposeNode } from '../../tool/SWTool'
 

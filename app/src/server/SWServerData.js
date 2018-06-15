@@ -1,3 +1,5 @@
+/* global $*/
+
 // import * as jsonData from '../tool/ExternalConst';
 import * as constants from '../tool/SWConstants';
 import ArrowInfo from '../data/SWArrowInfo';
@@ -97,12 +99,7 @@ class ServerData {
                     if (!constants.c_StationInfo || (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != data.GetPanoByIDResult.ImageID)) {
                         constants.c_isPreviewImageLoadEnd = false;
                         constants.c_StationInfo = new StationInfo(data.GetPanoByIDResult);
-                        constants.sw_skyBox.loadThumbnail();
-                        // if (SWPanoView.swSkySphere) {
-                        //     SWPanoView.swSkySphere.initSkySphere();
-                        // } else if (SWPanoView.swSkyBox) {
-                        //     SWPanoView.swSkyBox.initBox(SWPanoView.stationInfo);
-                        // }
+                        constants.sw_skyBox.addThumbnail();
                     }
                 }
             }
