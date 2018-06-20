@@ -106,6 +106,8 @@ export var c_clock = new THREE.Clock();
 export var c_StationInfo;
 /**缩略图对象*/
 export var c_previewImage = undefined;
+/**跳转过程中的过渡球*/
+export var c_jumpSphere = undefined;
 
 
 //实例化对象

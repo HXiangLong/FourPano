@@ -15,7 +15,9 @@ class SWMarkerModule {
      * @param {Number} fpsNum GIF动画多少张
      */
     constructor(url, type, fpsNum) {
+
         this.markerType = type;
+
         this.texture = new THREE.ImageUtils.loadTexture(url);
 
         this.textureAnimator = new SWTextureAnimator(this.texture, fpsNum, 1, fpsNum, 100);
@@ -28,16 +30,21 @@ class SWMarkerModule {
             transparent: true,
             opacity: 1
         });
+
         this.mesh = new THREE.Mesh(this.geometry, this.material);
     }
 
     update(delta) {
-        if (this.textureAnimator) {
+        if (this.textureAnimator && this.markerType == 2) {
+
             this.textureAnimator.update(1000 * delta);
+
         }
     }
 
     clear() {
+        this.textureAnimator = null;
+
         disposeNode(this.mesh);
     }
 }

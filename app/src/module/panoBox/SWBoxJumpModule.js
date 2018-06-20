@@ -2,17 +2,8 @@
 
 import SWBox from './SWBoxModule';
 import HashTable from '../../tool/SWHashTable';
-import {
-    scene,
-    renderer,
-    cubeCamera,
-    c_StationInfo,
-    sw_getService,
-    c_FloorsMapTable,
-    c_isPreviewImageLoadEnd,
-    c_FaceDistance,
-    c_DS3ToOpenGLMx4
-} from '../../tool/SWConstants';
+import * as constants from '../../tool/SWConstants';
+import { disposeNode } from '../../tool/SWTool';
 const TWEEN = require('@tweenjs/tween.js');
 
 /**
@@ -39,8 +30,6 @@ class SWBoxJumpModule {
 
             this.preloadThumbnails();
 
-            this.createSphere();
-
         }, 10000);
 
     }
@@ -52,26 +41,28 @@ class SWBoxJumpModule {
 
         if (this.imageUrl == "") { //由于加载数据需要时间，这个第一次加载缩略图时记录路径
 
-            this.imageUrl = `${sw_getService.getmusServerURL().split('/S')[0]}/panoImages/`;
+            this.imageUrl = `${constants.sw_getService.getmusServerURL().split('/S')[0]}/panoImages/`;
         }
 
-        if (c_StationInfo.panoID != this.previousPano) { //同站点跳转忽略
+        if (constants.c_StationInfo.panoID != this.previousPano.panoID) { //同站点跳转忽略
 
-            // c_isPreviewImageLoadEnd = true;
+            let url = `${this.imageUrl}${constants.c_StationInfo.panoID}`;
 
-            let url = `${this.imageUrl}${c_StationInfo.panoID}`;
+            if (this.thumbnailsTable.containsKey(constants.c_StationInfo.panoID)) { //缩略图集合中是否有此站点的图
 
-            if (this.thumbnailsTable.containsKey(c_StationInfo.panoID)) { //缩略图集合中是否有此站点的图
+                constants.c_isPreviewImageLoadEnd = true;
 
-                let textures = this.thumbnailsTable.getValue(c_StationInfo.panoID); //获取当前站点的缩略图对象
+                let textures = this.thumbnailsTable.getValue(constants.c_StationInfo.panoID); //获取当前站点的缩略图对象
 
-                this.createPanoBox(c_StationInfo, url, textures);
+                this.createPanoBox(constants.c_StationInfo, url, textures);
 
             } else { //集合中没有
 
-                this.loadThumbnail(c_StationInfo.panoID, (texture) => {
+                this.loadThumbnail(constants.c_StationInfo.panoID, (texture) => {
 
-                    this.createPanoBox(c_StationInfo, url, texture);
+                    constants.c_isPreviewImageLoadEnd = true;
+
+                    this.createPanoBox(constants.c_StationInfo, url, texture);
 
                 });
             }
@@ -85,9 +76,9 @@ class SWBoxJumpModule {
      * @param {THREE.Texture} texture 缩略图对象
      */
     createPanoBox(pano, url, texture) {
-        this.previousPano = pano;
-
         if (!this.panoBox) {
+
+            this.previousPano = pano;
 
             this.panoBox = new SWBox(url, texture);
 
@@ -101,49 +92,72 @@ class SWBoxJumpModule {
      */
     createSphere() {
 
-        cubeCamera.update(renderer, scene);
+        constants.cubeCamera.update(constants.renderer, constants.scene);
 
-        let cubetexture = cubeCamera.renderTarget.texture;
+        let cubetexture = constants.cubeCamera.renderTarget.texture;
 
         let material = new THREE.MeshBasicMaterial({
             envMap: cubetexture,
+            // wireframe: true,
+            // transparent: true,
+            // color: 0x00fff0,
             side: THREE.BackSide
         });
 
+        let geometry = new THREE.SphereGeometry(2048, 32, 32);
+
         material.envMap.mapping = THREE.CubeRefractionMapping;
 
-        this.sphere = new THREE.Mesh(new THREE.IcosahedronBufferGeometry(c_FaceDistance * 0.5, 3), material);
+        constants.c_jumpSphere = new THREE.Mesh(geometry, material);
 
-        scene.add(this.sphere);
+        constants.scene.add(constants.c_jumpSphere);
 
         this.panoBox.clearBox();
 
-        // this.jumpAnimations();
+        this.panoBox = null;
+
+        constants.cubeCamera.children.length = 0;
+
+        this.jumpAnimations();
+
+
     }
 
     /**
      * 跳转拉伸动画
      */
     jumpAnimations() {
-        let pos1 = this.previousPano.point.clone().applyMatrix4(c_DS3ToOpenGLMx4);
-        let pos2 = c_StationInfo.point.clone().applyMatrix4(c_DS3ToOpenGLMx4);
+        let pos1 = this.previousPano.point.clone().applyMatrix4(constants.c_DS3ToOpenGLMx4);
+        let pos2 = constants.c_StationInfo.point.clone().applyMatrix4(constants.c_DS3ToOpenGLMx4);
         let pos3 = pos1.sub(pos2);
 
         let from = { x: 0, y: 0, z: 0, a: 1 };
         let to = {
-            x: (pos3.x * 100 > 1000 ? 1000 : (pos3.x * 100 < -1000 ? -1000 : pos3.x * 100)),
+            x: (pos3.x * 100 > 1000 ? 1000 : (pos3.x * 100 < -1000 ? -1000 : pos3.x * 100)) * 1,
             y: 0,
-            z: (pos3.z * 100 > 1000 ? 1000 : (pos3.z * 100 < -1000 ? -1000 : pos3.z * 100)),
+            z: (pos3.z * 100 > 1000 ? 1000 : (pos3.z * 100 < -1000 ? -1000 : pos3.z * 100)) * 1,
             a: 0
         };
         new TWEEN.Tween(from)
-            .to(to, 800)
+            .to(to, 1000)
             .easing(TWEEN.Easing.Quadratic.Out)
             .onUpdate(function() {
-                this.sphere.position.copy(new THREE.Vector3(this.z, this.y, this.x));
-            })
-            .onComplete(function() {
 
+                constants.c_jumpSphere.position.x = this._object.z;
+
+                constants.c_jumpSphere.position.z = this._object.x;
+
+                // constants.camera.position.x = this._object.z;
+                // constants.camera.position.z = this._object.x;
+                // console.log(constants.camera.position);
+
+            })
+            .onComplete(() => {
+                // constants.c_jumpSphere.position.copy(new THREE.Vector3(to.z, 0, to.x));
+                // disposeNode(constants.c_jumpSphere);
+                // constants.camera.position.x = constants.c_jumpSphere.position.x;
+                // constants.camera.position.z = constants.c_jumpSphere.position.z;
+                // constants.c_jumpSphere.material.side = THREE.BackSide;
             })
             .start();
     }
@@ -183,7 +197,7 @@ class SWBoxJumpModule {
 
         let itemArr = [];
 
-        let fmt = c_FloorsMapTable.getValues();
+        let fmt = constants.c_FloorsMapTable.getValues();
 
         fmt.forEach(element => {
 

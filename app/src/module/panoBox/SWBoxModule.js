@@ -1,11 +1,6 @@
 /* global THREE */
 
-import {
-    scene,
-    c_StationInfo,
-    c_ThumbnailSize,
-    c_isPreviewImageLoadEnd
-} from '../../tool/SWConstants';
+import { scene, c_StationInfo, c_ThumbnailSize } from '../../tool/SWConstants';
 import SWBoxFaceModule from './SWBoxFaceModule';
 import { disposeNode } from '../../tool/SWTool';
 
@@ -70,8 +65,6 @@ class SWBoxModule {
             this.faceArr.push(face);
 
         }
-
-        // c_isPreviewImageLoadEnd = false;
 
         console.log(`缩略图贴面上耗时：${Date.now()-dd}ms`);
     }

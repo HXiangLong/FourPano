@@ -1,6 +1,5 @@
 /* global $*/
 
-// import * as jsonData from '../tool/ExternalConst';
 import * as constants from '../tool/SWConstants';
 import ArrowInfo from '../data/SWArrowInfo';
 import ExhibitsInfo from '../data/SWExhibitsInfo';
@@ -10,7 +9,8 @@ import MarkerInfo from '../data/SWMarkerInfo';
 import MultiDataByParentIDInfo from '../data/SWMultiDataByParentIDInfo';
 import ThumbnailsInfo from '../data/SWThumbnailsInfo';
 import StationInfo from '../data/SWStationInfo';
-const jsonData = require('../tool/SWExternalConst.js');
+import { AddNewArrow, AddOldArrow } from '../tool/SWTool';
+const external = require('../tool/SWExternalConst.js');
 
 /**
  * 获取服务器数据
@@ -41,14 +41,14 @@ class ServerData {
      * 获取配置文件数据
      */
     getConfig() {
-        console.info(jsonData);
-        this.museumID = jsonData.museumID;
-        this.displayID = jsonData.displayID;
-        this.serverURL = jsonData.serverUrl;
-        this.musServerURL = jsonData.musServerUrl;
-        this.firstPanoID = jsonData.firstPanoID;
-        this.resourcesUrl = jsonData.resourcesUrl;
-        this.featuresObj = jsonData.data;
+        console.info(external.server_json);
+        this.museumID = external.server_json.museumID;
+        this.displayID = external.server_json.displayID;
+        this.serverURL = external.server_json.serverUrl;
+        this.musServerURL = external.server_json.musServerUrl;
+        this.firstPanoID = external.server_json.firstPanoID;
+        this.resourcesUrl = external.server_json.resourcesUrl;
+        this.featuresObj = external.server_json.data;
         this.getPanoByID(this.firstPanoID);
         this.getAllFloorsForBuilding();
     }
@@ -100,6 +100,7 @@ class ServerData {
                         constants.c_isPreviewImageLoadEnd = false;
                         constants.c_StationInfo = new StationInfo(data.GetPanoByIDResult);
                         constants.sw_skyBox.addThumbnail();
+                        this.getOldArrow();
                     }
                 }
             }
@@ -159,7 +160,9 @@ class ServerData {
                     data.GetAdjacentPanoResult.map((obj) => {
                         constants.c_AdjacentPanoInfoArr.push(new ArrowInfo(obj, 1));
                     });
-                    // SWPanoView.AddArrow();
+                    AddOldArrow();
+                } else {
+                    this.getNewArrow();
                 }
             }
         });
@@ -181,6 +184,7 @@ class ServerData {
                     data.Link.map((obj) => {
                         constants.c_ArrowPanoInfoArr.push(new ArrowInfo(obj, 2));
                     });
+                    AddNewArrow();
                 }
             }
         });

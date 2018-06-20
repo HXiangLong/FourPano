@@ -1,4 +1,4 @@
-/* global THREE */
+/* global THREE,$ */
 
 import * as constants from "./tool/SWConstants";
 import * as tool from './tool/SWTool';
@@ -7,6 +7,7 @@ import serverData from './server/SWServerData';
 import SWCameraModule from './module/SWCameraModule'
 import SWBoxJumpModule from './module/panoBox/SWBoxJumpModule'
 import SWMouseModule from './module/SWMouseModule'
+
 const TWEEN = require('@tweenjs/tween.js');
 
 class SWPano {
@@ -74,7 +75,27 @@ class SWPano {
 
     /**其他需要更新的都在这里*/
     Update() {
+
+        //计时器
+        let delta = constants.c_clock.getDelta();
+
+        //相机旋转
         if (constants.sw_cameraManage) constants.sw_cameraManage.update();
+
+        //箭头动画
+        if (constants.c_arrowArr.length > 0) {
+
+            constants.c_arrowArr.map((item) => {
+
+                item.update(delta);
+
+            });
+        }
+
+        // if (constants.c_jumpSphere) {
+        // constants.c_jumpSphere.material.envMap = constants.cubeCamera.renderTarget.texture;
+        // constants.cubeCamera.update(constants.renderer, constants.scene);
+        // }
     }
 
     /**初始化读取数据对象*/

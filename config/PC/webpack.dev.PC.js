@@ -88,7 +88,7 @@ let config = merge(baseWebpackConfig, {
             },
             {
                 test: /\.(png|jpg|gif|ttf|eot|woff|woff2|svg|swf)$/,
-                loader: 'file-loader?name=[name].[ext]&outputPath=' + webpackFile.resource + '/'
+                loader: 'file-loader?limit=8192&name=[name].[ext]&outputPath=' + webpackFile.resource + '/'
             }
         ]
     },

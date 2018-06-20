@@ -1,7 +1,10 @@
 /* global THREE,$*/
 
+/**所有共用方法 */
+
 import * as constants from './SWConstants';
 import SWViewGesture from './SWViewGesture';
+import SWMarkerArrowModule from '../module/marker/SWMarkerArrowModule';
 
 /**
  * 屏幕坐标转世界坐标
@@ -9,9 +12,13 @@ import SWViewGesture from './SWViewGesture';
  * @param {number} dy 鼠标Y坐标
  */
 export function getSceneToWorld(dx, dy) {
+
     let mouse3D = new THREE.Vector3(dx / window.innerWidth * 2 - 1, -dy / window.innerHeight * 2 + 1, 0.5);
+
     mouse3D.project(constants.camera);
+
     return mouse3D;
+
 };
 
 /**
@@ -19,20 +26,27 @@ export function getSceneToWorld(dx, dy) {
  * @param {THREE.Vector3} v3 世界坐标
  */
 export function getWorldToScene(v3) {
+
     let vector = v3.clone();
+
     let windowWidth = window.innerWidth;
+
     let minWidth = 1280;
 
     if (windowWidth < minWidth) {
+
         windowWidth = minWidth;
+
     }
 
     let widthHalf = (windowWidth / 2);
+
     let heightHalf = (window.innerHeight / 2);
 
     vector.project(constants.camera);
 
     vector.x = (vector.x * widthHalf) + widthHalf;
+
     vector.y = -(vector.y * heightHalf) + heightHalf;
 
     return vector;
@@ -108,9 +122,13 @@ export function YPRToVector3(yaw, pitch) {
  * @param {number} n 
  */
 export function getNumberMax360(n) {
+
     n = n % 360;
+
     if (n < 0) {
+
         n = 360 + n;
+
     }
     return n;
 };
@@ -123,8 +141,11 @@ export function getNumberMax360(n) {
  * @param {number} y2 
  */
 export function getDistance(x1, y1, x2, y2) {
+
     let xx = x2 - x1;
+
     let yy = y2 - y1;
+
     return Math.pow((xx * xx + yy * yy), 0.5);
 };
 
@@ -134,7 +155,9 @@ export function getDistance(x1, y1, x2, y2) {
  * @param {number} aspect 
  */
 export function getHfov(wfov, aspect) {
+
     return THREE.Math.radToDeg(Math.atan(Math.tan(THREE.Math.degToRad(wfov) / 2) / aspect) * 2);
+
 };
 
 /**
@@ -143,7 +166,9 @@ export function getHfov(wfov, aspect) {
  * @param {number} aspect 
  */
 export function getWfov(hfov, aspect) {
+
     return THREE.Math.radToDeg(2 * Math.atan(Math.tan(THREE.Math.degToRad(hfov) / 2) * aspect));
+
 };
 
 /**
@@ -151,8 +176,11 @@ export function getWfov(hfov, aspect) {
  * @param {number} lzoom 
  */
 export function getFaceTileMatrixWH(lzoom) {
+
     let wh = new THREE.Vector3();
+
     wh.x = wh.y = Math.pow(2, lzoom);
+
     return wh;
 };
 
@@ -174,7 +202,9 @@ export function getPintIFScene(sceneXY) {
  * 获取随机颜色值
  * */
 export function getRandomColor() {
+
     return '#' + (Math.random() * 0xffffff << 0).toString(16);
+
 };
 
 /**
@@ -182,13 +212,21 @@ export function getRandomColor() {
  * @param {THREE.Object} obj 
  */
 export function getWallProbeSurfaceAngle(obj) {
+
     let normal = obj.face.normal.clone();
+
     let vv = new THREE.Vector3(0, 0, 1);
+
     let angle = THREE.Math.radToDeg(vv.angleTo(normal));
+
     let tan = vv.clone().cross(normal).dot(new THREE.Vector3(0, 1, 0));
+
     if (tan > 0) {
+
         angle = 360 - angle;
+
     }
+
     return angle;
 };
 
@@ -197,7 +235,9 @@ export function getWallProbeSurfaceAngle(obj) {
  * @param {THREE.Object} obj 
  */
 export function getProbeSurfaceDistance(obj) {
+
     return Math.abs(1.5 * obj.distance / obj.point.y);
+
 };
 
 /**
@@ -206,15 +246,23 @@ export function getProbeSurfaceDistance(obj) {
  * @param {number} rph 
  */
 export function getPanoRealPoint(obj, rph) {
+
     let v = Math.asin(obj.point.y / obj.distance); //垂直角度
+
     let h = Math.atan2(obj.point.z, obj.point.x) - THREE.Math.degToRad(90); //水平角度
 
     let rp = Math.abs(rph / Math.tan(v));
+
     let x = rp * Math.cos(h);
+
     let z = -rp * Math.sin(h);
+
     let y = rph;
+
     let v3 = new THREE.Vector3(x, y, z).applyMatrix4(constants.c_OpenGLToDS3Mx4);
+
     let realPoint = constants.c_StationInfo.point.clone().add(v3);
+
     return realPoint;
 };
 
@@ -223,11 +271,17 @@ export function getPanoRealPoint(obj, rph) {
  * @param {THREE.Object} obj 
  */
 export function getWallRealPoint(obj) {
+
     let drc = obj.point.clone().applyMatrix4(obj.object.matrix).applyMatrix4(constants.c_OpenGLToDS3Mx4);
+
     let dx = drc.x / constants.c_WallDisplaySize * 2;
+
     let dy = drc.y / constants.c_WallDisplaySize * 2;
+
     let dz = drc.z / constants.c_WallDisplaySize * 2;
+
     let realPoint = constants.c_StationInfo.point.clone().add(new THREE.Vector3(dx, dy, dz));
+
     return realPoint;
 };
 
@@ -237,10 +291,15 @@ export function getWallRealPoint(obj) {
  * @param {int} type 
  */
 export function getJudgeOrZoom(obj, type) {
+
     let distances;
+
     let dis = 0;
+
     if (type == 1) {
+
         distances = getPanoRealPoint(obj, 2.5);
+
         dis = -1;
     } else {
         distances = getWallRealPoint(obj);
@@ -400,4 +459,75 @@ export function getFont(fontUrl) {
             resolve(response);
         });
     });
+}
+
+/**
+ * 添加老箭头数据
+ * */
+export function AddOldArrow() {
+    constants.c_AdjacentPanoInfoArr.map((obj) => {
+
+        constants.c_arrowArr.push(new SWMarkerArrowModule(obj));
+
+    });
+
+    constants.sw_getService.getNewArrow();
+}
+
+/**
+ * 添加新箭头数据
+ * */
+export function AddNewArrow() {
+
+    let boo = true;
+
+    if (constants.c_arrowArr.length == 0) {
+
+        boo = false;
+    }
+
+    constants.c_ArrowPanoInfoArr.map((obj) => {
+
+        if (boo) {
+
+            constants.c_arrowArr.map((item) => {
+
+                if (item.arrowData.srcPanoID === obj.srcPanoID && item.arrowData.dstPanoName === obj.dstPanoName) {
+
+                    item.updateLocation(obj);
+
+                }
+
+            });
+
+        } else {
+
+            constants.c_arrowArr.push(new SWMarkerArrowModule(obj));
+
+        }
+    });
+}
+
+/**
+ * 清除所有箭头
+ * */
+export function deleteAllArrow() {
+
+    constants.c_arrowArr.map((item) => {
+
+        if (item) item.clearArrow();
+
+    });
+    constants.c_arrowArr.length = 0;
+}
+
+/**
+ * 跳站点
+ * @param {String} panoID 站点ID
+ */
+export function jumpSite(panoID) {
+
+    deleteAllArrow();
+
+    constants.sw_getService.getPanoByID(panoID);
 }
