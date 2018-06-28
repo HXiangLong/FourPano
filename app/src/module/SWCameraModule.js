@@ -1,7 +1,7 @@
 /* global THREE*/
 
-import { camera, c_Maxfov, c_Minfov, c_maxPitch, c_minPitch } from "../tool/SWConstants";
-import { getSceneToWorld, YPRToVector3, getNumberMax360 } from '../tool/SWTool';
+import { camera, c_Maxfov, c_Minfov, c_maxPitch, c_minPitch, sw_skyBox } from "../tool/SWConstants";
+import { YPRToVector3, Vector3ToVP, getNumberMax360, getSceneToWorld } from '../tool/SWTool';
 
 /**
  * 相机控制类只有旋转和缩放，没有平移
@@ -87,8 +87,13 @@ class SWCameraModule {
         this.boundary = 320;
         this.lastLon = this.lastLat = undefined;
 
+        /**相机是否推进放大 */
+        this.ifCameraEnlarge = false;
+
         this.setHousesViewAngle(0, 0);
+
     }
+
 
     update() {
 
@@ -136,6 +141,14 @@ class SWCameraModule {
 
             camera.fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov + dollyScale));
 
+            if (camera.fov > (c_Maxfov + c_Minfov) * 0.5) {
+
+                this.ifCameraEnlarge = false;
+
+                sw_skyBox.panoBox.clearFaceTiles();
+
+            }
+
             camera.updateProjectionMatrix();
 
         }
@@ -150,6 +163,14 @@ class SWCameraModule {
             camera.fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov - dollyScale));
 
             camera.updateProjectionMatrix();
+
+            if (camera.fov < (c_Maxfov + c_Minfov) * 0.5) {
+
+                this.ifCameraEnlarge = true;
+
+                sw_skyBox.panoBox.addFaceTiles();
+
+            }
         }
 
     }
@@ -196,7 +217,7 @@ class SWCameraModule {
 
             this.setOverlayViewAngle(this.rotateYaw, this.rotatePitch);
 
-            // this.slowMove(10);
+            this.slowMove(10);
 
             this.rotateStart.copy(this.rotateEnd);
         }
@@ -343,7 +364,19 @@ class SWCameraModule {
      */
     onTouchEnd(event) {
 
-        this.state = this.STATE.NONE;
+        if (event.touches.length === 1) {
+
+            this.state = this.STATE.TOUCH_ROTATE;
+
+            this.rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
+
+            this.rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
+
+        } else if (event.touches.length === 0) {
+
+            this.state = this.STATE.NONE;
+
+        }
 
     }
 
@@ -426,10 +459,15 @@ class SWCameraModule {
      */
     setWallWheel() {
         if (camera.isPerspectiveCamera) {
+
             if (camera.fov > c_Minfov) { //放大
+
                 this.dollyOut((c_Maxfov - c_Minfov) / 3);
+
             } else if (camera.fov == c_Minfov) { //还原
+
                 this.dollyIn(100);
+
             }
         }
     }
@@ -440,9 +478,18 @@ class SWCameraModule {
      * @param {*} pitch 纬度
      */
     setHousesViewAngle(yaws, pitch) {
+
         if (yaws) this.yaw_Camera = yaws;
+
         if (pitch) this.picth_Camera = pitch;
+
         camera.lookAt(YPRToVector3(this.yaw_Camera, this.picth_Camera));
+
+        if (this.ifCameraEnlarge) {
+
+            sw_skyBox.panoBox.addFaceTiles();
+
+        }
     }
 
     /**
@@ -451,8 +498,14 @@ class SWCameraModule {
      * @param {*} pitch 纬度
      */
     setOverlayViewAngle(yaws, pitch) {
+
         this.picth_Camera = Math.max(c_minPitch, Math.min(c_maxPitch, this.picth_Camera + pitch));
+
         this.yaw_Camera = getNumberMax360(this.yaw_Camera + yaws);
+
+        if (isNaN(this.picth_Camera)) this.picth_Camera = 0;
+
+        if (isNaN(this.yaw_Camera)) this.yaw_Camera = 0;
 
         this.setHousesViewAngle();
     }

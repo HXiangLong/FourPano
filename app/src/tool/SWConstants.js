@@ -118,8 +118,8 @@ export var sw_cameraManage;
 /**鼠标控制*/
 export var sw_mouseControl;
 /**小地图*/
-export var sw_minMap
-    /**球形盒子*/
+export var sw_minMap;
+/**球形盒子*/
 export var sw_skySphere;
 /**六面体*/
 export var sw_skyBox;

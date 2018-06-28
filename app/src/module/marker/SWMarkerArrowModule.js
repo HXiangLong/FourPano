@@ -20,11 +20,11 @@ class SWMarkerArrowModule extends SWMarkerModule {
 
         this.arrowData = date;
 
-        this.swvg = this.arrowData.angle ? new SWViewGesture(this.arrowData.angle, -45, 0) : new SWViewGesture(this.arrowData.yaw, this.arrowData.pitch, 0);
+        this.swvg = this.arrowData.angle ? new SWViewGesture(this.arrowData.angle, -35, 0) : new SWViewGesture(this.arrowData.yaw, this.arrowData.pitch, 0);
 
         this.v3 = VPToVector3(this.swvg);
 
-        this.mesh.position.copy(new THREE.Vector3((this.v3.x * 0.65), (this.v3.y * 0.35), (this.v3.z * 0.65)));
+        this.mesh.position.copy(new THREE.Vector3((this.v3.x * 0.65), (this.v3.y * 0.45), (this.v3.z * 0.65)));
 
         this.mesh.lookAt(camera.position);
 
@@ -68,7 +68,7 @@ class SWMarkerArrowModule extends SWMarkerModule {
 
         this.v3 = VPToVector3(this.swvg);
 
-        this.mesh.position.copy(new THREE.Vector3((this.v3.x * 0.65), (this.v3.y * 0.35), (this.v3.z * 0.65)));
+        this.mesh.position.copy(new THREE.Vector3((this.v3.x * 0.65), (this.v3.y * 0.45), (this.v3.z * 0.65)));
 
         this.mesh.lookAt(camera.position);
     }

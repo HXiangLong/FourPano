@@ -57,7 +57,7 @@ class SWBoxTilesModule {
 
         let ss = (((this.row - 1) * this.lineNum + this.line > 9) ? ((this.row - 1) * this.lineNum + this.line) : '0' + ((this.row - 1) * this.lineNum + this.line));
 
-        let path = `${this.boxPath}/3/sw_${(this.faceNo)}_${ss}.jpg`;
+        let path = `${this.boxPath}/4/sw_${(this.faceNo)}_${ss}.jpg`;
 
         // 实例化一个加载器
         let loader = new THREE.TextureLoader();
@@ -68,7 +68,7 @@ class SWBoxTilesModule {
             path,
             // 加载成功之后调用
             (texture) => {
-                console.log(`图片加载成功：${path}`);
+                // console.log(`图片加载成功：${path}`);
                 this.geometry.visible = true;
 
                 texture.mapping = THREE.UVMapping;

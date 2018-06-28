@@ -1,8 +1,9 @@
 /* global THREE*/
 
-import { c_FaceDistance } from '../../tool/SWConstants'
-import { disposeNode } from '../../tool/SWTool'
+import { c_FaceDistance, scene } from '../../tool/SWConstants'
+import { disposeNode, Vector3ToVP, getNumberMax360 } from '../../tool/SWTool'
 import SWBoxTilesModule from './SWBoxTilesModule'
+import HashTable from '../../tool/SWHashTable';
 /**
  * 全景盒子面对象
  */
@@ -16,15 +17,17 @@ class SWBoxFaceModule {
      */
     constructor(no, faceGroup, texture, path) {
 
-        this.faceNo = no;
+        this.faceNo = no; //面编号
 
-        this.boxPath = path;
+        this.boxPath = path; //总路径
 
-        this.levelplaneArr = []; //4等级面数组
+        this.levelplaneTable = new HashTable(); //4等级面数组
 
-        this.fourPoint = [];
+        this.fourPoint = []; //面的四个顶点坐标
 
-        this.faceGroup = faceGroup;
+        this.tilesPointArr = []; //所有瓦片四个顶点坐标
+
+        this.faceGroup = faceGroup; //全部盒子对象
 
         this.loadTexture();
 
@@ -33,6 +36,8 @@ class SWBoxFaceModule {
         this.material = new THREE.MeshBasicMaterial({ map: texture });
 
         this.thumbnails = new THREE.Mesh(this.geometry, this.material);
+
+        this.thumbnails.name = "" + this.faceNo;
 
         this.thumbnails.userData.depthlevel = 100;
 
@@ -80,16 +85,83 @@ class SWBoxFaceModule {
     }
 
     /**
-     * 当前瓦片四个顶点世界坐标
+     * 当前瓦片四个顶点世界坐标及所有小瓦片世界坐标
      */
     faceFourVertices() {
-        this.fourPoint.p1 = this.faceMatrix4(this.thumbnails.geometry.vertices[0]);
+        let fourPointV3 = [];
 
-        this.fourPoint.p2 = this.faceMatrix4(this.thumbnails.geometry.vertices[1]);
+        fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[0]));
 
-        this.fourPoint.p3 = this.faceMatrix4(this.thumbnails.geometry.vertices[2]);
+        // let geometry = new THREE.SphereGeometry(100, 32, 32);
+        // let material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF }); //白0
+        // let sphere = new THREE.Mesh(geometry, material);
+        // sphere.position.copy(fourPointV3[0].multiplyScalar(0.8));
+        // scene.add(sphere);
 
-        this.fourPoint.p4 = this.faceMatrix4(this.thumbnails.geometry.vertices[3]);
+        fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[1]));
+
+        // geometry = new THREE.SphereGeometry(100, 32, 32);
+        // material = new THREE.MeshBasicMaterial({ color: 0xffff00 }); //黄1
+        // sphere = new THREE.Mesh(geometry, material);
+        // sphere.position.copy(fourPointV3[1].multiplyScalar(0.8));
+        // scene.add(sphere);
+
+        fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[2]));
+
+        // geometry = new THREE.SphereGeometry(100, 32, 32);
+        // material = new THREE.MeshBasicMaterial({ color: 0xff00ff }); //紫2
+        // sphere = new THREE.Mesh(geometry, material);
+        // sphere.position.copy(fourPointV3[2].multiplyScalar(0.8));
+        // scene.add(sphere);
+
+        fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[3]));
+
+        // geometry = new THREE.SphereGeometry(100, 32, 32);
+        // material = new THREE.MeshBasicMaterial({ color: 0x00ffff }); //蓝3
+        // sphere = new THREE.Mesh(geometry, material);
+        // sphere.position.copy(fourPointV3[3].multiplyScalar(0.8));
+        // scene.add(sphere);
+
+        this.fourPoint = [Vector3ToVP(fourPointV3[0]),
+            Vector3ToVP(fourPointV3[1]),
+            Vector3ToVP(fourPointV3[2]),
+            Vector3ToVP(fourPointV3[3])
+        ];
+
+        // console.log(this.faceNo, fourPointV3, this.fourPoint);
+
+        let yawDis = -90 / 8;
+        let minYaw = this.fourPoint[0].Yaw;
+
+        let minPitch = this.fourPoint[0].Pitch;
+        let pitchDis = -(this.fourPoint[0].Pitch - this.fourPoint[this.fourPoint.length - 1].Pitch) / 8;
+
+        for (let y = 0; y < 8; y++) {
+
+            for (let x = 0; x < 8; x++) {
+
+                let y1 = getNumberMax360(minYaw + yawDis * x);
+                let p1 = minPitch + pitchDis * y;
+
+                let y2 = getNumberMax360(minYaw + yawDis * (x + 1));
+                let p2 = minPitch + pitchDis * y;
+
+                let y3 = getNumberMax360(minYaw + yawDis * x);
+                let p3 = minPitch + pitchDis * (y + 1);
+
+                let y4 = getNumberMax360(minYaw + yawDis * (x + 1));
+                let p4 = minPitch + pitchDis * (y + 1);
+
+                this.tilesPointArr.push([
+                    [y1, p1],
+                    [y2, p2],
+                    [y3, p3],
+                    [y4, p4]
+                ]);
+            }
+        }
+
+        // console.log(this.faceNo, this.tilesPointArr);
     }
 
     /**矩阵计算世界坐标 */
@@ -111,7 +183,7 @@ class SWBoxFaceModule {
     loadTexture() {
         let dd = Date.now();
 
-        let path = `${this.boxPath}/2/sw_${this.faceNo}.jpg`;
+        let path = `${this.boxPath}/3/sw_${this.faceNo}.jpg`;
 
         // 实例化一个加载器
         let loader = new THREE.TextureLoader();
@@ -122,9 +194,7 @@ class SWBoxFaceModule {
             path,
             // 加载成功之后调用
             (texture) => {
-                console.log(`清晰图加载耗时：${Date.now()-dd}ms`);
-
-                console.log(texture);
+                // console.log(`清晰图加载耗时：${Date.now()-dd}ms`);
 
                 texture.mapping = THREE.UVMapping;
 
@@ -150,38 +220,65 @@ class SWBoxFaceModule {
     }
 
     /**生成瓦片 */
-    createTiles() {
-        for (let x = 0; x < 8; x++) {
+    createTiles(minYaw, maxYaw, minPitch, maxPitch) {
 
-            for (let y = 0; y < 8; y++) {
+        for (let y = 0; y < 8; y++) {
 
-                let tiles = new SWBoxTilesModule(this.faceNo, x + 1, y + 1, this.thumbnails, this.boxPath);
+            for (let x = 0; x < 8; x++) {
 
-                this.levelplaneArr.push(tiles);
+                let pointArr = this.tilesPointArr[y * 8 + x];
 
+                pointArr.map((item) => {
+
+                    let boo = false;
+
+                    if ((maxYaw - minYaw) > 120) { //圆的0和360是同一个点
+
+                        if (((0 < item[0] && item[0] < minYaw) || (maxYaw < item[0] && item[0] < 360)) && (minPitch < item[1] && item[1] < maxPitch)) {
+                            boo = true;
+                        }
+
+                    } else {
+
+                        if (minYaw < item[0] && item[0] < maxYaw && minPitch < item[1] && item[1] < maxPitch) {
+                            boo = true;
+                        }
+
+                    }
+
+                    if (boo) {
+                        let key = y + "_" + x;
+
+                        if (!this.levelplaneTable.containsKey(key)) {
+
+                            let tiles = new SWBoxTilesModule(this.faceNo, y + 1, x + 1, this.thumbnails, this.boxPath);
+
+                            this.levelplaneTable.add(key, tiles);
+                        }
+                    }
+                });
             }
         }
     }
 
     /**
-     * 显示隐藏瓦片
-     * @param {Boolean} boo 
-     */
-    showHideTiles(boo) {
-
-    }
-
-    /**
      * 清除瓦片及自身
      */
-    clearTiles() {
-        this.levelplaneArr.forEach((tile) => {
+    clearTiles(boo = true) {
+
+        let tilesArr = this.levelplaneTable.getValues();
+
+        tilesArr.forEach((tile) => {
 
             tile.clearTile();
 
         });
 
-        disposeNode(this.thumbnails, true);
+        this.levelplaneTable.clear();
+
+        if (boo) {
+            disposeNode(this.thumbnails, true);
+        }
     }
 }
 

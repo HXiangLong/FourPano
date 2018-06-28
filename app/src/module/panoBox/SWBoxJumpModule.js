@@ -15,8 +15,6 @@ class SWBoxJumpModule {
 
         this.panoBox = undefined;
 
-        this.sphere = undefined;
-
         /**缩略图集合 */
         this.thumbnailsTable = new HashTable();
 
@@ -78,37 +76,45 @@ class SWBoxJumpModule {
     createPanoBox(pano, url, texture) {
         if (!this.panoBox) {
 
-            this.previousPano = pano;
-
             this.panoBox = new SWBox(url, texture);
 
         } else {
-            this.createSphere();
+            this.createSphere(() => {
+
+                this.panoBox = new SWBox(url, texture);
+
+            });
         }
+        this.previousPano = pano;
     }
 
     /**
      * 将全景盒子映射到球体上并且清除天空盒子产生新的全景天空盒子
+     * @param {Function} callFun 回调函数
      */
-    createSphere() {
+    createSphere(callFun) {
 
         constants.cubeCamera.update(constants.renderer, constants.scene);
 
         let cubetexture = constants.cubeCamera.renderTarget.texture;
 
-        let material = new THREE.MeshBasicMaterial({
-            envMap: cubetexture,
-            // wireframe: true,
-            // transparent: true,
-            // color: 0x00fff0,
-            side: THREE.BackSide
+        let shader = THREE.ShaderLib['cube']; // 来自内置库的init立方体着色器
+        shader.uniforms['tFlip'].value = 1; //默认值是-1 进行翻转
+        shader.uniforms['tCube'].value = cubetexture; // 将纹理应用于着色器
+
+        // 创建着色器材质
+        let skyBoxMaterial = new THREE.ShaderMaterial({
+            fragmentShader: shader.fragmentShader,
+            vertexShader: shader.vertexShader,
+            uniforms: shader.uniforms,
+            depthWrite: false,
+            transparent: true,
+            side: THREE.DoubleSide
         });
 
         let geometry = new THREE.SphereGeometry(2048, 32, 32);
 
-        material.envMap.mapping = THREE.CubeRefractionMapping;
-
-        constants.c_jumpSphere = new THREE.Mesh(geometry, material);
+        constants.c_jumpSphere = new THREE.Mesh(geometry, skyBoxMaterial);
 
         constants.scene.add(constants.c_jumpSphere);
 
@@ -118,28 +124,29 @@ class SWBoxJumpModule {
 
         constants.cubeCamera.children.length = 0;
 
-        this.jumpAnimations();
-
+        this.jumpAnimations(callFun);
 
     }
 
+
     /**
      * 跳转拉伸动画
+     * @param {Function} callFun 动画完成之后的回调函数
      */
-    jumpAnimations() {
+    jumpAnimations(callFun) {
         let pos1 = this.previousPano.point.clone().applyMatrix4(constants.c_DS3ToOpenGLMx4);
         let pos2 = constants.c_StationInfo.point.clone().applyMatrix4(constants.c_DS3ToOpenGLMx4);
         let pos3 = pos1.sub(pos2);
 
         let from = { x: 0, y: 0, z: 0, a: 1 };
         let to = {
-            x: (pos3.x * 100 > 1000 ? 1000 : (pos3.x * 100 < -1000 ? -1000 : pos3.x * 100)) * 1,
+            x: (pos3.x * 100 > 2048 ? 2048 : (pos3.x * 100 < -2048 ? -2048 : pos3.x * 100)) * 1,
             y: 0,
-            z: (pos3.z * 100 > 1000 ? 1000 : (pos3.z * 100 < -1000 ? -1000 : pos3.z * 100)) * 1,
+            z: (pos3.z * 100 > 2048 ? 2048 : (pos3.z * 100 < -2048 ? -2048 : pos3.z * 100)) * 1,
             a: 0
         };
         new TWEEN.Tween(from)
-            .to(to, 1000)
+            .to(to, 600)
             .easing(TWEEN.Easing.Quadratic.Out)
             .onUpdate(function() {
 
@@ -147,17 +154,16 @@ class SWBoxJumpModule {
 
                 constants.c_jumpSphere.position.z = this._object.x;
 
-                // constants.camera.position.x = this._object.z;
-                // constants.camera.position.z = this._object.x;
-                // console.log(constants.camera.position);
+                constants.c_jumpSphere.material.opacity = this._object.a;
 
             })
             .onComplete(() => {
-                // constants.c_jumpSphere.position.copy(new THREE.Vector3(to.z, 0, to.x));
-                // disposeNode(constants.c_jumpSphere);
-                // constants.camera.position.x = constants.c_jumpSphere.position.x;
-                // constants.camera.position.z = constants.c_jumpSphere.position.z;
-                // constants.c_jumpSphere.material.side = THREE.BackSide;
+
+                disposeNode(constants.c_jumpSphere);
+
+                constants.c_jumpSphere = null;
+
+                callFun();
             })
             .start();
     }
@@ -220,7 +226,6 @@ class SWBoxJumpModule {
 
         Promise.all(promises).then(result => console.log(result)).catch(e => console.log(e));
     }
-
 }
 
 export default SWBoxJumpModule;

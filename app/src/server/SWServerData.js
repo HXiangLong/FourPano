@@ -180,6 +180,7 @@ class ServerData {
                 console.log("网络连接错误，请刷新重试！");
             },
             success: (data) => {
+                constants.c_ArrowPanoInfoArr.length = 0;
                 if (data.Link) {
                     data.Link.map((obj) => {
                         constants.c_ArrowPanoInfoArr.push(new ArrowInfo(obj, 2));

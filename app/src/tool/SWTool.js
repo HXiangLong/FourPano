@@ -13,7 +13,7 @@ import SWMarkerArrowModule from '../module/marker/SWMarkerArrowModule';
  */
 export function getSceneToWorld(dx, dy) {
 
-    let mouse3D = new THREE.Vector3(dx / window.innerWidth * 2 - 1, -dy / window.innerHeight * 2 + 1, 0.5);
+    let mouse3D = new THREE.Vector3((dx / window.innerWidth) * 2 - 1, -(dy / window.innerHeight) * 2 + 1, 0.5);
 
     mouse3D.project(constants.camera);
 
@@ -492,7 +492,7 @@ export function AddNewArrow() {
 
             constants.c_arrowArr.map((item) => {
 
-                if (item.arrowData.srcPanoID === obj.srcPanoID && item.arrowData.dstPanoName === obj.dstPanoName) {
+                if (item.arrowData.srcPanoID === obj.srcPanoID && item.arrowData.dstPanoID === obj.dstPanoID) {
 
                     item.updateLocation(obj);
 

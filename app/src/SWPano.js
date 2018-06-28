@@ -91,11 +91,6 @@ class SWPano {
 
             });
         }
-
-        // if (constants.c_jumpSphere) {
-        // constants.c_jumpSphere.material.envMap = constants.cubeCamera.renderTarget.texture;
-        // constants.cubeCamera.update(constants.renderer, constants.scene);
-        // }
     }
 
     /**初始化读取数据对象*/
