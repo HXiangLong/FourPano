@@ -1,3 +1,6 @@
+/**
+ * 空间坐标对象
+ */
 class SWViewGesture {
     constructor(yaw, pitch, roll) {
         this._yaw = yaw % 360;

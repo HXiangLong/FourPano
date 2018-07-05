@@ -3,7 +3,8 @@
 import SWMarkerModule from "./SWMarkerModule";
 import SWViewGesture from "../../tool/SWViewGesture";
 import { camera, scene } from '../../tool/SWConstants';
-import { VPToVector3, jumpSite } from '../../tool/SWTool';
+import { VPToVector3 } from '../../tool/SWTool';
+import { jumpSite } from '../../tool/SWInitializeInstance';
 const external = require('../../tool/SWExternalConst');
 
 /**

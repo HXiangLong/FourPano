@@ -15,6 +15,7 @@ swPano.initService();
 swPano.initMouseModule();
 swPano.initCameraManage();
 swPano.initSkyBox();
+swPano.initWallModule();
 
 (function animate() {
     requestAnimationFrame(animate);

@@ -173,7 +173,16 @@ class SWMouseModule {
 
         if (rayObj) {
 
-            if (rayObj.object.mouseOver) { //离开模型事件
+            if (this.intersect && this.intersect != rayObj) { //如果再次返回对象不是上次对象，就是离开对象了
+
+                if (this.intersect.object.mouseOut) { //离开模型事件
+
+                    this.intersect.object.mouseOut(e, this.intersect);
+
+                }
+            }
+
+            if (rayObj.object.mouseOver) { //进入模型事件
 
                 rayObj.object.mouseOver(e, rayObj);
 

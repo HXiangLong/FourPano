@@ -1,12 +1,13 @@
 /* global THREE,$ */
 
 import * as constants from "./tool/SWConstants";
-import * as tool from './tool/SWTool';
 import Stats from './libs/Stats';
 import serverData from './server/SWServerData';
 import SWCameraModule from './module/SWCameraModule'
 import SWBoxJumpModule from './module/panoBox/SWBoxJumpModule'
 import SWMouseModule from './module/SWMouseModule'
+import SWWallModule from "./module/laser/SWWallModule";
+import SWGroundModule from "./module/laser/SWGroundModule";
 
 const TWEEN = require('@tweenjs/tween.js');
 
@@ -115,20 +116,11 @@ class SWPano {
         constants.sw_mouseControl = new SWMouseModule(canvas);
     }
 
-    initBox() {
-        var box = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 1, 1), new THREE.MeshBasicMaterial({ color: 0xff00ff }));
-        constants.scene.add(box);
-
-        var coords = { x: 0, y: 0, z: 0 };
-        new TWEEN.Tween(coords)
-            .to({ x: 0, y: 0, z: -100 }, 5000)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .onUpdate(function() {
-                box.position.copy(new THREE.Vector3(coords.x, coords.y, coords.z));
-            })
-            .start();
+    /**墙片初始化 */
+    initWallModule() {
+        constants.sw_wallMesh = new SWWallModule();
+        constants.sw_groundMesh = new SWGroundModule();
     }
-
 
     /**
      * 设置相机视角

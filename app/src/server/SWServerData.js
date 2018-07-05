@@ -9,7 +9,7 @@ import MarkerInfo from '../data/SWMarkerInfo';
 import MultiDataByParentIDInfo from '../data/SWMultiDataByParentIDInfo';
 import ThumbnailsInfo from '../data/SWThumbnailsInfo';
 import StationInfo from '../data/SWStationInfo';
-import { AddNewArrow, AddOldArrow } from '../tool/SWTool';
+import { AddNewArrow, AddOldArrow } from '../tool/SWInitializeInstance';
 const external = require('../tool/SWExternalConst.js');
 
 /**
@@ -71,7 +71,7 @@ class ServerData {
                     data.Floors.map((obj) => {
                         new FloorsInfo(obj);
                     });
-                    console.log(constants.c_FloorsMapTable);
+                    // console.log(constants.c_FloorsMapTable);
                     // if (SWPanoView.swMinMap) {
                     //     SWPanoView.swMinMap.init();
                     // }
@@ -101,6 +101,7 @@ class ServerData {
                         constants.c_StationInfo = new StationInfo(data.GetPanoByIDResult);
                         constants.sw_skyBox.addThumbnail();
                         this.getOldArrow();
+                        this.getFacadeByPanoID();
                     }
                 }
             }
@@ -121,11 +122,19 @@ class ServerData {
                 console.log("网络连接错误，请刷新重试！");
             },
             success: (data) => {
+
                 if (data.GetFacadeByPanoIDResult) {
+
                     constants.c_facadeByPanoIDInfoArr.length = 0;
+
                     data.GetFacadeByPanoIDResult.map((obj) => {
+
                         constants.c_facadeByPanoIDInfoArr.push(new FacadeByPanoIDInfo(obj));
+
                     });
+
+                    constants.sw_wallMesh.createWallFace();
+                    constants.sw_groundMesh.drawGroundFace();
                     // //绘制墙面片
                     // SWPanoView.swWallMesh.init();
                     // SWPanoView.swGroundMesh.groundMeshShow(true);
@@ -139,7 +148,7 @@ class ServerData {
                 // }
             }
         });
-    };
+    }
 
     /**
      * 获取老箭头方法
@@ -166,7 +175,7 @@ class ServerData {
                 }
             }
         });
-    };
+    }
 
     //获得新箭头
     getNewArrow() {
@@ -189,7 +198,7 @@ class ServerData {
                 }
             }
         });
-    };
+    }
 
     /**
      * 地面跳转
@@ -215,6 +224,42 @@ class ServerData {
                     //     SWPanoView.swSkyBox.initBox(SWPanoView.stationInfo);
                     // }
                 }
+            }
+        });
+    }
+
+    /**
+     * 墙面跳转
+     * @param {Number} x 3DS坐标X
+     * @param {Number} y 3DS坐标Y
+     * @param {Number} z 3DS坐标Z
+     * @param {Number} facadeid 点击跳转的墙面片ID
+     */
+    getOtherPanoByFacadeID(x, y, z, facadeid) {
+        let urls = "/GetOtherPanoByFacadeID?facadeID=" + facadeid + "&Z=" + z + "&Y=" + y + "&X=" + x;
+        $.ajax({
+            url: this.serverURL + urls,
+            type: 'GET',
+            cache: true,
+            dataType: 'json',
+            error: (data) => {
+                console.log("网络链接错误，请刷新重试！");
+            },
+            success: (data) => {
+                // if (SWPanoView.isPreviewImageLoadEnd && SWPanoView.stationInfo.imageID != data.GetOtherPanoByFacadeIDResult.ImageID) {
+                //     SWPanoView.isPreviewImageLoadEnd = false;
+                //     var newPanoInfo = new StationInfo(data.GetOtherPanoByFacadeIDResult);
+                //     SWPanoView.stationInfo = newPanoInfo;
+                //     SWPanoView.isWallClickRotateBoo = true;
+                //     if (SWPanoView.swSkySphere) {
+                //         SWPanoView.swSkySphere.initSkySphere();
+                //     } else if (SWPanoView.swSkyBox) {
+                //         SWPanoView.swSkyBox.initBox(SWPanoView.stationInfo);
+                //     }
+                // } else {
+                //     SWPanoView.addmouseEvent.mouseEvent.ifJump = false;
+                //     SWPanoView.wallProbeSurface.wallProbeSurfaceVisible(true);
+                // }
             }
         });
     };

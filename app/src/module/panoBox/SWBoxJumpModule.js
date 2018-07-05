@@ -140,13 +140,13 @@ class SWBoxJumpModule {
 
         let from = { x: 0, y: 0, z: 0, a: 1 };
         let to = {
-            x: (pos3.x * 100 > 2048 ? 2048 : (pos3.x * 100 < -2048 ? -2048 : pos3.x * 100)) * 1,
+            x: (pos3.x * 100 > 2000 ? 2000 : (pos3.x * 100 < -2000 ? -2000 : pos3.x * 100)) * 1,
             y: 0,
-            z: (pos3.z * 100 > 2048 ? 2048 : (pos3.z * 100 < -2048 ? -2048 : pos3.z * 100)) * 1,
+            z: (pos3.z * 100 > 2000 ? 2000 : (pos3.z * 100 < -2000 ? -2000 : pos3.z * 100)) * 1,
             a: 0
         };
         new TWEEN.Tween(from)
-            .to(to, 600)
+            .to(to, 800)
             .easing(TWEEN.Easing.Quadratic.Out)
             .onUpdate(function() {
 
