@@ -8,6 +8,7 @@ import SWBoxJumpModule from './module/panoBox/SWBoxJumpModule'
 import SWMouseModule from './module/SWMouseModule'
 import SWWallModule from "./module/laser/SWWallModule";
 import SWGroundModule from "./module/laser/SWGroundModule";
+import SWWallSurfaceModule from "./module/laser/SWWallSurfaceModule";
 
 const TWEEN = require('@tweenjs/tween.js');
 
@@ -120,6 +121,7 @@ class SWPano {
     initWallModule() {
         constants.sw_wallMesh = new SWWallModule();
         constants.sw_groundMesh = new SWGroundModule();
+        constants.sw_wallProbeSurface = new SWWallSurfaceModule();
     }
 
     /**

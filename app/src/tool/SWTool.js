@@ -286,8 +286,8 @@ export function getWallRealPoint(obj) {
 
 /**
  * 获取是否跳转还是放大
- * @param {THREE.Object} obj 
- * @param {int} type 
+ * @param {THREE.Object} obj 射线对象
+ * @param {int} type 1-地面片检测 2-墙面片检测
  */
 export function getJudgeOrZoom(obj, type) {
 
@@ -304,15 +304,20 @@ export function getJudgeOrZoom(obj, type) {
         distances = getWallRealPoint(obj);
     }
     let dis0 = Math.sqrt(Math.pow((distances.x - constants.c_StationInfo.nx), 2) + Math.pow((distances.y - constants.c_StationInfo.ny), 2)) + dis;
+
     for (let i = 0; i < constants.c_AdjacentPanoInfoArr.length; i++) {
-        let dis1 = Math.sqrt(Math.pow((distances.x - constants.c_AdjacentPanoInfoArr[i].nX), 2) +
-            Math.pow((distances.y - constants.c_AdjacentPanoInfoArr[i].nY), 2));
+
+        let dis1 = Math.sqrt(Math.pow((distances.x - constants.c_AdjacentPanoInfoArr[i].nX), 2) + Math.pow((distances.y - constants.c_AdjacentPanoInfoArr[i].nY), 2));
+
         if (dis1 <= dis0) {
-            return false;
+
+            return true;
+
         }
     }
-    return true;
-};
+
+    return false;
+}
 
 /**
  * 获取两个站点坐标点的夹角
@@ -426,23 +431,40 @@ export function getFullScreen() {
  * @param {*} text 
  */
 export function TextDiv(labelPos, fontSize, text) {
+
     labelPos.copy(getWorldToScene(labelPos));
+
     this.textDiv = document.createElement("div");
+
     let fs = fontSize || 14;
+
     this.textDiv.style.fontSize = fs + "px";
+
     this.textDiv.style.color = "#fff";
+
     this.textDiv.style.position = "absolute";
+
     this.textDiv.id = "" + text;
+
     this.textDiv.style.pointerEvents = "none";
+
     if (!text) {
+
         this.textDiv.style.left = "-100px";
+
         this.textDiv.style.top = "-100px";
+
     } else {
+
         this.textDiv.style.left = labelPos.x + "px";
+
         this.textDiv.style.top = labelPos.y + "px";
+
     }
     this.textDiv.innerHTML = text;
+
     document.body.appendChild(this.textDiv);
+
     return this.textDiv;
 }
 

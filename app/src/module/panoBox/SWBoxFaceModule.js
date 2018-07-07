@@ -181,7 +181,7 @@ class SWBoxFaceModule {
      * 加载高清图
      */
     loadTexture() {
-        let dd = Date.now();
+        // let dd = Date.now();
 
         let path = `${this.boxPath}/3/sw_${this.faceNo}.jpg`;
 

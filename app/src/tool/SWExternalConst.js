@@ -6,7 +6,15 @@
      /**
       * 跳转箭头图片
       */
-     arrow_icon: require('../../commons/img/arrow.png')
+     arrow_icon: require('../../commons/img/arrow.png'),
+     /**
+      * 探面放大图标
+      */
+     plusSign_icon: require('../../commons/img/fd.png'),
+     /**
+      * 探面缩小图标
+      */
+     minusSign_icon: require('../../commons/img/sx.png')
  };
 
  module.exports = external;

@@ -1,6 +1,7 @@
 /* global THREE*/
 
-import { scene, c_FaceDistance } from '../../tool/SWConstants';
+import { scene, c_FaceDistance, sw_getService, c_StationInfo, sw_wallProbeSurface } from '../../tool/SWConstants';
+import { getPanoRealPoint } from '../../tool/SWTool';
 
 /**
  * 地面面片对象
@@ -39,38 +40,49 @@ class SWGroundModule {
             this.groundMesh.userData.depthlevel = 3;
             scene.add(this.groundMesh);
 
-            // this.groundMesh.onClick = function (obj, e) {//鼠标弹起
-            //     var event = e || window.event;
-            //     var v33 = new THREE.Vector2(event.screenX, event.screenY);
-            //     var boo = v33.equals(this.startPoint);
-            //     if (boo) {
-            //         if (!SWPanoView.isEditorStatus) {
-            //             if (!SWPanoView.isMeasureStatus) {
-            //                 if (!ifClick) {
-            //                     SWPanoView.addmouseEvent.mouseEvent.ifJump = true;
-            //                     var v3 = SWPanoView.getPanoRealPoint(obj, 2.5);
-            //                     SWPanoView.swGetService.getOtherPanoByPosition(v3.x, v3.y, v3.z, SWPanoView.stationInfo.imageID);
-            //                     this.probeSurfaceVisible(false);
-            //                 }
-            //             }
-            //             else {
-            //                 SWPanoView.swMeasure.addPoint(obj.point, 2);//测量功能
-            //             }
-            //         }
-            //     }
-            // };
+            //进入
+            this.groundMesh.mouseOver = (e, obj) => {
+                sw_wallProbeSurface.wallProbeSurfaceVisible(2);
+            }
 
-            // this.groundMesh.onDown = function (obj, e) {//鼠标按下
-            //     if (this.textDiv) {
-            //         this.textDiv.style.display = "none";
-            //     }
-            //     if (this.probeSurface) {
-            //         this.probeSurface.visible = false;
-            //     }
-            //     var event = e || window.event;
-            //     this.startPoint.x = event.screenX;
-            //     this.startPoint.y = event.screenY;
-            // }
+            //出去
+            this.groundMesh.mouseOut = (e, obj) => {
+                sw_wallProbeSurface.wallProbeSurfaceVisible(0);
+            }
+
+            //移动
+            this.groundMesh.mouseMove = (e, obj) => {
+
+                sw_wallProbeSurface.groundFaceMove(obj);
+
+            }
+
+            //鼠标弹起
+            this.groundMesh.mouseUp = (e, obj) => {
+
+                var event = e || window.event;
+
+                var v3 = new THREE.Vector2(event.clientX, event.clientY);
+
+                var boo = v3.equals(this.startPoint);
+
+                if (boo) {
+
+                    let v3 = getPanoRealPoint(obj, 2.5);
+
+                    sw_getService.getOtherPanoByPosition(v3.x, v3.y, v3.z, c_StationInfo.imageID);
+                }
+            }
+
+            //鼠标按下
+            this.groundMesh.mouseDown = (e) => {
+
+                let event = e || window.event;
+
+                this.startPoint.x = event.clientX;
+
+                this.startPoint.y = event.clientY;
+            }
         }
     }
 }

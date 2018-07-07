@@ -134,7 +134,6 @@ class ServerData {
                     });
 
                     constants.sw_wallMesh.createWallFace();
-                    constants.sw_groundMesh.drawGroundFace();
                     // //绘制墙面片
                     // SWPanoView.swWallMesh.init();
                     // SWPanoView.swGroundMesh.groundMeshShow(true);
@@ -214,9 +213,9 @@ class ServerData {
                 console.log("网络连接错误，请刷新重试！");
             },
             success: (data) => {
-                if (constants.c_isPreviewImageLoadEnd && constants.c_stationInfo.panoid != data.GetOtherPanoByPositionResult.ImageID) {
+                if (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoid != data.GetOtherPanoByPositionResult.ImageID) {
                     constants.c_isPreviewImageLoadEnd = false;
-                    constants.c_stationInfo = new StationInfo(data.GetOtherPanoByPositionResult);
+                    constants.c_StationInfo = new StationInfo(data.GetOtherPanoByPositionResult);
                     // SWPanoView.swMinMap.init();
                     // if (SWPanoView.swSkySphere) {
                     //     SWPanoView.swSkySphere.initSkySphere();

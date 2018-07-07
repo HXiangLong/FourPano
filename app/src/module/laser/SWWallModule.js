@@ -1,5 +1,5 @@
 import SWWallFaceModule from './SWWallFaceModule';
-import { c_facadeByPanoIDInfoArr, c_StationInfo } from '../../tool/SWConstants';
+import { c_facadeByPanoIDInfoArr, c_StationInfo, sw_groundMesh } from '../../tool/SWConstants';
 
 /**
  * 激光点云墙面片集合对象
@@ -17,13 +17,15 @@ class SWWallModule {
 
         c_facadeByPanoIDInfoArr.map((item) => {
 
-            if (c_StationInfo.point.clone().distanceTo(item.points.p1) < 100) { //限制不在眼前的面片不显示
+            if (c_StationInfo.point.clone().distanceTo(item.points.p1) < 100) { //100 限制不在眼前的面片不显示
 
                 this.wallMeshArr.push(new SWWallFaceModule(item));
 
             }
 
         });
+
+        sw_groundMesh.drawGroundFace();
 
     }
 

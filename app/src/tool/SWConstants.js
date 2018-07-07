@@ -46,10 +46,19 @@ export var c_DS3ToOpenGLMx4 = new THREE.Matrix4().getInverse(c_OpenGLToDS3Mx4);
 export var c_wallClickRotateV3 = new THREE.Vector3();
 /**墙面鼠标按下位置*/
 export var c_wallStartPoint = new THREE.Vector3();
-/**是否加载缩略图中 */
-export var c_isPreviewImageLoadEnd = true;
+
 /**测量状态*/
 export var c_isMeasureStatus = false;
+/**false-网络版，true-单机版 */
+export var c_isSingleVision = false;
+/**当前处于什么版本状态 1-默认为PC版 2-手机版 3-编辑版 4-触屏版*/
+export var c_currentStateEnum = { pcStatus: 1, phoneStatus: 2, editorStatus: 3, touchStatus: 4 };
+/**当前运行的是什么版本 */
+export var c_currentState = c_currentStateEnum.pcStatus;
+
+
+/**是否加载缩略图中 */
+export var c_isPreviewImageLoadEnd = true;
 /**墙面探面加减号是否显示*/
 export var c_isWallProbeSurfacePlusShow = false;
 /**是否是编辑状态*/
@@ -70,6 +79,8 @@ export var c_isWallClickRotateBoo = false;
 export var c_isThumbnailsRotateBoo = false;
 /**是否读取本地数据类型（适用于没有面片数据的单机版）*/
 export var c_isloadLocalDataBoo = false;
+
+
 /**面数组*/
 export var c_faceArr = [];
 /**当前已经加载瓦片*/

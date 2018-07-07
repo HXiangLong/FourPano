@@ -188,6 +188,12 @@ class SWMouseModule {
 
             }
 
+            if (rayObj.object.mouseMove) { //移动事件
+
+                rayObj.object.mouseMove(e, rayObj);
+
+            }
+
         } else if (this.intersect) {
 
             if (this.intersect.object.mouseOut) { //离开模型事件

@@ -21,6 +21,12 @@ class ArrowData {
 
             this.srcPanoID = obj.SrcImageID; //当前站点编号
 
+            this.nX = obj.X; //世界坐标位置
+
+            this.nY = obj.Y; //世界坐标位置
+
+            this.nZ = obj.Z; //世界坐标位置
+
             this.angle = -90 - getArrowsAngle(c_StationInfo.point.clone(), new THREE.Vector3(obj.X, obj.Y, obj.Z)); //偏移世界角度 
 
         } else if (type == 2) {

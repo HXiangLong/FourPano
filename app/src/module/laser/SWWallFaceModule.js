@@ -2,15 +2,13 @@
 
 import {
     scene,
-    camera,
-    minfov,
     c_StationInfo,
     c_WallDisplaySize,
     c_DS3ToOpenGLMx4,
     c_OpenGLToDS3Mx4,
-    c_isWallProbeSurfacePlusShow,
     c_wallClickRotateV3,
-    sw_getService
+    sw_getService,
+    sw_wallProbeSurface
 } from '../../tool/SWConstants';
 import { getRandomColor, disposeNode } from '../../tool/SWTool';
 /**
@@ -26,6 +24,9 @@ class SWWallFaceModule {
         this.drawWallFace();
     }
 
+    /**
+     * 绘制墙面片
+     */
     drawWallFace() {
 
         let sif = c_StationInfo.point.clone();
@@ -77,20 +78,31 @@ class SWWallFaceModule {
         this.wallmesh.userData.depthlevel = 2;
         this.wallmesh.name = this.info.facadeID;
         scene.add(this.wallmesh);
+
+        this.wallMouseEvent();
     }
 
+    /**墙面面片鼠标事件 */
     wallMouseEvent() {
 
-        this.wallmesh.mouseOver = (e, obj) => { //鼠标进入
-            // if (!SWPanoView.isMeasureStatus) { //测量状态
-            //     SWPanoView.wallProbeSurface.wallProbeSurfaceVisible(true);
-            // }
-        };
+        //鼠标进入
+        this.wallmesh.mouseOver = (e, obj) => {
+            sw_wallProbeSurface.wallProbeSurfaceVisible(1);
+        }
 
-        this.wallmesh.mouseOut = (e, obj) => { //鼠标离开
-            // SWPanoView.wallProbeSurface.wallProbeSurfaceVisible(false);
-        };
+        //出去
+        this.wallmesh.mouseOut = (e, obj) => {
+            sw_wallProbeSurface.wallProbeSurfaceVisible(0);
+        }
 
+        //移动
+        this.wallmesh.mouseMove = (e, obj) => {
+
+            sw_wallProbeSurface.wallFaceMove(obj);
+
+        }
+
+        //鼠标弹起
         this.wallmesh.mouseUp = (e, obj) => { //鼠标点击事件
 
             let event = e || window.event;
@@ -101,18 +113,6 @@ class SWWallFaceModule {
 
             if (boo) {
 
-                // if (!SWPanoView.isEditorStatus) { //编辑状态
-
-                //     if (SWPanoView.isMeasureStatus) { //测量状态
-
-                //         SWPanoView.swMeasure.addPoint(obj.point, 1);
-
-                //     } else {
-
-                //         if (!c_isWallProbeSurfacePlusShow) {
-
-                // SWPanoView.addmouseEvent.mouseEvent.ifJump = true;
-
                 let realPoint1 = obj.point.clone().applyMatrix4(obj.object.matrix).applyMatrix4(c_OpenGLToDS3Mx4);
 
                 let realPoint = new THREE.Vector3(c_StationInfo.nx + realPoint1.x / 10,
@@ -122,27 +122,10 @@ class SWWallFaceModule {
                 c_wallClickRotateV3.copy(realPoint);
 
                 sw_getService.getOtherPanoByFacadeID(realPoint.x, realPoint.y, realPoint.z, obj.object.name);
-
-                // SWPanoView.wallProbeSurface.wallProbeSurfaceVisible(false);
-
-                // } else {
-
-                // let fovLevel = Math.ceil((camera.fov - minfov) / 12);
-
-                // if (fovLevel > 1) {
-
-                //     SWPanoView.swCameraManage.wallMoseWheel(1);
-                // } else {
-
-                //     SWPanoView.swCameraManage.wallMoseWheel(0);
-
-                // }
-                // }
-                // }
-                // }
             }
         };
 
+        //鼠标按下
         this.wallmesh.mouseDown = (e) => {
 
             let event = e || window.event;
@@ -154,6 +137,7 @@ class SWWallFaceModule {
         };
     }
 
+    /**清除墙面片 */
     clearWallMesh() {
         disposeNode(this.wallmesh);
     }
