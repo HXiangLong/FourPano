@@ -1,4 +1,11 @@
 /* global THREE,$*/
+
 /**
- * 静态标注
+ * 绘制面标注
  */
+class SWMarkerStaticModule {
+    constructor() {
+
+    }
+}
+export default SWMarkerStaticModule;

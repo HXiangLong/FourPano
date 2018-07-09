@@ -8,9 +8,11 @@ import {
     c_OpenGLToDS3Mx4,
     c_wallClickRotateV3,
     sw_getService,
-    sw_wallProbeSurface
+    sw_wallProbeSurface,
+    sw_cameraManage
 } from '../../tool/SWConstants';
-import { getRandomColor, disposeNode } from '../../tool/SWTool';
+import { getRandomColor, disposeNode, Vector3ToVP, setCameraAngle } from '../../tool/SWTool';
+import { deleteAll } from '../../tool/SWInitializeInstance';
 /**
  * 激光点云墙面片
  */
@@ -113,15 +115,29 @@ class SWWallFaceModule {
 
             if (boo) {
 
-                let realPoint1 = obj.point.clone().applyMatrix4(obj.object.matrix).applyMatrix4(c_OpenGLToDS3Mx4);
+                if (sw_wallProbeSurface.isWallFaceJumpBoo) {
 
-                let realPoint = new THREE.Vector3(c_StationInfo.nx + realPoint1.x / 10,
-                    c_StationInfo.ny + realPoint1.y / 10,
-                    c_StationInfo.nz + realPoint1.z / 10);
+                    let realPoint1 = obj.point.clone().applyMatrix4(obj.object.matrix).applyMatrix4(c_OpenGLToDS3Mx4);
 
-                c_wallClickRotateV3.copy(realPoint);
+                    let realPoint = new THREE.Vector3(c_StationInfo.nx + realPoint1.x / 10,
+                        c_StationInfo.ny + realPoint1.y / 10,
+                        c_StationInfo.nz + realPoint1.z / 10);
 
-                sw_getService.getOtherPanoByFacadeID(realPoint.x, realPoint.y, realPoint.z, obj.object.name);
+                    c_wallClickRotateV3.copy(realPoint);
+
+                    deleteAll();
+
+                    sw_getService.getOtherPanoByFacadeID(realPoint.x, realPoint.y, realPoint.z, obj.object.name);
+
+                } else {
+
+                    let vp = Vector3ToVP(obj.point.clone());
+
+                    setCameraAngle(vp.Yaw, vp.Pitch, true);
+
+                    sw_cameraManage.setWallWheel();
+
+                }
             }
         };
 

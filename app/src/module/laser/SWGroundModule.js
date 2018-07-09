@@ -2,6 +2,7 @@
 
 import { scene, c_FaceDistance, sw_getService, c_StationInfo, sw_wallProbeSurface } from '../../tool/SWConstants';
 import { getPanoRealPoint } from '../../tool/SWTool';
+import { deleteAll } from '../../tool/SWInitializeInstance';
 
 /**
  * 地面面片对象
@@ -69,6 +70,8 @@ class SWGroundModule {
                 if (boo) {
 
                     let v3 = getPanoRealPoint(obj, 2.5);
+
+                    deleteAll();
 
                     sw_getService.getOtherPanoByPosition(v3.x, v3.y, v3.z, c_StationInfo.imageID);
                 }

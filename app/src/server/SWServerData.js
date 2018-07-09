@@ -213,15 +213,12 @@ class ServerData {
                 console.log("网络连接错误，请刷新重试！");
             },
             success: (data) => {
-                if (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoid != data.GetOtherPanoByPositionResult.ImageID) {
+                if (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != data.GetOtherPanoByPositionResult.ImageID) {
                     constants.c_isPreviewImageLoadEnd = false;
                     constants.c_StationInfo = new StationInfo(data.GetOtherPanoByPositionResult);
-                    // SWPanoView.swMinMap.init();
-                    // if (SWPanoView.swSkySphere) {
-                    //     SWPanoView.swSkySphere.initSkySphere();
-                    // } else if (SWPanoView.swSkyBox) {
-                    //     SWPanoView.swSkyBox.initBox(SWPanoView.stationInfo);
-                    // }
+                    constants.sw_skyBox.addThumbnail();
+                    this.getOldArrow();
+                    this.getFacadeByPanoID();
                 }
             }
         });
@@ -245,20 +242,13 @@ class ServerData {
                 console.log("网络链接错误，请刷新重试！");
             },
             success: (data) => {
-                // if (SWPanoView.isPreviewImageLoadEnd && SWPanoView.stationInfo.imageID != data.GetOtherPanoByFacadeIDResult.ImageID) {
-                //     SWPanoView.isPreviewImageLoadEnd = false;
-                //     var newPanoInfo = new StationInfo(data.GetOtherPanoByFacadeIDResult);
-                //     SWPanoView.stationInfo = newPanoInfo;
-                //     SWPanoView.isWallClickRotateBoo = true;
-                //     if (SWPanoView.swSkySphere) {
-                //         SWPanoView.swSkySphere.initSkySphere();
-                //     } else if (SWPanoView.swSkyBox) {
-                //         SWPanoView.swSkyBox.initBox(SWPanoView.stationInfo);
-                //     }
-                // } else {
-                //     SWPanoView.addmouseEvent.mouseEvent.ifJump = false;
-                //     SWPanoView.wallProbeSurface.wallProbeSurfaceVisible(true);
-                // }
+                if (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != data.GetOtherPanoByFacadeIDResult.ImageID) {
+                    constants.c_isPreviewImageLoadEnd = false;
+                    constants.c_StationInfo = new StationInfo(data.GetOtherPanoByFacadeIDResult);
+                    constants.sw_skyBox.addThumbnail();
+                    this.getOldArrow();
+                    this.getFacadeByPanoID();
+                }
             }
         });
     };

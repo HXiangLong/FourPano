@@ -123,47 +123,6 @@ class SWPano {
         constants.sw_groundMesh = new SWGroundModule();
         constants.sw_wallProbeSurface = new SWWallSurfaceModule();
     }
-
-    /**
-     * 设置相机视角
-     * @param {Number} yaw 偏航角
-     * @param {Number} pitch 俯仰角
-     * @param {boolean} move 是否动画旋转
-     */
-    setCameraAngle(yaw, pitch, move) {
-        if (move) {
-            let r1, r2;
-            r1 = constants.sw_cameraManage.yaw_Camera - yaw;
-            if (r1 > 0) {
-                r2 = 360 - constants.sw_cameraManage.yaw_Camera + yaw;
-            } else {
-                r2 = 360 + constants.sw_cameraManage.yaw_Camera - yaw;
-            }
-
-            let from = {
-                x: constants.sw_cameraManage.yaw_Camera,
-                y: constants.sw_cameraManage.picth_Camera,
-                z: 0
-            };
-            let to = {
-                x: (r1 > 0 ? (Math.abs(r1) > Math.abs(r2) ? (yaw + 360) : yaw) : (Math.abs(r1) > Math.abs(r2) ? (yaw - 360) : yaw)),
-                y: pitch,
-                z: 0
-            };
-            new TWEEN.Tween(from)
-                .to(to, 1000)
-                .easing(TWEEN.Easing.Exponential.Out)
-                .onUpdate(function() {
-                    constants.sw_cameraManage.setHousesViewAngle(from.x, from.y);
-                })
-                .onComplete(function() {
-                    constants.sw_cameraManage.setHousesViewAngle(to.x, to.y);
-                })
-                .start();
-        } else {
-            constants.sw_cameraManage.cameraLookAt(yaw, pitch);
-        }
-    }
 }
 
 

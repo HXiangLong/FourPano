@@ -4,6 +4,7 @@
 
 import * as constants from './SWConstants';
 import SWViewGesture from './SWViewGesture';
+const TWEEN = require('@tweenjs/tween.js');
 
 /**
  * 屏幕坐标转世界坐标
@@ -379,17 +380,6 @@ export function disposeNode(node, ifParent = true) {
 };
 
 /**
- * 清楚新增文本div层
- * @param {*} textdiv 
- */
-export function delectTextDiv(textdiv) {
-    if (textdiv && document.body.children.indexOf(textdiv) != -1) {
-        document.body.removeChild(textdiv);
-    }
-};
-
-
-/**
  * 全屏
  * */
 export function getFullScreen() {
@@ -469,6 +459,19 @@ export function TextDiv(labelPos, fontSize, text) {
 }
 
 /**
+ * 清楚新增文本div层
+ * @param {*} textdiv 
+ */
+export function delectTextDiv(textdiv) {
+
+    if (textdiv && document.body.children.indexOf(textdiv) != -1) {
+
+        document.body.removeChild(textdiv);
+
+    }
+}
+
+/**
  * 获取字体
  * @param {string} fontUrl 字体地址 '../../../commons/font/optimer_regular.typeface.json'
  * @param {Function} callFun 回调函数
@@ -480,4 +483,45 @@ export function getFont(fontUrl) {
             resolve(response);
         });
     });
+}
+
+/**
+ * 设置相机视角
+ * @param {Number} yaw 偏航角
+ * @param {Number} pitch 俯仰角
+ * @param {boolean} move 是否动画旋转
+ */
+export function setCameraAngle(yaw, pitch, move) {
+    if (move) {
+        let r1, r2;
+        r1 = constants.sw_cameraManage.yaw_Camera - yaw;
+        if (r1 > 0) {
+            r2 = 360 - constants.sw_cameraManage.yaw_Camera + yaw;
+        } else {
+            r2 = 360 + constants.sw_cameraManage.yaw_Camera - yaw;
+        }
+
+        let from = {
+            x: constants.sw_cameraManage.yaw_Camera,
+            y: constants.sw_cameraManage.picth_Camera,
+            z: 0
+        };
+        let to = {
+            x: (r1 > 0 ? (Math.abs(r1) > Math.abs(r2) ? (yaw + 360) : yaw) : (Math.abs(r1) > Math.abs(r2) ? (yaw - 360) : yaw)),
+            y: pitch,
+            z: 0
+        };
+        new TWEEN.Tween(from)
+            .to(to, 1000)
+            .easing(TWEEN.Easing.Exponential.Out)
+            .onUpdate(function() {
+                constants.sw_cameraManage.setHousesViewAngle(from.x, from.y);
+            })
+            .onComplete(function() {
+                constants.sw_cameraManage.setHousesViewAngle(to.x, to.y);
+            })
+            .start();
+    } else {
+        constants.sw_cameraManage.cameraLookAt(yaw, pitch);
+    }
 }

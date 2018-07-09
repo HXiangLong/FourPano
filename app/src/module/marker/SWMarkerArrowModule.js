@@ -17,7 +17,7 @@ class SWMarkerArrowModule extends SWMarkerModule {
      */
     constructor(date) {
 
-        super(external.arrow_icon, 2, 27);
+        super(external.arrow_icon, 2, { fpsNum: 27, wPlane: 144, hPlane: 64 });
 
         this.arrowData = date;
 

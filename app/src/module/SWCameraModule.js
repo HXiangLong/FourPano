@@ -1,7 +1,8 @@
 /* global THREE*/
 
 import { camera, c_Maxfov, c_Minfov, c_maxPitch, c_minPitch, sw_skyBox } from "../tool/SWConstants";
-import { YPRToVector3, Vector3ToVP, getNumberMax360, getSceneToWorld } from '../tool/SWTool';
+import { YPRToVector3, getNumberMax360 } from '../tool/SWTool';
+const TWEEN = require('@tweenjs/tween.js');
 
 /**
  * 相机控制类只有旋转和缩放，没有平移
@@ -21,7 +22,7 @@ class SWCameraModule {
         /**设置为false以禁用缩放 */
         this.enableZoom = true;
         /**缩放速度 */
-        this.zoomSpeed = 2.0;
+        this.zoomSpeed = 4.0;
 
         /**设置为false以禁用旋转 */
         this.enableRotate = true;
@@ -139,7 +140,7 @@ class SWCameraModule {
 
         if (camera.isPerspectiveCamera) {
 
-            camera.fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov + dollyScale));
+            let fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov + dollyScale));
 
             if (camera.fov > (c_Maxfov + c_Minfov) * 0.5) {
 
@@ -148,6 +149,24 @@ class SWCameraModule {
                 sw_skyBox.panoBox.clearFaceTiles();
 
             }
+
+            let from = { x: camera.fov };
+
+            let to = { x: fov };
+
+            new TWEEN.Tween(from)
+                .to(to, 800)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(function() {
+
+                    camera.fov = this._object.x;
+                    console.log("camera.fov：" + camera.fov);
+
+                })
+                .onComplete(() => {
+
+                })
+                .start();
 
             camera.updateProjectionMatrix();
 
@@ -160,7 +179,7 @@ class SWCameraModule {
 
         if (camera.isPerspectiveCamera) {
 
-            camera.fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov - dollyScale));
+            let fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov - dollyScale));
 
             camera.updateProjectionMatrix();
 
@@ -171,6 +190,24 @@ class SWCameraModule {
                 sw_skyBox.panoBox.addFaceTiles();
 
             }
+
+            let from = { x: camera.fov };
+
+            let to = { x: fov };
+
+            new TWEEN.Tween(from)
+                .to(to, 800)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(function() {
+
+                    camera.fov = this._object.x;
+                    console.log("camera.fov：" + camera.fov);
+
+                })
+                .onComplete(() => {
+
+                })
+                .start();
         }
 
     }
@@ -380,6 +417,10 @@ class SWCameraModule {
 
     }
 
+    /**
+     * 帮助转动，使转动更加轻松
+     * @param {Number} card 缓动值
+     */
     slowMove(card) {
 
         this.speed = { yaw: (this.rotateEnd.x - this.rotateStart.x), pitch: (this.rotateEnd.y - this.rotateStart.y) };
