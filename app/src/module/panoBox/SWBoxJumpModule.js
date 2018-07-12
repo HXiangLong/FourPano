@@ -65,6 +65,10 @@ class SWBoxJumpModule {
                 });
             }
         }
+
+        constants.sw_getService.getOldArrow();
+        constants.sw_getService.getFacadeByPanoID();
+        constants.sw_getService.getMarkerByPanoID();
     }
 
     /**

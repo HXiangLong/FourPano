@@ -464,9 +464,11 @@ export function TextDiv(labelPos, fontSize, text) {
  */
 export function delectTextDiv(textdiv) {
 
-    if (textdiv && document.body.children.indexOf(textdiv) != -1) {
+    if (textdiv && textdiv.parent != null) {
 
-        document.body.removeChild(textdiv);
+        textdiv.parent.removeChild(textdiv);
+
+        textdiv = null;
 
     }
 }

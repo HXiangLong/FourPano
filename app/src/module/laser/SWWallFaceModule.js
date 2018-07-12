@@ -51,7 +51,7 @@ class SWWallFaceModule {
             depthTest: true,
             side: 2,
             transparent: true,
-            opacity: 0.5
+            opacity: 0
         });
 
         let geometry = new THREE.Geometry();

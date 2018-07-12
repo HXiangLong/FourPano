@@ -28,7 +28,7 @@ class SWGroundModule {
                 depthTest: false,
                 transparent: true,
                 side: 2,
-                opacity: 0.5
+                opacity: 0
             });
             groundMaterial.shading = THREE.SmoothShading;
             groundMaterial.reflectivity = 0;

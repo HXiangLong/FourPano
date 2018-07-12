@@ -3,8 +3,10 @@
  */
 
 import * as constants from './SWConstants';
+import { setCameraAngle } from './SWTool';
 import SWMarkerArrowModule from '../module/marker/SWMarkerArrowModule';
-import SWMarkerDynamicModule from '../module/marker/SWMarkerDynamicModule';
+import SWMarkerSingleModule from '../module/marker/SWMarkerSingleModule';
+import SWMarkerMoreModule from '../module/marker/SWMarkerMoreModule';
 
 /**
  * 添加老箭头数据
@@ -85,20 +87,92 @@ export function deleteAll() {
     constants.sw_wallMesh.clear();
 
     constants.sw_wallProbeSurface.wallProbeSurfaceVisible(0, 0);
+
+    constants.c_markerMeshArr.map((item) => {
+
+        item.clear();
+
+    });
 }
 
 /**
  * 添加标注
  * */
 export function AddMarkerMesh() {
-    constants.c_markerInfoArr.map((obj, idx) => {
-        constants.c_markerMeshArr.push(new SWMarkerDynamicModule(obj));
+
+    constants.c_markerInfoArr.map((obj) => {
+
+        if (obj.centerX != 0 && obj.centerY != 0) {
+
+            constants.c_markerMeshArr.push(new SWMarkerSingleModule(obj));
+
+        } else {
+
+            constants.c_markerMeshArr.push(new SWMarkerMoreModule(obj));
+
+        }
+
+        if (constants.c_JumpMarkerID != "" && constants.c_JumpMarkerID == obj.markerID) {
+
+            constants.c_JumpMarkerID = "";
+
+            JumpLookMarker(obj);
+
+        }
     });
-    // $.each(constants.c_markerInfoArr, function() {
-    //     SWPanoView.markerMeshArr.push(new SWMarkerMesh(obj));
-    //     if (SWPanoView.jumpMarkerID != "" && SWPanoView.jumpMarkerID == obj.markerID) {
-    //         SWPanoView.jumpMarkerID = "";
-    //         SWPanoView.JumpLookMarker(obj);
-    //     }
-    // });
-};
+}
+
+/**
+ * 跳转之后看向标注的中心点
+ * @param {SWMarkerInfo} obj 标注点对象
+ */
+export function JumpLookMarker(obj) {
+
+    if (obj.centerX != 0 && obj.centerY != 0 && obj.centerZ != 0) {
+
+        setCameraAngle(obj.centerX, obj.centerY);
+
+    } else {
+
+        let yaw = [],
+            pitch = [];
+
+        obj.points.map((objs) => {
+
+            yaw.push(parseFloat(objs.yaw));
+
+            pitch.push(parseFloat(objs.pitch));
+
+        });
+
+        let yawArr = yaw.sort(function(a, b) {
+            if (a > b) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        let pitchArr = pitch.sort(function(a, b) {
+            if (a > b) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        let num = yawArr[yawArr.length - 1];
+
+        if (yawArr[0] < 100 && yawArr[yawArr.length - 1] > 300) {
+
+            num = 360 - yawArr[yawArr.length - 1];
+
+        }
+
+        let yy = yawArr[0] + (num - yawArr[0]) * 0.5;
+
+        let pp = pitchArr[0] + (pitchArr[pitchArr.length - 1] - pitchArr[0]) * 0.5;
+
+        setCameraAngle(yy, pp);
+    }
+}

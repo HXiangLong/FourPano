@@ -12,6 +12,7 @@ class SWDrawPoint {
         this.allPointArr = [];
     }
 
+    /**绘制点 */
     drawPoint(point) {
         let radius = (point.distanceTo(new THREE.Vector3(0, 0, 0)) / 30) * 0.3;
         this.dotRadius = radius > 30 ? 30 : radius;

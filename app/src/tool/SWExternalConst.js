@@ -19,6 +19,14 @@
       * 视频标注图标
       */
      marker_video_icon: require('../../commons/img/icon-s.png'),
+     /**
+      * 单点标注默认图标
+      */
+     marker_default_icon: require('../../commons/img/dw.png'),
+     /**
+      * 单点标注默认动态图标
+      */
+     marker_default_anim_icon: require('../../commons/img/new_spotd07_gif.png'),
 
      /**
       * 探面放大图标

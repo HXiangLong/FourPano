@@ -5,11 +5,11 @@ import ArrowInfo from '../data/SWArrowInfo';
 import ExhibitsInfo from '../data/SWExhibitsInfo';
 import FacadeByPanoIDInfo from '../data/SWFacadeByPanoIDInfo';
 import FloorsInfo from '../data/SWFloorsInfo';
-import MarkerInfo from '../data/SWMarkerInfo';
+import SWMarkerInfo from '../data/SWMarkerInfo';
 import MultiDataByParentIDInfo from '../data/SWMultiDataByParentIDInfo';
 import ThumbnailsInfo from '../data/SWThumbnailsInfo';
 import StationInfo from '../data/SWStationInfo';
-import { AddNewArrow, AddOldArrow } from '../tool/SWInitializeInstance';
+import { AddNewArrow, AddOldArrow, AddMarkerMesh } from '../tool/SWInitializeInstance';
 const external = require('../tool/SWExternalConst.js');
 
 /**
@@ -71,10 +71,6 @@ class ServerData {
                     data.Floors.map((obj) => {
                         new FloorsInfo(obj);
                     });
-                    // console.log(constants.c_FloorsMapTable);
-                    // if (SWPanoView.swMinMap) {
-                    //     SWPanoView.swMinMap.init();
-                    // }
                 }
             }
         })
@@ -100,8 +96,6 @@ class ServerData {
                         constants.c_isPreviewImageLoadEnd = false;
                         constants.c_StationInfo = new StationInfo(data.GetPanoByIDResult);
                         constants.sw_skyBox.addThumbnail();
-                        this.getOldArrow();
-                        this.getFacadeByPanoID();
                     }
                 }
             }
@@ -134,17 +128,7 @@ class ServerData {
                     });
 
                     constants.sw_wallMesh.createWallFace();
-                    // //绘制墙面片
-                    // SWPanoView.swWallMesh.init();
-                    // SWPanoView.swGroundMesh.groundMeshShow(true);
-                    // if (SWPanoView.isWallClickRotateBoo) {
-                    //     SWPanoView.isWallClickRotateBoo = false;
-                    //     SWPanoView.rotateByWallClick();
-                    // }
                 }
-                // else {
-                //     SWPanoView.swGroundMesh.groundMeshShow(false);
-                // }
             }
         });
     }
@@ -217,8 +201,6 @@ class ServerData {
                     constants.c_isPreviewImageLoadEnd = false;
                     constants.c_StationInfo = new StationInfo(data.GetOtherPanoByPositionResult);
                     constants.sw_skyBox.addThumbnail();
-                    this.getOldArrow();
-                    this.getFacadeByPanoID();
                 }
             }
         });
@@ -246,12 +228,35 @@ class ServerData {
                     constants.c_isPreviewImageLoadEnd = false;
                     constants.c_StationInfo = new StationInfo(data.GetOtherPanoByFacadeIDResult);
                     constants.sw_skyBox.addThumbnail();
-                    this.getOldArrow();
-                    this.getFacadeByPanoID();
                 }
             }
         });
-    };
+    }
+
+    /**
+     * 获取标注
+     * */
+    getMarkerByPanoID() {
+        constants.c_markerInfoArr.length = 0;
+        let urls = "?method=getMarkerByPanoID&panoID=" + constants.c_StationInfo.panoID;
+        $.ajax({
+            url: this.musServerURL + urls,
+            type: 'GET',
+            cache: true,
+            dataType: 'json',
+            error: (data) => {
+                console.log("网络连接错误，请刷新重试！");
+            },
+            success: (data) => {
+                if (data.MarkerInfo) {
+                    data.MarkerInfo.map((obj) => {
+                        constants.c_markerInfoArr.push(new SWMarkerInfo(obj));
+                    });
+                    AddMarkerMesh();
+                }
+            }
+        });
+    }
 
 }
 export default ServerData;
