@@ -12,7 +12,8 @@ class SWDrawString {
 
         this.textArr = [];
 
-        getFont(sw_getService.resourcesUrl + '/BusinessData/ExhibitDetails/Font/optimer_regular.typeface.json').then((response) => {
+        //字体用的是绝对地址
+        getFont('http://ojv7mano6.bkt.clouddn.com/optimer_regular.typeface.json').then((response) => {
             this.font = response;
         });
     }
@@ -55,11 +56,11 @@ class SWDrawString {
 
         let dArr = num == 0 ? this.textArr.splice(0, this.textArr.length) : num < 0 ? this.textArr.splice(num, Math.abs(num)) : this.textArr.splice(0, num);
 
-        for (let item in dArr) {
+        dArr.map((item, idx) => {
 
             disposeNode(item);
 
-        }
+        });
     }
 }
 

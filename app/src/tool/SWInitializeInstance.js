@@ -93,6 +93,8 @@ export function deleteAll() {
         item.clear();
 
     });
+
+    constants.sw_measure.clear();
 }
 
 /**

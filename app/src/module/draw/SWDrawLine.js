@@ -39,8 +39,9 @@ class SWDrawLine {
     /**
      * 新增点击点
      * @param {Vector3} points 点击点坐标
+     * @param {Boolean} textBoo 是否显示距离
      */
-    addPoint(points) {
+    addPoint(points, textBoo = true) {
 
         this.endPoint.copy(points);
 
@@ -64,12 +65,15 @@ class SWDrawLine {
 
             this.lineTimeBoo = true;
 
-            let dis1 = (Math.ceil(this.endPoint.distanceTo(this.startPoint) * 10) / 100) + "m";
+            if (textBoo) {
 
-            this.fontSize = sw_measure.swDrawPoint.dotRadius * 3;
+                let dis1 = (Math.ceil(this.endPoint.distanceTo(this.startPoint) * 10) / 100) + "m";
 
-            this.swDrawString.drawString(new THREE.Vector3(this.endPoint.x + sw_measure.swDrawPoint.dotRadius, this.endPoint.y + sw_measure.swDrawPoint.dotRadius, this.endPoint.z + sw_measure.swDrawPoint.dotRadius), dis1, this.fontSize);
+                this.fontSize = sw_measure.swDrawPoint.dotRadius * 3;
 
+                this.swDrawString.drawString(new THREE.Vector3(this.endPoint.x + sw_measure.swDrawPoint.dotRadius, this.endPoint.y + sw_measure.swDrawPoint.dotRadius, this.endPoint.z + sw_measure.swDrawPoint.dotRadius), dis1, this.fontSize);
+
+            }
         }
 
         this.startPoint.copy(this.endPoint);
@@ -85,6 +89,8 @@ class SWDrawLine {
                     clearInterval(this.lineTimeNum);
 
                     this.lineTimeBoo = false;
+
+                    this.linePointArr.length = 0;
 
                     return;
                 }
@@ -133,13 +139,23 @@ class SWDrawLine {
             num < 0 ? this.lineAllArr.splice(num * this.lineAllNum, Math.abs(num * this.lineAllNum)) :
             this.lineAllArr.splice(0, num * this.lineAllNum);
 
-        for (let item in dArr) {
+        dArr.map((item, idx) => {
 
             disposeNode(item);
 
-        }
+        });
+
+        this.startPoint = new THREE.Vector3(0, 0, 0);
+
+        this.endPoint = new THREE.Vector3(0, 0, 0);
 
         this.lineNum = 0;
+
+        if (this.swDrawString) {
+
+            this.swDrawString.clear(num);
+
+        }
     }
 }
 

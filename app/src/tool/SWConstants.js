@@ -48,7 +48,7 @@ export var c_wallClickRotateV3 = new THREE.Vector3();
 export var c_wallStartPoint = new THREE.Vector3();
 
 /**测量状态*/
-export var c_isMeasureStatus = false;
+export var c_isMeasureStatus = true;
 /**false-网络版，true-单机版 */
 export var c_isSingleVision = false;
 /**当前处于什么版本状态 1-默认为PC版 2-手机版 3-编辑版 4-触屏版*/

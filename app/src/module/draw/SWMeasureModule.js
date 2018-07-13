@@ -21,7 +21,7 @@ class SWMeasureModule {
     /**
      * 
      * @param {Object} obj 在墙上地上点击的点
-     * @param {*} type 1-墙上点的  2-地面点的
+     * @param {Number} type 1-墙上点的  2-地面点的
      */
     addPoint(obj, type) {
 
@@ -42,6 +42,12 @@ class SWMeasureModule {
             this.swDrawLine.addPoint(poi);
         }
 
+    }
+
+    /**清除所有 */
+    clear() {
+        this.swDrawPoint.clear(0);
+        this.swDrawLine.clear(0);
     }
 }
 export default SWMeasureModule;
