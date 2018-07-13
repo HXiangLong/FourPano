@@ -1,6 +1,14 @@
 /* global THREE*/
 
-import { scene, c_FaceDistance, sw_getService, c_StationInfo, sw_wallProbeSurface } from '../../tool/SWConstants';
+import {
+    scene,
+    c_FaceDistance,
+    sw_getService,
+    c_StationInfo,
+    sw_wallProbeSurface,
+    c_isMeasureStatus,
+    sw_measure
+} from '../../tool/SWConstants';
 import { getPanoRealPoint } from '../../tool/SWTool';
 import { deleteAll } from '../../tool/SWInitializeInstance';
 
@@ -43,12 +51,16 @@ class SWGroundModule {
 
             //进入
             this.groundMesh.mouseOver = (e, obj) => {
+
                 sw_wallProbeSurface.wallProbeSurfaceVisible(2);
+
             }
 
             //出去
             this.groundMesh.mouseOut = (e, obj) => {
+
                 sw_wallProbeSurface.wallProbeSurfaceVisible(0);
+
             }
 
             //移动
@@ -68,7 +80,11 @@ class SWGroundModule {
                 var boo = v3.equals(this.startPoint);
 
                 if (boo) {
-
+                    //测量状态开启
+                    if (c_isMeasureStatus) {
+                        sw_measure.addPoint(obj, 2);
+                        return;
+                    }
                     let v3 = getPanoRealPoint(obj, 2.5);
 
                     deleteAll();

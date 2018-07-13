@@ -4,6 +4,10 @@
       */
      server_json: require('../../commons/json/config.json'),
      /**
+      * 测量文本显示
+      */
+     measuring_json: require('../../commons/font/optimer_regular.typeface.json'),
+     /**
       * 跳转箭头图片
       */
      arrow_icon: require('../../commons/img/arrow.png'),

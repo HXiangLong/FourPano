@@ -4,7 +4,8 @@ import {
     scene,
     camera,
     c_Minfov,
-    c_Maxfov
+    c_Maxfov,
+    c_isMeasureStatus
 } from '../../tool/SWConstants';
 import {
     TextDiv,
@@ -122,6 +123,8 @@ class SWWallSurfaceModule {
      */
     wallProbeSurfaceVisible(wallType, zoomType) {
 
+        if (c_isMeasureStatus) wallType = 0; //测量状态不显示探面
+
         this.wallFaceMash.visible = (wallType === 1);
 
         this.groundFaceMash.visible = (wallType === 2);
@@ -138,6 +141,8 @@ class SWWallSurfaceModule {
      * @param {Object} obj 射线返回对象
      */
     groundFaceMove(obj) {
+
+        if (c_isMeasureStatus) return; //测量状态不显示移动数据
 
         this.isgroundFaceJumpBoo = getJudgeOrZoom(obj, 1);
 

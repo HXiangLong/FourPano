@@ -1,6 +1,7 @@
 /* global THREE*/
-import { scene, camera } from '../../tool/SWConstants'
-import { disposeNode, getFont } from '../../tool/SWTool'
+import { scene, camera, sw_getService } from '../../tool/SWConstants';
+import { disposeNode, getFont } from '../../tool/SWTool';
+// const external = require('../../tool/SWExternalConst');
 /**
  * 绘制字符串
  */
@@ -11,7 +12,7 @@ class SWDrawString {
 
         this.textArr = [];
 
-        getFont('../../../commons/font/optimer_regular.typeface.json').then((response) => {
+        getFont(sw_getService.resourcesUrl + '/BusinessData/ExhibitDetails/Font/optimer_regular.typeface.json').then((response) => {
             this.font = response;
         });
     }
@@ -38,6 +39,8 @@ class SWDrawString {
         meshText.position.copy(labelPos);
 
         meshText.lookAt(camera.position);
+
+        meshText.scale.set(0.3, 0.3, 0.3);
 
         scene.add(meshText);
 

@@ -9,7 +9,9 @@ import {
     c_wallClickRotateV3,
     sw_getService,
     sw_wallProbeSurface,
-    sw_cameraManage
+    sw_cameraManage,
+    c_isMeasureStatus,
+    sw_measure
 } from '../../tool/SWConstants';
 import { getRandomColor, disposeNode, Vector3ToVP, setCameraAngle } from '../../tool/SWTool';
 import { deleteAll } from '../../tool/SWInitializeInstance';
@@ -89,12 +91,16 @@ class SWWallFaceModule {
 
         //鼠标进入
         this.wallmesh.mouseOver = (e, obj) => {
+
             sw_wallProbeSurface.wallProbeSurfaceVisible(1);
+
         }
 
         //出去
         this.wallmesh.mouseOut = (e, obj) => {
+
             sw_wallProbeSurface.wallProbeSurfaceVisible(0);
+
         }
 
         //移动
@@ -114,6 +120,11 @@ class SWWallFaceModule {
             let boo = v3.equals(this.startPoint);
 
             if (boo) {
+                //测量状态开启
+                if (c_isMeasureStatus) {
+                    sw_measure.addPoint(obj, 1);
+                    return;
+                }
 
                 if (sw_wallProbeSurface.isWallFaceJumpBoo) {
 

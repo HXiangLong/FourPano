@@ -23,6 +23,7 @@ class SWMarkerMoreModule extends SWMarkerModule {
         let holes = [],
             triangles, vertices = [];
 
+        //所有点由空间坐标转三维坐标
         obj.points.map((data) => {
 
             let v3 = VPToVector3(new SWViewGesture(data.yaw, data.pitch, 0));
@@ -35,8 +36,10 @@ class SWMarkerMoreModule extends SWMarkerModule {
 
         this.geometry.vertices = vertices;
 
+        //构建面顶点信息
         triangles = THREE.ShapeUtils.triangulateShape(vertices, holes);
 
+        //三点构建面
         for (let i = 0; i < triangles.length; i++) {
 
             this.geometry.faces.push(new THREE.Face3(triangles[i][0], triangles[i][1], triangles[i][2]));
