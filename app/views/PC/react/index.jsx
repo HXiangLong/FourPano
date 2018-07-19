@@ -1,3 +1,5 @@
+/**初始化react */
+
 import React ,{Component}from 'react';
 import './index.pcss'
 
