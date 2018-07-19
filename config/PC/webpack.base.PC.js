@@ -1,6 +1,6 @@
 let config = {
     entry: {
-        'index':'./app/views/PC/code/web/index.js'
+        'index':'./app/views/PC/web/index.js'
     },
     resolve: {
         extensions: [".js", ".json", ".jsx", ".css",".pcss"],
