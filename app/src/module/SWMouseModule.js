@@ -1,6 +1,6 @@
 /* global THREE*/
 
-import { camera, scene, sw_cameraManage } from '../tool/SWConstants'
+import * as constants from '../tool/SWConstants';
 
 /**
  * 鼠标事件
@@ -105,9 +105,9 @@ class SWMouseModule {
      */
     mouseRaycaster(mouseXY) {
 
-        this.raycaster.setFromCamera(mouseXY, camera);
+        this.raycaster.setFromCamera(mouseXY, constants.camera);
 
-        let intersects = this.raycaster.intersectObjects(scene.children);
+        let intersects = this.raycaster.intersectObjects(constants.scene.children);
 
         let intersect, depthlevel;
 
@@ -137,7 +137,7 @@ class SWMouseModule {
      */
     mouseWheel(e) {
 
-        sw_cameraManage.onMouseWheel(e);
+        constants.sw_cameraManage.onMouseWheel(e);
 
     }
 
@@ -146,16 +146,24 @@ class SWMouseModule {
      * @param {Event} e 
      */
     mouseUp(e) {
-        sw_cameraManage.onMouseUp(e);
 
-        this.mousePosition(e.clientX, e.clientY);
+        constants.sw_cameraManage.onMouseUp(e);
 
-        this.intersect = this.mouseRaycaster(this.mouseV2);
+        if (constants.c_currentState === constants.c_currentStateEnum.editorStatus &&
+            constants.c_editorState === constants.c_editorStateEnum.markerPoint) {
 
-        if (this.intersect && this.intersect.object.mouseUp) { //模型弹起事件
+            constants.sw_markPoint.addPoint(e.clientX, e.clientY, 2);
 
-            this.intersect.object.mouseUp(e, this.intersect);
+        } else {
+            this.mousePosition(e.clientX, e.clientY);
 
+            this.intersect = this.mouseRaycaster(this.mouseV2);
+
+            if (this.intersect && this.intersect.object.mouseUp) { //模型弹起事件
+
+                this.intersect.object.mouseUp(e, this.intersect);
+
+            }
         }
     }
 
@@ -165,7 +173,7 @@ class SWMouseModule {
      */
     mouseMove(e) {
 
-        sw_cameraManage.onMouseMove(e);
+        constants.sw_cameraManage.onMouseMove(e);
 
         this.mousePosition(e.clientX, e.clientY);
 
@@ -212,17 +220,26 @@ class SWMouseModule {
      */
     mouseDown(e) {
 
-        sw_cameraManage.onMouseDown(e);
+        constants.sw_cameraManage.onMouseDown(e);
 
-        this.mousePosition(e.clientX, e.clientY);
+        if (constants.c_currentState === constants.c_currentStateEnum.editorStatus &&
+            constants.c_editorState === constants.c_editorStateEnum.markerPoint) {
 
-        this.intersect = this.mouseRaycaster(this.mouseV2);
+            constants.sw_markPoint.addPoint(e.clientX, e.clientY, 1);
 
-        if (this.intersect && this.intersect.object.mouseDown) {
+        } else {
 
-            this.intersect.object.mouseDown(e, this.intersect);
+            this.mousePosition(e.clientX, e.clientY);
 
+            this.intersect = this.mouseRaycaster(this.mouseV2);
+
+            if (this.intersect && this.intersect.object.mouseDown) {
+
+                this.intersect.object.mouseDown(e, this.intersect);
+
+            }
         }
+
     }
 
     /**
@@ -249,7 +266,7 @@ class SWMouseModule {
      */
     touchStart(e) {
 
-        sw_cameraManage.onTouchStart(e);
+        constants.sw_cameraManage.onTouchStart(e);
     }
 
     /**
@@ -258,7 +275,7 @@ class SWMouseModule {
      */
     touchEnd(e) {
 
-        sw_cameraManage.onTouchEnd(e);
+        constants.sw_cameraManage.onTouchEnd(e);
     }
 
     /**
@@ -267,20 +284,20 @@ class SWMouseModule {
      */
     touchMove(e) {
 
-        sw_cameraManage.onTouchMove(e);
+        constants.sw_cameraManage.onTouchMove(e);
     }
 
     /**陀螺仪旋转事件-设备定位改变事件 */
     deviceOrientationChangeEvent(event) {
 
-        sw_cameraManage.onDeviceOrientationChangeEvent(event);
+        constants.sw_cameraManage.onDeviceOrientationChangeEvent(event);
 
     }
 
     /**陀螺仪旋转事件-屏幕方向改变事件 */
     screenOrientationChangeEvent() {
 
-        sw_cameraManage.onScreenOrientationChangeEvent();
+        constants.sw_cameraManage.onScreenOrientationChangeEvent();
 
     }
 

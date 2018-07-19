@@ -68,7 +68,7 @@ class SWBoxTilesModule {
             path,
             // 加载成功之后调用
             (texture) => {
-                // console.log(`图片加载成功：${path}`);
+
                 this.geometry.visible = true;
 
                 texture.mapping = THREE.UVMapping;

@@ -10,6 +10,7 @@ import SWWallModule from "./module/laser/SWWallModule";
 import SWGroundModule from "./module/laser/SWGroundModule";
 import SWWallSurfaceModule from "./module/laser/SWWallSurfaceModule";
 import SWMeasureModule from './module/draw/SWMeasureModule';
+import SWMarkerTakePictureModule from "./module/marker/SWMarkerTakePictureModule";
 
 const TWEEN = require('@tweenjs/tween.js');
 
@@ -124,6 +125,12 @@ class SWPano {
         constants.sw_groundMesh = new SWGroundModule();
         constants.sw_wallProbeSurface = new SWWallSurfaceModule();
         constants.sw_measure = new SWMeasureModule();
+    }
+
+    /**初始化编辑版需要的内容 */
+    initEditor() {
+        constants.sw_markPoint = new SWMarkerTakePictureModule();
+
     }
 }
 

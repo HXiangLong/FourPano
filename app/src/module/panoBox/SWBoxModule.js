@@ -33,7 +33,6 @@ class SWBoxModule {
     }
 
     addFace() {
-        let dd = Date.now();
 
         for (let i = 0; i < 6; i++) {
 
@@ -73,8 +72,6 @@ class SWBoxModule {
             this.faceArr.push(face);
 
         }
-
-        console.log(`缩略图贴面上耗时：${Date.now()-dd}ms`);
     }
 
     /**相机放大的情况下，有变化时调用此方法 */
@@ -104,11 +101,7 @@ class SWBoxModule {
         let minPitch = pitch[0].Pitch;
         let maxPitch = pitch[pitch.length - 1].Pitch;
 
-        if (isNaN(minYaw) || isNaN(maxYaw) || isNaN(minPitch) || isNaN(maxPitch)) { //上保险，计算错误时不影响程序运行
-            return;
-        }
-
-        // console.log(minYaw, maxYaw, minPitch, maxPitch);
+        if (isNaN(minYaw) || isNaN(maxYaw) || isNaN(minPitch) || isNaN(maxPitch)) return; //上保险，计算错误时不影响程序运行
 
         this.faceArr.forEach((itme) => {
 

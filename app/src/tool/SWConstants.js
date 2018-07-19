@@ -48,13 +48,18 @@ export var c_wallClickRotateV3 = new THREE.Vector3();
 export var c_wallStartPoint = new THREE.Vector3();
 
 /**测量状态*/
-export var c_isMeasureStatus = true;
+export var c_isMeasureStatus = false;
 /**false-网络版，true-单机版 */
 export var c_isSingleVision = false;
-/**当前处于什么版本状态 1-默认为PC版 2-手机版 3-编辑版 4-触屏版*/
+/**全景有几种版本 1-默认为PC版 2-手机版 3-编辑版 4-触屏版*/
 export var c_currentStateEnum = { pcStatus: 1, phoneStatus: 2, editorStatus: 3, touchStatus: 4 };
 /**当前运行的是什么版本 */
 export var c_currentState = c_currentStateEnum.pcStatus;
+
+/**编辑版的几种状态 1-默认编辑箭头 2-编辑标注*/
+export var c_editorStateEnum = { arrow: 1, markerPoint: 2 };
+/**当前运行的是编辑版的什么状态 */
+export var c_editorState = c_editorStateEnum.markerPoint;
 
 
 /**是否加载缩略图中 */

@@ -13,13 +13,25 @@ const TWEEN = require('@tweenjs/tween.js');
  */
 export function getSceneToWorld(dx, dy) {
 
-    let mouse3D = new THREE.Vector3((dx / window.innerWidth) * 2 - 1, -(dy / window.innerHeight) * 2 + 1, 0.5);
+    let vector = new THREE.Vector3();
 
-    mouse3D.project(constants.camera);
+    let raycaster = new THREE.Raycaster();
 
-    return mouse3D;
+    let div = new THREE.Vector3(0, 0, 0);
 
-};
+    vector.set((dx / window.innerWidth) * 2 - 1, -(dy / window.innerHeight) * 2 + 1, 0.5); // z = 0.5 important!
+
+    vector.unproject(constants.camera);
+
+    raycaster.set(constants.camera.position, vector.sub(constants.camera.position).normalize());
+
+    let intersects = raycaster.intersectObjects(constants.scene.children, true);
+
+    if (intersects) {
+        div = intersects[0].point.clone();
+    }
+    return div;
+}
 
 /**
  * 世界坐标转屏幕坐标
@@ -50,7 +62,7 @@ export function getWorldToScene(v3) {
     vector.y = -(vector.y * heightHalf) + heightHalf;
 
     return vector;
-};
+}
 
 /**
  * 三维坐标转视点坐标
@@ -73,7 +85,7 @@ export function Vector3ToVP(v3) {
     let swvg = new SWViewGesture(yaw, THREE.Math.radToDeg(pitch), 0);
 
     return swvg;
-};
+}
 
 /**
  * 视点转三维坐标,P是从球面和Z轴的交点绕Y轴旋转theta，
@@ -95,7 +107,7 @@ export function VPToVector3(vp) {
     vec.z = Math.cos(THREE.Math.degToRad(vp.Yaw - 90)) * m;
 
     return vec;
-};
+}
 
 /**
  * 相机看向球面坐标转三维坐标
@@ -131,7 +143,7 @@ export function getNumberMax360(n) {
 
     }
     return n;
-};
+}
 
 /**
  * 两点距离
@@ -147,7 +159,7 @@ export function getDistance(x1, y1, x2, y2) {
     let yy = y2 - y1;
 
     return Math.pow((xx * xx + yy * yy), 0.5);
-};
+}
 
 /**
  * 通过水平fov获得垂直fov
@@ -158,7 +170,7 @@ export function getHfov(wfov, aspect) {
 
     return THREE.Math.radToDeg(Math.atan(Math.tan(THREE.Math.degToRad(wfov) / 2) / aspect) * 2);
 
-};
+}
 
 /**
  * 通过垂直fov获得水平fov
@@ -169,7 +181,7 @@ export function getWfov(hfov, aspect) {
 
     return THREE.Math.radToDeg(2 * Math.atan(Math.tan(THREE.Math.degToRad(hfov) / 2) * aspect));
 
-};
+}
 
 /**
  * 获取当前面当前放大值瓦片WH数
@@ -182,7 +194,7 @@ export function getFaceTileMatrixWH(lzoom) {
     wh.x = wh.y = Math.pow(2, lzoom);
 
     return wh;
-};
+}
 
 /**
  * 获取点是否在屏幕上
@@ -196,7 +208,7 @@ export function getPintIFScene(sceneXY) {
         boo = true;
     }
     return boo;
-};
+}
 
 /**
  * 获取随机颜色值
@@ -205,7 +217,7 @@ export function getRandomColor() {
 
     return '#' + (Math.random() * 0xffffff << 0).toString(16);
 
-};
+}
 
 /**
  * 墙面探面角度值
@@ -228,7 +240,7 @@ export function getWallProbeSurfaceAngle(obj) {
     }
 
     return angle;
-};
+}
 
 /**
  * 获取显示的距离
@@ -238,7 +250,7 @@ export function getProbeSurfaceDistance(obj) {
 
     return Math.abs(1.5 * obj.distance / obj.point.y);
 
-};
+}
 
 /**
  * 获取现实中的坐标
@@ -264,7 +276,7 @@ export function getPanoRealPoint(obj, rph) {
     let realPoint = constants.c_StationInfo.point.clone().add(v3);
 
     return realPoint;
-};
+}
 
 /**
  * 获得墙面点击的真实坐标
@@ -283,7 +295,7 @@ export function getWallRealPoint(obj) {
     let realPoint = constants.c_StationInfo.point.clone().add(new THREE.Vector3(dx, dy, dz));
 
     return realPoint;
-};
+}
 
 /**
  * 获取是否跳转还是放大
@@ -335,7 +347,7 @@ export function getArrowsAngle(v1, v2) {
         angle = 360 - angle;
     }
     return angle;
-};
+}
 
 /**
  * 清空对象缓存
@@ -377,7 +389,7 @@ export function disposeNode(node, ifParent = true) {
             node = null;
         }
     }
-};
+}
 
 /**
  * 全屏
@@ -412,7 +424,7 @@ export function getFullScreen() {
             document.webkitExitFullscreen();
         }
     }
-};
+}
 
 /**
  * DIV文本显示

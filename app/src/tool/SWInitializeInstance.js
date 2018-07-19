@@ -1,12 +1,12 @@
-/**
- * 初始化实例对象
- */
-
 import * as constants from './SWConstants';
 import { setCameraAngle } from './SWTool';
 import SWMarkerArrowModule from '../module/marker/SWMarkerArrowModule';
 import SWMarkerSingleModule from '../module/marker/SWMarkerSingleModule';
 import SWMarkerMoreModule from '../module/marker/SWMarkerMoreModule';
+
+/**
+ * 初始化实例对象
+ */
 
 /**
  * 添加老箭头数据

@@ -95,7 +95,6 @@ class SWCameraModule {
 
     }
 
-
     update() {
 
         if (this.enableDamping) {
@@ -157,16 +156,7 @@ class SWCameraModule {
             new TWEEN.Tween(from)
                 .to(to, 800)
                 .easing(TWEEN.Easing.Quadratic.Out)
-                .onUpdate(function() {
-
-                    camera.fov = this._object.x;
-                    console.log("camera.fov：" + camera.fov);
-
-                })
-                .onComplete(() => {
-
-                })
-                .start();
+                .onUpdate(function() { camera.fov = this._object.x; }).onComplete(() => {}).start();
 
             camera.updateProjectionMatrix();
 
@@ -198,16 +188,7 @@ class SWCameraModule {
             new TWEEN.Tween(from)
                 .to(to, 800)
                 .easing(TWEEN.Easing.Quadratic.Out)
-                .onUpdate(function() {
-
-                    camera.fov = this._object.x;
-                    console.log("camera.fov：" + camera.fov);
-
-                })
-                .onComplete(() => {
-
-                })
-                .start();
+                .onUpdate(function() { camera.fov = this._object.x; }).onComplete(() => {}).start();
         }
 
     }

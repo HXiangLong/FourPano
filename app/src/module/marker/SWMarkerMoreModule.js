@@ -18,17 +18,31 @@ class SWMarkerMoreModule extends SWMarkerModule {
 
         this.mouseDownBoo = false;
 
-        this.markerObj = obj;
+        if (obj) {
+            this.markerObj = obj;
+
+            this.createPolygon(obj.points);
+
+            this.addMouseEvent();
+        }
+    }
+
+    /**
+     * 创建多边形
+     * @param {Array} vertices 顶点信息
+     */
+    createPolygon(points) {
 
         let holes = [],
-            triangles, vertices = [];
+            triangles,
+            vertices = [];
 
         //所有点由空间坐标转三维坐标
-        obj.points.map((data) => {
+        points.map((data) => {
 
-            let v3 = VPToVector3(new SWViewGesture(data.yaw, data.pitch, 0));
+            let v3 = VPToVector3(new SWViewGesture(data.yaw, parseFloat(data.pitch) + 20, 0));
 
-            vertices.push(v3);
+            vertices.push(v3.subScalar(0.8));
 
         });
 
@@ -50,7 +64,9 @@ class SWMarkerMoreModule extends SWMarkerModule {
 
         this.material = new THREE.MeshLambertMaterial({
             color: 0x06FFFF,
+            depthTest: true,
             transparent: true,
+            colorWrite: true,
             side: 2,
             opacity: 0.5
         });
@@ -64,6 +80,12 @@ class SWMarkerMoreModule extends SWMarkerModule {
         this.mesh.userData.depthlevel = 1;
 
         scene.add(this.mesh);
+    }
+
+    /**
+     * 添加鼠标事件
+     */
+    addMouseEvent() {
 
         this.mesh.mouseDown = (e, obj) => {
 

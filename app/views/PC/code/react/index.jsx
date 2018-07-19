@@ -1,7 +1,11 @@
 import React from 'react';
-import '../../css/index.pcss'
+import './index.pcss'
 
 class Index extends React.Component {
+    constructor(){
+        super();
+    }
+    
     render() {
         return (
             <div className="cont">

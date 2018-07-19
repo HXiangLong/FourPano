@@ -92,43 +92,17 @@ class SWBoxFaceModule {
 
         fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[0]));
 
-        // let geometry = new THREE.SphereGeometry(100, 32, 32);
-        // let material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF }); //白0
-        // let sphere = new THREE.Mesh(geometry, material);
-        // sphere.position.copy(fourPointV3[0].multiplyScalar(0.8));
-        // scene.add(sphere);
-
         fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[1]));
-
-        // geometry = new THREE.SphereGeometry(100, 32, 32);
-        // material = new THREE.MeshBasicMaterial({ color: 0xffff00 }); //黄1
-        // sphere = new THREE.Mesh(geometry, material);
-        // sphere.position.copy(fourPointV3[1].multiplyScalar(0.8));
-        // scene.add(sphere);
 
         fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[2]));
 
-        // geometry = new THREE.SphereGeometry(100, 32, 32);
-        // material = new THREE.MeshBasicMaterial({ color: 0xff00ff }); //紫2
-        // sphere = new THREE.Mesh(geometry, material);
-        // sphere.position.copy(fourPointV3[2].multiplyScalar(0.8));
-        // scene.add(sphere);
-
         fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[3]));
-
-        // geometry = new THREE.SphereGeometry(100, 32, 32);
-        // material = new THREE.MeshBasicMaterial({ color: 0x00ffff }); //蓝3
-        // sphere = new THREE.Mesh(geometry, material);
-        // sphere.position.copy(fourPointV3[3].multiplyScalar(0.8));
-        // scene.add(sphere);
 
         this.fourPoint = [Vector3ToVP(fourPointV3[0]),
             Vector3ToVP(fourPointV3[1]),
             Vector3ToVP(fourPointV3[2]),
             Vector3ToVP(fourPointV3[3])
         ];
-
-        // console.log(this.faceNo, fourPointV3, this.fourPoint);
 
         let yawDis = -90 / 8;
         let minYaw = this.fourPoint[0].Yaw;
@@ -160,8 +134,6 @@ class SWBoxFaceModule {
                 ]);
             }
         }
-
-        // console.log(this.faceNo, this.tilesPointArr);
     }
 
     /**矩阵计算世界坐标 */
@@ -181,7 +153,6 @@ class SWBoxFaceModule {
      * 加载高清图
      */
     loadTexture() {
-        // let dd = Date.now();
 
         let path = `${this.boxPath}/3/sw_${this.faceNo}.jpg`;
 
@@ -194,7 +165,6 @@ class SWBoxFaceModule {
             path,
             // 加载成功之后调用
             (texture) => {
-                // console.log(`清晰图加载耗时：${Date.now()-dd}ms`);
 
                 texture.mapping = THREE.UVMapping;
 
