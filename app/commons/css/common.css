@@ -130,7 +130,6 @@ body {
 }
 
 #app {
-    position: absolute;
     z-index: 9;
     margin: 0;
     padding: 0;
