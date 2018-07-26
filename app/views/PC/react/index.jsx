@@ -2,7 +2,7 @@
 
 import React ,{Component}from 'react';
 import './index.pcss'
-import Header from './header/Header'
+import Header from './header'
 
 class Index extends Component {
     render() {

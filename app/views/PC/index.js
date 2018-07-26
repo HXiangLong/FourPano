@@ -1,11 +1,16 @@
-import '../../../commons/css/common.css'
+import '../../commons/css/common.css'
 import React from 'react';
 import {render} from 'react-dom';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import Index from '../react/index';
-import SWPano from '../../../src/SWPano'
-render( <Index />, document.getElementById('app'));
+import store from './Store';
+import Index from './react/index';
+import SWPano from '../../src/SWPano'
+render(
+    <Provider store={store}>
+      <Index />
+    </Provider>,
+    document.getElementById('app')
+  );
 
 let swPano = new SWPano();
 swPano.initStats();
