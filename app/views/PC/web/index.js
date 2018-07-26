@@ -1,9 +1,11 @@
 import '../../../commons/css/common.css'
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {render} from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import Index from '../react/index';
 import SWPano from '../../../src/SWPano'
-ReactDOM.render( <Index />, document.getElementById('app'));
+render( <Index />, document.getElementById('app'));
 
 let swPano = new SWPano();
 swPano.initStats();
