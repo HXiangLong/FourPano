@@ -144,9 +144,9 @@ class SWBoxJumpModule {
 
         let from = { x: 0, y: 0, z: 0, a: 1 };
         let to = {
-            x: (pos3.x * 100 > 1500 ? 1500 : (pos3.x * 100 < -1500 ? -1500 : pos3.x * 100)) * 1,
+            x: (pos3.x * 80 > 1500 ? 1500 : (pos3.x * 80 < -1500 ? -1500 : pos3.x * 80)) * 1,
             y: 0,
-            z: (pos3.z * 100 > 1500 ? 1500 : (pos3.z * 100 < -1500 ? -1500 : pos3.z * 100)) * 1,
+            z: (pos3.z * 80 > 1500 ? 1500 : (pos3.z * 80 < -1500 ? -1500 : pos3.z * 80)) * 1,
             a: 0
         };
         new TWEEN.Tween(from)

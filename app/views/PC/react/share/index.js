@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import css from './css/share.css'
+import './css/share.css'
 import QRCode from 'qrcode.react'
 
 const propTypes = {

@@ -1,8 +1,18 @@
 /* global THREE */
 
-import { scene, camera, c_StationInfo, c_ThumbnailSize } from '../../tool/SWConstants';
+import {
+    scene,
+    camera,
+    c_StationInfo,
+    c_ThumbnailSize,
+    sw_cameraManage
+} from '../../tool/SWConstants';
 import SWBoxFaceModule from './SWBoxFaceModule';
-import { disposeNode, Vector3ToVP } from '../../tool/SWTool';
+import {
+    disposeNode,
+    Vector3ToVP,
+    getNumberMax360
+} from '../../tool/SWTool';
 
 /**
  * 全景盒子
@@ -12,6 +22,8 @@ class SWBoxModule {
         this.box = new THREE.Group(); //全景内盒子
 
         this.faceArr = []; //面集合
+
+        this.worldFourPoint = []; //當前屏幕四個顶点在世界的位置
 
         this.url = url; //贴图路径
 
@@ -25,16 +37,28 @@ class SWBoxModule {
 
         this.box.rotation.y = THREE.Math.degToRad(90 - c_StationInfo.yaw); //每个站点都有一个校正值
 
+        this.regulateYaw = THREE.Math.radToDeg(this.box.rotation.y);
+
+        // console.log(this.regulateYaw);
+
         scene.add(this.box);
 
         this.addFace();
-
-        this.worldFourPoint = [];
     }
 
     addFace() {
 
-        for (let i = 0; i < 6; i++) {
+        let angle = getNumberMax360(Math.abs(this.regulateYaw) + sw_cameraManage.yaw_Camera) / 90; //计算现在先看到的是那个面
+
+        let originalOrderArr = [0, 1, 2, 3, 4, 5];
+
+        let arr1 = originalOrderArr.slice(0, angle - 1);
+
+        let arr2 = originalOrderArr.slice(angle - 1);
+
+        let newOrderArr = [...arr2, ...arr1];
+
+        newOrderArr.map((item, idx) => {
 
             let canvas = document.createElement("canvas");
 
@@ -43,8 +67,8 @@ class SWBoxModule {
             let context = canvas.getContext("2d");
 
             //计算图片位置
-            let nint = Math.floor(i / 3);
-            let mint = i % 3;
+            let nint = Math.floor(item / 3);
+            let mint = item % 3;
 
             context.drawImage(this.textures.image,
 
@@ -67,17 +91,43 @@ class SWBoxModule {
 
             texture1.needsUpdate = true;
 
-            let face = new SWBoxFaceModule(i, this.box, texture1, this.url);
+            let face = new SWBoxFaceModule(item, this.box, texture1, this.url);
 
             this.faceArr.push(face);
 
-        }
+        })
     }
 
     /**相机放大的情况下，有变化时调用此方法 */
     addFaceTiles() {
 
-        this.getWorldFourPoint();
+        let yp = this.getWorldFourPoint();
+
+        if (yp) {
+
+            this.faceArr.forEach((itme) => {
+
+                itme.createTiles(yp[0], yp[1], yp[2], yp[3]);
+
+            });
+
+        }
+    }
+
+    /**
+     * 获得当前屏幕四个顶点所在世界的坐标
+     */
+    getWorldFourPoint() {
+
+        this.worldFourPoint.length = 0;
+
+        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(0, 0)));
+
+        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(window.innerWidth, 0)));
+
+        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(0, window.innerHeight)));
+
+        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(window.innerWidth, window.innerWidth)));
 
         let yaw = this.worldFourPoint.sort((a, b) => {
             if (a.Yaw > b.Yaw) {
@@ -103,28 +153,7 @@ class SWBoxModule {
 
         if (isNaN(minYaw) || isNaN(maxYaw) || isNaN(minPitch) || isNaN(maxPitch)) return; //上保险，计算错误时不影响程序运行
 
-        this.faceArr.forEach((itme) => {
-
-            itme.createTiles(minYaw, maxYaw, minPitch, maxPitch);
-
-        });
-    }
-
-    /**
-     * 获得当前屏幕四个顶点所在世界的坐标
-     */
-    getWorldFourPoint() {
-
-        this.worldFourPoint.length = 0;
-
-        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(0, 0)));
-
-        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(window.innerWidth, 0)));
-
-        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(0, window.innerHeight)));
-
-        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(window.innerWidth, window.innerWidth)));
-
+        return [minYaw, maxYaw, minPitch, maxPitch];
     }
 
     /**
@@ -142,7 +171,7 @@ class SWBoxModule {
 
         let intersects = this.raycaster.intersectObjects([this.box], true);
 
-        return intersects[0].point;
+        return intersects.length > 0 ? intersects[0].point : new THREE.Vector3(0, 0, 0);
     }
 
     /**相机缩小的情况下，调用此方法 */

@@ -11,6 +11,8 @@
 
 /dist
 
+/.cache-loader
+
 # misc
 .DS_Store
 .env.local
