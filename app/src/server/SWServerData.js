@@ -41,7 +41,6 @@ class ServerData {
      * 获取配置文件数据
      */
     getConfig() {
-        console.info(external.server_json);
         this.museumID = external.server_json.museumID;
         this.displayID = external.server_json.displayID;
         this.serverURL = external.server_json.serverUrl;

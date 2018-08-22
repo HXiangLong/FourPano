@@ -1,8 +1,8 @@
- const external = {
+const external = {
      /**
       * 链接服务器地址json文件
       */
-     server_json: require('../../commons/json/config.json'),
+     server_json: '',
      /**
       * 跳转箭头图片
       */

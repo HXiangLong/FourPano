@@ -6,6 +6,6 @@
     "displayID": "5101-0010-0001",
     "firstPanoID": "A101-20180102000001",
     "data": {
-
+        "bgMusic":"http://localhost:8096/NodeAllProject/FourPano/app/commons/img/backmusic.mp3"
     }
 }

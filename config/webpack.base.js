@@ -64,6 +64,10 @@ module.exports = {
                 loader: 'happypack/loader?id=happy-babel-js',
                 include: [resolve('app')],
                 exclude: /node_modules/,
+                // query: {
+                //     presets: ['es2015','react','stage-1'],
+                //     plugins: ['transform-decorators-legacy','transform-decorators']
+                // }
             },
             { //file-loader 解决css等文件中引入图片路径的问题
                 // url-loader 当图片较小的时候会把图片BASE64编码，大于limit参数的时候还是使用file-loader 进行拷贝
@@ -72,7 +76,7 @@ module.exports = {
                     loader: 'url-loader',
                     options: {
                         name: assetsPath('images/[name].[hash:7].[ext]'), // 图片输出的路径
-                        limit: 2048
+                        limit: 8192
                     }
                 }
             },
@@ -85,7 +89,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+                test: /\.(woff|woff2?|eot|ttf|otf)(\?.*)?$/,
                 loader: 'url-loader',
                 options: {
                     limit: 10000,

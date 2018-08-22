@@ -3,47 +3,42 @@
 import React, { Component } from 'react';
 import './Header.pcss';
 import ShareButtons from '../share';
+const external = require('../../../../src/tool/SWExternalConst.js');
+
 
 class Header extends Component {
 	constructor() {
 		super();
-		this.state = {
-			audioUrl: 'http://localhost:8096/NodeAllProject/FourPano/app/commons/img/backmusic.mp3',
-			audioOff: true,
-			audioTitle: '关闭声音'
-		};
 		this.playBackAudio = this.playBackAudio.bind(this);
+		this.showHelp = this.showHelp.bind(this);
 		this.myRef = React.createRef();
+	}
+
+	componentWillMount(){
+		this.props.open_close_Audio({
+			audioUrl:external.server_json.data.bgMusic
+		});
 	}
 
 	playBackAudio() {
 		const audioNode = this.myRef.current;
 
-		this.setState((prestate) => {
-			return {
-				audioOff: !prestate.audioOff,
-				audioTitle: !prestate.audioOff ? '关闭声音' : '开启声音'
-			};
+		this.props.open_close_Audio({
+			bgMusicOff: !this.props.bgMusicOff
 		});
 
-		if (!this.state.audioOff) {
+		if (!this.props.bgMusicOff) {
 			audioNode.play();
 		} else {
 			audioNode.pause();
 		}
 	}
 
-	componentDidMount() {
-		console.log('componentDidMount');
-
-	}
-  
-	componentWillUnmount() {
-		console.log('componentWillUnmount');
+	showHelp() {
+		this.props.openHelp(true);
 	}
 
 	render() {
-		// console.log('render');
 		return (
 			<div className="header">
 				<ul className="quickmenu">
@@ -57,15 +52,15 @@ class Header extends Component {
 						/>
 					</li>
 					<li
-						className={'headerLi BGMusic' + (this.state.audioOff ? '' : ' closed')}
-						title={this.state.audioTitle}
+						className={'headerLi BGMusic' + (this.props.bgMusicOff ? '' : ' closed')}
+						title={this.props.bgMusicOff ? '关闭声音' : '开启声音'}
 						onClick={this.playBackAudio}
 					>
 						<i />
 						<span>音频</span>
-						<audio ref={this.myRef} src={this.state.audioUrl} autoPlay="autoplay" loop="loop" />
+						<audio ref={this.myRef} src={this.props.audioUrl} autoPlay="autoplay" loop="loop" />
 					</li>
-					<li className="headerLi help">
+					<li className="headerLi help" onClick={this.showHelp}>
 						<i />
 						<span>帮助</span>
 					</li>

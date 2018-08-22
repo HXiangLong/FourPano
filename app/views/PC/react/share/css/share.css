@@ -1,8 +1,8 @@
 @font-face {
   font-family: "socialshare";
-  src: url('../fonts/iconfont.eot');
+  src: url('../fonts/iconfont_share.eot');
   /* IE9*/
-  src: url('../fonts/iconfont.eot?#iefix') format('embedded-opentype'), url('../fonts/iconfont.woff') format('woff'), url('../fonts/iconfont.ttf') format('truetype'), url('../fonts/iconfont.svg#iconfont') format('svg');
+  src: url('../fonts/iconfont_share.eot?#iefix') format('embedded-opentype'), url('../fonts/iconfont_share.woff') format('woff'), url('../fonts/iconfont_share.ttf') format('truetype'), url('../fonts/iconfont_share.svg#iconfont_share') format('svg');
   /* IE6-IE8 */
   /* chrome, firefox */
   /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
