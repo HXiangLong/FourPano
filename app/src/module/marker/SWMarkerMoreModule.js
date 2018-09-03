@@ -3,6 +3,10 @@ import SWMarkerModule from "./SWMarkerModule";
 import { VPToVector3 } from '../../tool/SWTool';
 import SWViewGesture from '../../tool/SWViewGesture';
 import { camera, scene } from '../../tool/SWConstants';
+import initStore from '../../../views/PC/redux/store/store';
+import {
+    show_Iframe_fun
+} from '../../../views/PC/redux/action';
 
 /**
  * 多点绘面标注
@@ -100,6 +104,12 @@ class SWMarkerMoreModule extends SWMarkerModule {
                 this.mouseDownBoo = false;
 
                 console.log("鼠标弹起啦~~~~~" + this.markerObj.name);
+
+                		let store = initStore();
+		store.dispatch(show_Iframe_fun({
+            iframeOff: true,
+            iframeUrl: "http://192.168.10.63:8090/GZXHGM/DigitalMusService/BusinessData/ExhibitDetails/3DModel/001.html"
+        }));
             }
 
         };

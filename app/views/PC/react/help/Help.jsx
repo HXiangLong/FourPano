@@ -34,12 +34,13 @@ class Help extends Component {
 	}
 
 	closeHelp() {
-		this.props.closeHelp()
+		this.props.closeHelp();
 	}
 
 	render() {
 		return this.props.openHelp ? (
 			<div className="helpshade">
+				<div className="UIBG" onClick={this.closeHelp}/>
 				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeHelp} />
 				<div className="helpbox">
 					<div className="iconfont icon-zuo helpLeft" onClick={this.nextLeft} />

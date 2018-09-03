@@ -5,6 +5,12 @@ import './index.pcss';
 import '../../common_img/font_icon/iconfont.css';
 import Header from './header';
 import Help from './help';
+import MapTipBox from './mapTip';
+import MainMenu from './menu';
+import Loading from './load';
+import OpenIframe from './iframe';
+import IntroductionSimple from './Introduction';
+import ViewPicture from './viewPicture';
 
 const helpImgs = [
 	require('../../../commons/img/help/help1.png'), //操作
@@ -14,15 +20,21 @@ const helpImgs = [
 	require('../../../commons/img/help/help5.png'), //文物
 	require('../../../commons/img/help/help6.png'), //测量
 	require('../../../commons/img/help/help7.png'), //漫游
-	require('../../../commons/img/help/help8.png')//地图
-]; 
+	require('../../../commons/img/help/help8.png') //地图
+];
 
 class Index extends Component {
 	render() {
 		return (
 			<div className="reactApp">
 				<Header />
+				<MainMenu />
 				<Help helpList={helpImgs} />
+				<MapTipBox />
+				<Loading />
+				<OpenIframe />
+				<IntroductionSimple />
+				<ViewPicture imgs={helpImgs} />
 			</div>
 		);
 	}

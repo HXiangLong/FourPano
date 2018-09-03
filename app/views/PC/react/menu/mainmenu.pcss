@@ -1,0 +1,90 @@
+.mainmenu {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    text-align: center;
+}
+
+.mainmenu ul {}
+
+.mainmenu ul li {
+    position: relative;
+    display: inline-block;
+    margin: 0 15px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.mainmenu ul li i {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: block;
+    background: url(../../../../commons/img/mainmenu.png) no-repeat;
+    border-radius: 50%;
+    transition: box-shadow 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.mainmenu ul li i:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(../../../../commons/img/mainmenu.png) no-repeat;
+}
+
+.mainmenu ul li p {
+    font-size: 13px;
+    color: #f3f1e9;
+    margin-top: 7px;
+}
+
+.mainmenu ul li.exhibithall i:before {
+    background-position-x: -40px;
+}
+
+.mainmenu ul li.summary i:before {
+    background-position-x: -80px;
+}
+
+.mainmenu ul li.collect i:before {
+    background-position-x: -120px;
+}
+
+.mainmenu ul li.measure i:before {
+    background-position-x: -160px;
+}
+
+.mainmenu ul li.roam i:before {
+    background-position-x: -200px;
+}
+
+.mainmenu ul li.roam.close i:before {
+    background-position-x: -240px;
+}
+
+.mainmenu ul li.map i:before {
+    background-position-x: -280px;
+}
+
+.mainmenu ul li.school i:before {
+    background-position-x: -351px;
+}
+
+.mainmenu ul li.links i:before {
+    background-position-x: -317px;
+}
+
+.mainmenu ul li:hover i,
+.mainmenu ul li.active i {
+    box-shadow: 0 0 17px 0px rgba(249, 241, 190, 0.85);
+}
+
+.mainmenu ul li:hover i:before,
+.mainmenu ul li.active i:before {
+    background-position-y: -40px;
+}

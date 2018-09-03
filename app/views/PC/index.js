@@ -3,8 +3,7 @@ import {render} from 'react-dom';
 import { Provider} from 'react-redux';
 import Index from './react/index';
 import SWPano from '../../src/SWPano';
-import { createStore } from 'redux';
-import rootReducer from './redux/reducers';
+import initStore from './redux/store/store';
 const swExternalConst = require('../../src/tool/SWExternalConst');
 const axios = require('axios');
 
@@ -16,15 +15,13 @@ axios.get(serverPath, {
   })
   .then(json => {
     swExternalConst.server_json = json.data;
-    console.log('====================================');
+    console.log('==============初始配置======================');
     console.log(json.data,(Date.now() - tt));
     console.log('====================================');
     init();
   });
 
 function init() {
-
-  const store = createStore(rootReducer,window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
   let swPano = new SWPano();
   swPano.initStats();
@@ -40,7 +37,7 @@ function init() {
   swPano.initEditor();
 
   render( <Provider store = {
-      store
+    initStore()
     } >
     <Index />
     </Provider>,

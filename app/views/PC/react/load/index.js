@@ -1,2 +1,2 @@
-import loading from './loading';
-export default loading;
+import Loading from './loading';
+export default Loading;
