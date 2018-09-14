@@ -4,30 +4,50 @@ import './MainMenu.pcss';
 
 class MainMenu extends Component {
 	constructor() {
-        super();
+		super();
+	}
 
-        this.showIntroduction = this.showIntroduction.bind(this);
-    }
+	/**显示简介界面 */
+	showIntroduction() {
+		this.props.IntroductionState({
+			off: true
+		});
+		this.props.closeThumbnails();
+	}
 
-    showIntroduction(){
-        this.props.IntroductionState({
-            off:true
-        });
-    }
+	/**显示展厅列表 */
+	showThumbnails() {
+		this.props.OpenThumbnails ? this.props.closeThumbnails() : this.props.showThumbnails();
+	}
+
+	/**显示文物界面 */
+	showHotPhotoWall(){
+		this.props.closeThumbnails();
+		this.props.showHotPhotoWall({
+			off: true
+		});
+	}
+
+	showPanoMap(){
+		
+		this.props.showPanoMap({
+			off:!this.props.openPanoMapOff
+		});
+	}
 
 	render() {
 		return (
-			<div className="mainmenu" url=''>
+			<div className="mainmenu" url="">
 				<ul>
-					<li className="exhibithall" title="展厅">
+					<li className="exhibithall" title="展厅" onClick={this.showThumbnails.bind(this)}>
 						<i />
 						<p>展厅</p>
 					</li>
-					<li className="summary" title="简介" onClick={this.showIntroduction}>
+					<li className="summary" title="简介" onClick={this.showIntroduction.bind(this)}>
 						<i />
 						<p>简介</p>
 					</li>
-					<li className="collect" title="文物">
+					<li className="collect" title="文物" onClick={this.showHotPhotoWall.bind(this)}>
 						<i />
 						<p>文物</p>
 					</li>
@@ -39,7 +59,7 @@ class MainMenu extends Component {
 						<i />
 						<p>漫游</p>
 					</li>
-					<li className="map" title="地图">
+					<li className="map" title="地图" onClick={this.showPanoMap.bind(this)}>
 						<i />
 						<p>地图</p>
 					</li>

@@ -197,20 +197,6 @@ export function getFaceTileMatrixWH(lzoom) {
 }
 
 /**
- * 获取点是否在屏幕上
- * @param {THREE.Vector3} sceneXY 
- */
-export function getPintIFScene(sceneXY) {
-    let boo = false;
-    if ((Math.abs(sceneXY.x) != Infinity && sceneXY.x != NaN && (sceneXY.x >= -100 && sceneXY.x <= window.innerWidth + 100)) &&
-        (Math.abs(sceneXY.y) != Infinity && sceneXY.y != NaN && ((window.innerHeight - sceneXY.y) >= -100 && (window.innerHeight - sceneXY.y) <= window.innerHeight + 100)) &&
-        (Math.abs(sceneXY.z) != Infinity && sceneXY.z != NaN && sceneXY.z < 1)) {
-        boo = true;
-    }
-    return boo;
-}
-
-/**
  * 获取随机颜色值
  * */
 export function getRandomColor() {
@@ -361,7 +347,7 @@ export function disposeNode(node, ifParent = true) {
         }
         if (node.material) {
             if (node.material instanceof THREE.MeshFaceMaterial || node.material instanceof THREE.MultiMaterial) {
-                $.each(node.material.materials, function(idx, mtrl) {
+                $.each(node.material.materials, function (idx, mtrl) {
                     if (mtrl.map) mtrl.map.dispose();
                     if (mtrl.lightMap) mtrl.lightMap.dispose();
                     if (mtrl.bumpMap) mtrl.bumpMap.dispose();
@@ -528,14 +514,14 @@ export function setCameraAngle(yaw, pitch, move) {
         new TWEEN.Tween(from)
             .to(to, 1000)
             .easing(TWEEN.Easing.Exponential.Out)
-            .onUpdate(function() {
-                constants.sw_cameraManage.setHousesViewAngle(from.x, from.y);
+            .onUpdate(function () {
+                constants.sw_cameraManage.setHousesViewAngle(from.x, from.y, true);
             })
-            .onComplete(function() {
-                constants.sw_cameraManage.setHousesViewAngle(to.x, to.y);
+            .onComplete(function () {
+                constants.sw_cameraManage.setHousesViewAngle(to.x, to.y, true);
             })
             .start();
     } else {
-        constants.sw_cameraManage.cameraLookAt(yaw, pitch);
+        constants.sw_cameraManage.setHousesViewAngle(yaw, pitch, true);
     }
 }

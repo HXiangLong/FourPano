@@ -13,6 +13,9 @@ import {
     Vector3ToVP,
     getNumberMax360
 } from '../../tool/SWTool';
+import {
+    LoadPreviewImage
+} from '../../tool/SWInitializeInstance';
 
 /**
  * 全景盒子
@@ -28,6 +31,8 @@ class SWBoxModule {
         this.url = url; //贴图路径
 
         this.textures = textures; //缩略贴图对象
+
+        this.faceNum = 0;
 
         /**鼠标坐标 */
         this.mouseV2 = new THREE.Vector2();
@@ -91,7 +96,13 @@ class SWBoxModule {
 
             texture1.needsUpdate = true;
 
-            let face = new SWBoxFaceModule(item, this.box, texture1, this.url);
+
+            let face = new SWBoxFaceModule(item, this.box, texture1, this.url, () => {
+                this.faceNum += 1;
+                if (this.faceNum >= 6) {
+                    LoadPreviewImage();
+                }
+            });
 
             this.faceArr.push(face);
 

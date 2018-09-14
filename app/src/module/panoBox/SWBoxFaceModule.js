@@ -14,8 +14,9 @@ class SWBoxFaceModule {
      * @param {THREE.Group} faceGroup 全景盒子对象
      * @param {THREE.Group} texture 全景贴图
      * @param {THREE.Group} path 图片链接的前半截地址
+     * @param {Function} callfun 加载完毕回调
      */
-    constructor(no, faceGroup, texture, path) {
+    constructor(no, faceGroup, texture, path,callfun) {
 
         this.faceNo = no; //面编号
 
@@ -28,6 +29,8 @@ class SWBoxFaceModule {
         this.tilesPointArr = []; //所有瓦片四个顶点坐标
 
         this.faceGroup = faceGroup; //全部盒子对象
+
+        this.callFun = callfun;
 
         this.loadTexture();
 
@@ -179,6 +182,8 @@ class SWBoxFaceModule {
                 this.thumbnails.material.map = texture;
 
                 this.thumbnails.material.map.needsUpdate = true;
+
+                this.callFun();
             },
             // 加载中
             (xhr) => {},

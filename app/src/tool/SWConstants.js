@@ -124,6 +124,8 @@ export var c_StationInfo;
 export var c_previewImage = undefined;
 /**跳转过程中的过渡球*/
 export var c_jumpSphere = undefined;
+/**所有视频集合 */
+export var c_allVideoTable = new HashTable();
 
 
 //实例化对象

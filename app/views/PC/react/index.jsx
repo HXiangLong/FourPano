@@ -11,6 +11,9 @@ import Loading from './load';
 import OpenIframe from './iframe';
 import IntroductionSimple from './Introduction';
 import ViewPicture from './viewPicture';
+import Thumbnails from './thumbnails';
+import HotPhotoWall from './hotWall';
+import PanoMap from './map';
 
 const helpImgs = [
 	require('../../../commons/img/help/help1.png'), //操作
@@ -35,6 +38,9 @@ class Index extends Component {
 				<OpenIframe />
 				<IntroductionSimple />
 				<ViewPicture imgs={helpImgs} />
+				<Thumbnails />
+				<HotPhotoWall />
+				<PanoMap />
 			</div>
 		);
 	}

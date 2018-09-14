@@ -1,5 +1,7 @@
 import * as constants from './SWConstants';
-import { setCameraAngle } from './SWTool';
+import {
+    setCameraAngle,Vector3ToVP
+} from './SWTool';
 import SWMarkerArrowModule from '../module/marker/SWMarkerArrowModule';
 import SWMarkerSingleModule from '../module/marker/SWMarkerSingleModule';
 import SWMarkerMoreModule from '../module/marker/SWMarkerMoreModule';
@@ -124,6 +126,33 @@ export function AddMarkerMesh() {
     });
 }
 
+/**加载完成之后调用 */
+export function LoadPreviewImage(){
+
+    if (constants.c_isWallClickRotateBoo) {
+
+        constants.c_isWallClickRotateBoo = false;
+
+        rotateByWallClick();
+    }
+
+    AddMarkerMesh();
+}
+
+/**
+ * 跳转之后看向某一个点
+ * */
+export function rotateByWallClick() {
+
+    let aa = constants.c_wallClickRotateV3.clone().sub(constants.c_StationInfo.point.clone());
+
+    let bb = aa.clone().applyMatrix4(constants.c_DS3ToOpenGLMx4);
+
+    let swvg = Vector3ToVP(new THREE.Vector3(bb.z, -bb.y, bb.x));
+
+    setCameraAngle(swvg.Yaw,  swvg.Pitch, true);
+};
+
 /**
  * 跳转之后看向标注的中心点
  * @param {SWMarkerInfo} obj 标注点对象
@@ -132,7 +161,7 @@ export function JumpLookMarker(obj) {
 
     if (obj.centerX != 0 && obj.centerY != 0 && obj.centerZ != 0) {
 
-        setCameraAngle(obj.centerX, obj.centerY);
+        setCameraAngle(obj.centerX, obj.centerY, true);
 
     } else {
 
@@ -147,7 +176,7 @@ export function JumpLookMarker(obj) {
 
         });
 
-        let yawArr = yaw.sort(function(a, b) {
+        let yawArr = yaw.sort(function (a, b) {
             if (a > b) {
                 return 1;
             } else {
@@ -155,7 +184,7 @@ export function JumpLookMarker(obj) {
             }
         });
 
-        let pitchArr = pitch.sort(function(a, b) {
+        let pitchArr = pitch.sort(function (a, b) {
             if (a > b) {
                 return 1;
             } else {
@@ -175,6 +204,6 @@ export function JumpLookMarker(obj) {
 
         let pp = pitchArr[0] + (pitchArr[pitchArr.length - 1] - pitchArr[0]) * 0.5;
 
-        setCameraAngle(yy, pp);
+        setCameraAngle(yy, pp, true);
     }
 }

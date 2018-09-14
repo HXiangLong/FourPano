@@ -61,7 +61,6 @@ class SWBoxJumpModule {
                     constants.c_isPreviewImageLoadEnd = true;
 
                     this.createPanoBox(constants.c_StationInfo, url, texture);
-
                 });
             }
         }
@@ -86,7 +85,6 @@ class SWBoxJumpModule {
             this.createSphere(() => {
 
                 this.panoBox = new SWBox(url, texture);
-
             });
         }
         this.previousPano = pano;

@@ -5,7 +5,6 @@ import './Header.pcss';
 import ShareButtons from '../share';
 const external = require('../../../../src/tool/SWExternalConst.js');
 
-
 class Header extends Component {
 	constructor() {
 		super();
@@ -14,9 +13,9 @@ class Header extends Component {
 		this.myRef = React.createRef();
 	}
 
-	componentWillMount(){
+	componentWillMount() {
 		this.props.open_close_Audio({
-			audioUrl:external.server_json.data.bgMusic
+			audioUrl: external.server_json.data.bgMusic
 		});
 	}
 
@@ -41,6 +40,28 @@ class Header extends Component {
 	render() {
 		return (
 			<div className="header">
+				{/* <div className="selectType">
+					<div className="border">
+						<span className="choseVal" data-value="">
+							中国民主党派历史陈列馆
+						</span>
+						<input type="text" className="choseVal" value="" name="y" style="display:none;" />
+						<i className="toggleIcon" />
+					</div>
+					<ul>
+						<li data-value="" data-text="中国民主党派历史陈列馆" className="active">
+							中国民主党派历史陈列馆
+						</li>
+						<li data-value="" data-text="红岩魂陈列馆">
+							红岩魂陈列馆
+						</li>
+						<li data-value="" data-text="红岩革命纪念馆">
+							{' '}
+							红岩革命纪念馆
+						</li>
+					</ul>
+				</div> */}
+
 				<ul className="quickmenu">
 					<li className="headerLi share_share">
 						<i />

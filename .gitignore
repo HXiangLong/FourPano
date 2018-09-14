@@ -13,6 +13,8 @@
 
 /.cache-loader
 
+/.svn
+
 # misc
 .DS_Store
 .env.local

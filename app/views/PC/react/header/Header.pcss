@@ -78,3 +78,65 @@
 .header .quickmenu .headerLi.setup i {
     background-position-x: -66px;
 }
+
+.header .selectType {
+    position: absolute;
+    width: 260px;
+    line-height: 50px;
+    border-right: 1px solid #e3c042;
+}
+
+.header .border {
+    cursor: pointer;
+}
+
+.header .selectType .choseVal {
+    padding: 0 45px 0 20px;
+    cursor: pointer;
+    color: #f5f3ec;
+    font-size: 16px;
+}
+
+.header .selectType .toggleIcon {
+    position: absolute;
+    right: 0;
+    top: 8px;
+    width: 50px;
+    height: 38px;
+    background: url(../../../../commons/img/xljt.png) no-repeat center;
+    transition: all .3s ease;
+}
+
+.header .selectType ul {
+    position: absolute;
+    top: 51px;
+    left: 0;
+    right: 0;
+    background: #0000006e;
+    box-shadow: 1px 1px 12px #bfbebe;
+    z-index: 100;
+    padding-top: 5px;
+    transition: all .5s ease;
+    display: none;
+    max-height: 185px;
+    overflow: auto;
+}
+
+.header .selectType li {
+    border-bottom: 1px solid #eaeaea;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    font-size:  16px;
+}
+
+.header .selectType li:hover,
+.searchbar .selectType li.active {
+    background: #e3c042;
+}
+
+.header .selectType.active ul {
+    display: block;
+}

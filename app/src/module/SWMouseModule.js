@@ -1,6 +1,10 @@
 /* global THREE*/
 
 import * as constants from '../tool/SWConstants';
+import initStore from '../../views/PC/redux/store/store';
+import {
+    show_Thumbnails_fun
+} from '../../views/PC/redux/action';
 
 /**
  * 鼠标事件
@@ -12,11 +16,7 @@ class SWMouseModule {
 
         this.canvas3d = canvas;
 
-        /**是否按下鼠标 */
-        this.ifMouseDownBoo = false;
-
-        /**是否鼠标离开 */
-        this.ifMouseOutBoo = false;
+        this.startMouse = new THREE.Vector2();
 
         /**鼠标坐标 */
         this.mouseV2 = new THREE.Vector2();
@@ -24,9 +24,12 @@ class SWMouseModule {
         /**射线 */
         this.raycaster = new THREE.Raycaster();
 
-        this.addMosueEvent();
-        // this.addGyroEvent();
-        this.addTouchEvent();
+        if ('ontouchstart' in window) {
+            // this.addGyroEvent();
+            this.addTouchEvent();
+        } else {
+            this.addMosueEvent();
+        }
     }
 
     /**添加鼠标事件 */
@@ -159,6 +162,14 @@ class SWMouseModule {
 
             this.intersect = this.mouseRaycaster(this.mouseV2);
 
+            let v2 = new THREE.Vector2(e.clientX, e.clientY);
+
+            if (v2.equals(this.startMouse) && this.intersect && this.intersect.object.mouseclick) {
+
+                console.log("点击事件");
+                this.intersect.object.mouseclick(e, this.intersect);
+            }
+
             if (this.intersect && this.intersect.object.mouseUp) { //模型弹起事件
 
                 this.intersect.object.mouseUp(e, this.intersect);
@@ -220,7 +231,13 @@ class SWMouseModule {
      */
     mouseDown(e) {
 
+        let store = initStore();
+
+        store.dispatch(show_Thumbnails_fun(false));
+        
         constants.sw_cameraManage.onMouseDown(e);
+
+        this.startMouse = new THREE.Vector2(e.clientX, e.clientY);
 
         if (constants.c_currentState === constants.c_currentStateEnum.editorStatus &&
             constants.c_editorState === constants.c_editorStateEnum.markerPoint) {
@@ -239,16 +256,14 @@ class SWMouseModule {
 
             }
         }
-
     }
 
     /**
-     * 鼠标从某元素移开
+     * 鼠标从某元素移开 PS:为解决鼠标移动到UI界面上
      * @param {Event} e 
      */
     mouseOut(e) {
-
-        this.ifMouseOutBoo = true;
+        constants.sw_cameraManage.onMouseUp(e);
     }
 
     /**
@@ -257,7 +272,6 @@ class SWMouseModule {
      */
     mouseOver(e) {
 
-        this.ifMouseOutBoo = false;
     }
 
     /**
@@ -266,7 +280,21 @@ class SWMouseModule {
      */
     touchStart(e) {
 
+        let store = initStore();
+
+        store.dispatch(show_Thumbnails_fun(false));
+
         constants.sw_cameraManage.onTouchStart(e);
+
+        this.mousePosition(e.targetTouches[0].clientX, e.targetTouches[0].clientY);
+
+        this.intersect = this.mouseRaycaster(this.mouseV2);
+
+        if (this.intersect && this.intersect.object.mouseDown) {
+
+            this.intersect.object.mouseDown(e.targetTouches[0], this.intersect);
+
+        }
     }
 
     /**
@@ -276,6 +304,19 @@ class SWMouseModule {
     touchEnd(e) {
 
         constants.sw_cameraManage.onTouchEnd(e);
+
+        if (e.touches.length == 0) { //屏幕上没有手指才是真的触摸事件触发时
+
+            this.mousePosition(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+
+            this.intersect = this.mouseRaycaster(this.mouseV2);
+
+            if (this.intersect && this.intersect.object.mouseUp) { //模型弹起事件
+
+                this.intersect.object.mouseUp(e.changedTouches[0], this.intersect);
+
+            }
+        }
     }
 
     /**
@@ -285,6 +326,46 @@ class SWMouseModule {
     touchMove(e) {
 
         constants.sw_cameraManage.onTouchMove(e);
+
+        if (e.touches.length == 0) { //一支手指 旋转、点击
+            this.mousePosition(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+
+            let rayObj = this.mouseRaycaster(this.mouseV2);
+
+            if (rayObj) {
+
+                if (this.intersect && this.intersect != rayObj) { //如果再次返回对象不是上次对象，就是离开对象了
+
+                    if (this.intersect.object.mouseOut) { //离开模型事件
+
+                        this.intersect.object.mouseOut(e.changedTouches[0], this.intersect);
+
+                    }
+                }
+
+                if (rayObj.object.mouseOver) { //进入模型事件
+
+                    rayObj.object.mouseOver(e.changedTouches[0], rayObj);
+
+                }
+
+                if (rayObj.object.mouseMove) { //移动事件
+
+                    rayObj.object.mouseMove(e.changedTouches[0], rayObj);
+
+                }
+
+            } else if (this.intersect) {
+
+                if (this.intersect.object.mouseOut) {
+
+                    this.intersect.object.mouseOut(e.changedTouches[0], this.intersect);
+
+                }
+            }
+
+            this.intersect = rayObj;
+        }
     }
 
     /**陀螺仪旋转事件-设备定位改变事件 */

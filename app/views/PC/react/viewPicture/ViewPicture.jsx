@@ -20,7 +20,7 @@ class ViewPicture extends Component {
 
 		this.state = {
             touchORmouse:('ontouchstart' in window),//是否是触屏
-			off: true,
+			off: false,
 			title: '查看大图界面',
 			imgs: this.props.imgs,
 			page: 1,
