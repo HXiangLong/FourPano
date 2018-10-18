@@ -5,7 +5,8 @@ import {
     camera,
     c_Minfov,
     c_Maxfov,
-    c_isMeasureStatus
+    c_isMeasureStatus,
+    c_isDisplayFace
 } from '../../tool/SWConstants';
 import {
     TextDiv,
@@ -50,7 +51,7 @@ class SWWallSurfaceModule {
             depthTest: false,
             side: 2,
             transparent: true,
-            opacity: 0.3
+            opacity: 0.5
         });
         let geometry = new THREE.PlaneGeometry(200, 123.6);
         this.wallFaceMash = new THREE.Mesh(geometry, material);
@@ -124,6 +125,7 @@ class SWWallSurfaceModule {
     wallProbeSurfaceVisible(wallType, zoomType) {
 
         if (c_isMeasureStatus) wallType = 0; //测量状态不显示探面
+        if (!c_isDisplayFace && wallType == 2) wallType = 0;
 
         this.wallFaceMash.visible = (wallType === 1);
 
@@ -142,7 +144,7 @@ class SWWallSurfaceModule {
      */
     groundFaceMove(obj) {
 
-        if (c_isMeasureStatus) return; //测量状态不显示移动数据
+        if (c_isMeasureStatus || !c_isDisplayFace) return; //测量状态不显示移动数据
 
         this.isgroundFaceJumpBoo = getJudgeOrZoom(obj, 1);
 
@@ -205,7 +207,7 @@ class SWWallSurfaceModule {
 
         dis = dis < 0.05 ? 0.05 : dis; //0.05是最小缩放比例
 
-        dis = dis > 3 ? 3 : dis; //3是最大缩放比例
+        dis = dis > 2 ? 2 : dis; //3是最大缩放比例
 
         this.wallFaceMash.scale.set(dis * fov, dis * fov, dis * fov); //缩放
 

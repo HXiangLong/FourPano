@@ -4,14 +4,7 @@ import {
     VPToVector3
 } from '../../tool/SWTool';
 import SWViewGesture from '../../tool/SWViewGesture';
-import {
-    camera,
-    scene
-} from '../../tool/SWConstants';
-import initStore from '../../../views/PC/redux/store/store';
-import {
-    show_Iframe_fun
-} from '../../../views/PC/redux/action';
+import * as constants from '../../tool/SWConstants';
 
 /**
  * 多点绘面标注
@@ -25,14 +18,17 @@ class SWMarkerMoreModule extends SWMarkerModule {
 
         super();
 
-        this.mouseDownBoo = false;
+        this.config = {
+            max: 0.6,
+            min: 0.15,
+            openness: 0.6,
+            weak: -0.005
+        }
 
         if (obj) {
             this.markerObj = obj;
 
             this.createPolygon(obj.points);
-
-            this.addMouseEvent();
         }
     }
 
@@ -41,15 +37,23 @@ class SWMarkerMoreModule extends SWMarkerModule {
      * @param {Array} vertices 顶点信息
      */
     createPolygon(points) {
-
         let holes = [],
             triangles,
             vertices = [];
 
-        //所有点由空间坐标转三维坐标
-        points.map((data) => {
+        this.material = new THREE.MeshBasicMaterial({
+            color: new THREE.Color(0x06FFFF),
+            depthTest: false,
+            transparent: true,
+            side: 2,
+            alphaTest:0,
+            opacity: 1
+        });
 
-            let v3 = VPToVector3(new SWViewGesture(data.yaw, parseFloat(data.pitch) + 20, 0));
+        //所有点由空间坐标转三维坐标
+        points.forEach((data) => {
+
+            let v3 = VPToVector3(new SWViewGesture(parseFloat(data.yaw), parseFloat(data.pitch), 0));
 
             vertices.push(v3.subScalar(0.8));
 
@@ -71,68 +75,29 @@ class SWMarkerMoreModule extends SWMarkerModule {
 
         this.geometry.computeFaceNormals();
 
-        this.material = new THREE.MeshLambertMaterial({
-            color: 0x06FFFF,
-            depthTest: true,
-            transparent: true,
-            colorWrite: true,
-            side: 2,
-            opacity: 0.5
-        });
-
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-
-        this.mesh.lookAt(camera.position);
-
+        this.mesh.lookAt(constants.camera.position);
         this.mesh.name = "markerMesh";
-
         this.mesh.userData.depthlevel = 1;
+        this.mesh.userData.markerID = this.markerObj.markerID;
+        constants.scene.add(this.mesh);
 
-        scene.add(this.mesh);
+        this.addMouseEvent();
     }
 
-    /**
-     * 添加鼠标事件
-     */
-    addMouseEvent() {
+    update() {
 
-        this.mesh.mouseDown = (e, obj) => {
+        this.mesh.material.transparent = true;
+        
+        this.mesh.material.opacity = this.config.openness;
 
-            this.mouseDownBoo = true;
+        this.config.openness += this.config.weak;
 
-        };
+        if (this.config.openness <= this.config.min || this.config.openness >= this.config.max) {
 
-        this.mesh.mouseUp = (e, obj) => {
-
-            if (this.mouseDownBoo) {
-
-                this.mouseDownBoo = false;
-
-                console.log("鼠标弹起啦~~~~~" + this.markerObj.name);
-
-                let store = initStore();
-                store.dispatch(show_Iframe_fun({
-                    iframeOff: true,
-                    iframeUrl: "http://192.168.10.63:8090/GZXHGM/DigitalMusService/BusinessData/ExhibitDetails/3DModel/001.html"
-                }));
-            }
-
-        };
-
-        //鼠标进入
-        this.mesh.mouseOver = (e, obj) => {
-
-            this.showTextDiv(obj, this.markerObj.name);
+            this.config.weak = -this.config.weak;
 
         }
-
-        //出去
-        this.mesh.mouseOut = (e, obj) => {
-
-            this.hideTextDiv();
-
-        }
-
     }
 }
 

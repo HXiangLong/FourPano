@@ -1,7 +1,16 @@
 /* global THREE*/
 
-import { c_FaceDistance, scene } from '../../tool/SWConstants'
-import { disposeNode, Vector3ToVP, getNumberMax360 } from '../../tool/SWTool'
+import {
+    c_FaceDistance,
+    scene,
+    vs_hdr,
+    fs_hdr
+} from '../../tool/SWConstants'
+import {
+    disposeNode,
+    Vector3ToVP,
+    getNumberMax360
+} from '../../tool/SWTool'
 import SWBoxTilesModule from './SWBoxTilesModule'
 import HashTable from '../../tool/SWHashTable';
 /**
@@ -16,7 +25,7 @@ class SWBoxFaceModule {
      * @param {THREE.Group} path 图片链接的前半截地址
      * @param {Function} callfun 加载完毕回调
      */
-    constructor(no, faceGroup, texture, path,callfun) {
+    constructor(no, faceGroup, texture, path, callfun) {
 
         this.faceNo = no; //面编号
 
@@ -36,7 +45,24 @@ class SWBoxFaceModule {
 
         this.geometry = new THREE.PlaneGeometry(c_FaceDistance, c_FaceDistance, 1, 1);
 
-        this.material = new THREE.MeshBasicMaterial({ map: texture });
+        this.material = new THREE.MeshBasicMaterial({ map: texture ,depthTest: true});
+        // this.material = new THREE.ShaderMaterial({
+
+        //     uniforms: {
+        //         tDiffuse: {
+        //             value: texture
+        //         },
+        //         exposure: {
+        //             value: 0.125
+        //         },
+        //         brightMax: {
+        //             value: 0.5
+        //         }
+        //     },
+        //     vertexShader: vs_hdr,
+        //     fragmentShader: fs_hdr
+
+        // });
 
         this.thumbnails = new THREE.Mesh(this.geometry, this.material);
 
@@ -181,6 +207,10 @@ class SWBoxFaceModule {
 
                 this.thumbnails.material.map = texture;
 
+                // this.thumbnails.material.lights = true;
+
+                // this.thumbnails.material.aoMapIntensity = 0.001;
+
                 this.thumbnails.material.map.needsUpdate = true;
 
                 this.callFun();
@@ -203,7 +233,7 @@ class SWBoxFaceModule {
 
                 let pointArr = this.tilesPointArr[y * 8 + x];
 
-                pointArr.map((item) => {
+                pointArr.forEach((item) => {
 
                     let boo = false;
 

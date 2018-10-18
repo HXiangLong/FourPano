@@ -44,8 +44,6 @@ class SWBoxModule {
 
         this.regulateYaw = THREE.Math.radToDeg(this.box.rotation.y);
 
-        // console.log(this.regulateYaw);
-
         scene.add(this.box);
 
         this.addFace();
@@ -63,7 +61,7 @@ class SWBoxModule {
 
         let newOrderArr = [...arr2, ...arr1];
 
-        newOrderArr.map((item, idx) => {
+        newOrderArr.forEach((item) => {
 
             let canvas = document.createElement("canvas");
 
@@ -98,8 +96,11 @@ class SWBoxModule {
 
 
             let face = new SWBoxFaceModule(item, this.box, texture1, this.url, () => {
+
                 this.faceNum += 1;
+
                 if (this.faceNum >= 6) {
+
                     LoadPreviewImage();
                 }
             });

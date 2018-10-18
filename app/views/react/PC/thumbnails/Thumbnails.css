@@ -1,0 +1,43 @@
+.ThumbnailsBox {
+    position: absolute;
+    width: 100%;
+    height: 160px;
+    background-color: rgba(0, 0, 0, 0.5);
+    bottom: 12%;
+    z-index: 13;
+}
+
+.ThumbnailsBox .exhiblistItem {
+    position: absolute;
+    width: 1195px;
+    height: 140px;
+    background-color: rgba(0, 0, 0, 0.4);
+    left: 50%;
+    top: 10px;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.ThumbnailsBox ul {
+    width: 20000px;
+}
+
+.ThumbnailsBox .left {
+    font-size: 60px;
+    position: absolute;
+    top: 50%;
+    left: 286px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.ThumbnailsBox .right {
+    font-size: 60px;
+    position: absolute;
+    top: 50%;
+    right: 286px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}

@@ -1,0 +1,69 @@
+.ViewPicture {
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+}
+
+.ViewPicture .titleName {
+    font-weight: bold;
+    padding: 4px;
+    display: inline;
+    background-color: rgba(0, 0, 0, 0.6);
+    text-align: left;
+    font-size: 16px;
+    letter-spacing: 2px;
+    top: 10px;
+    left: 10px;
+    position: absolute;
+    color: #e8e8e8;
+    z-index: 2;
+}
+
+.ViewPicture .imageShow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.ViewPicture .imageShow img {
+    position: absolute;
+}
+
+.ViewPicture .operating {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    width: 360px;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.ViewPicture .operating ul {
+    text-align: center;
+}
+
+.ViewPicture .operating li {
+    display: inline-block;
+    font-size: 40px;
+    margin: 0 9px;
+    cursor: pointer;
+}
+
+.ViewPicture .pageNum {
+    position: absolute;
+    width: 76px;
+    height: 23px;
+    left: 50%;
+    bottom: 7%;
+    font-size: 18px;
+    color: #e8e8e8;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 2;
+}

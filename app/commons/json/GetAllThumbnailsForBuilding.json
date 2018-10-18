@@ -1,0 +1,38 @@
+[
+    {
+        "ThumbnailID": "1",
+        "MuseumID": "5101-0001",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "5101-0010-0001-0001",
+        "SceneID": "",
+        "PanoID": "A101-20180102000001",
+        "Name": "一楼",
+        "DisplayPriority": 1,
+        "Description": "",
+        "FilePath": "BusinessData/PanoThumbnails/A101-20180102000001.jpg"
+    },
+    {
+        "ThumbnailID": "2",
+        "MuseumID": "5101-0001",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "5101-0010-0001-0002",
+        "SceneID": "",
+        "PanoID": "W101-20171214000001",
+        "Name": "二楼",
+        "DisplayPriority": 1,
+        "Description": "",
+        "FilePath": "BusinessData/PanoThumbnails/W101-20171214000001.jpg"
+    },
+    {
+        "ThumbnailID": "3",
+        "MuseumID": "5101-0001",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "5101-0010-0001-0003",
+        "SceneID": "",
+        "PanoID": "C301-20180103000001",
+        "Name": "三楼",
+        "DisplayPriority": 1,
+        "Description": "",
+        "FilePath": "BusinessData/PanoThumbnails/C301-20180103000001.jpg"
+    }
+]

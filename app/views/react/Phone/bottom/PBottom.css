@@ -1,0 +1,93 @@
+.PMainMenu {
+    position: absolute;
+    bottom: 42px;
+    left: 7px;
+    width: 232px;
+    height: 20px;
+    text-align: center;
+    z-index: 10;
+}
+
+.PMainMenu ul {
+    position: absolute;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.PMainMenu ul li {
+    margin: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    background-color: #e8e8e8;
+    width: 2rem;
+    height: 2rem;
+    background: rgba(31, 30, 30, 0.7) no-repeat center;
+    background-size: 50% auto;
+    float: left;
+    text-align: center;
+}
+
+.PMainMenu ul li i {
+    position: relative;
+    width: 100%;
+    height: 2rem;
+    display: inline-block;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.PMainMenu ul li p {
+    font-size: 12px;
+    color: #e8e8e8;
+    position: absolute;
+    line-height: 2rem;
+    bottom: -8px;
+    width: 2rem;
+}
+
+
+.PMainMenu ul li.exhibithall {
+    background-image: url(../../../../commons/img/menuicon-exhibithall.png);
+}
+
+.PMainMenu ul li.summary {
+    background-image: url(../../../../commons/img/menuicon-summary.png);
+}
+
+.PMainMenu ul li.arrow {
+    background-image: url(../../../../commons/img/down.png);
+    background-size: auto 45%;
+}
+
+.PMainMenu ul li.roam {
+    background-image: url(../../../../commons/img/menuicon-roam.png);
+}
+
+.PMainMenu ul li.collect {
+    background-size: 37% auto;
+    background-image: url(../../../../commons/img/menuicon-collect.png);
+}
+
+.PMainMenu ul li.exhibithall.active i {
+    background-image: url(../../../../commons/img/menuicon-exhibithall-active.png);
+}
+
+.PMainMenu ul li.summary.active i {
+    background-image: url(../../../../commons/img/menuicon-summary-active.png);
+}
+
+.PMainMenu ul li.roam.close i {
+    background-image: url(../../../../commons/img/menuicon-roam-close.png);
+}
+
+.PMainMenu ul li.collect.active i {
+    background-image: url(../../../../commons/img/menuicon-collect-active.png);
+}
+
+.PMainMenu .arrowup {
+    background: url(../../../../commons/img/up.png) no-repeat center;
+    padding: 1.5rem 1rem;
+    background-size: auto 30%;
+    display: none;
+}

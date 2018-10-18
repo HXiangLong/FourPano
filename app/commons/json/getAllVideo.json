@@ -1,0 +1,162 @@
+[
+    {
+        "PanoID": "A101-2018010200004000",
+        "VideoName": "videos/03cishalizhun.webm",
+        "Details": "{\"url\":\"videos/03cishalizhun.webm\",\"width\":\"1024\",\"height\":\"768\",\"posX\":\"-696.500\",\"posY\":\"-52.000\",\"posZ\":\"1112.400\",\"rotX\":\"-5.350\",\"rotY\":\"-212.750\",\"rotZ\":\"3.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-2018010200002800",
+        "VideoName": "videos/05xuchongzhi.webm",
+        "Details": "{\"url\":\"videos/05xuchongzhi.webm\",\"width\":\"1280\",\"height\":\"720\",\"posX\":\"755.500\",\"posY\":\"136.000\",\"posZ\":\"-1038.600\",\"rotX\":\"-717.350\",\"rotY\":\"-415.750\",\"rotZ\":\"3.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000002",
+        "VideoName": "videos/061bowenqiangyou.webm",
+        "Details": "{\"url\":\"videos/061bowenqiangyou.webm\",\"width\":\"1024\",\"height\":\"768\",\"posX\":\"750.500\",\"posY\":\"51.000\",\"posZ\":\"-128.600\",\"rotX\":\"-3.350\",\"rotY\":\"-48.750\",\"rotZ\":\"-2.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000002",
+        "VideoName": "videos/062bowenqiangzuo.webm",
+        "Details": "{\"url\":\"videos/062bowenqiangzuo.webm\",\"width\":\"1024\",\"height\":\"768\",\"posX\":\"-255.500\",\"posY\":\"48.000\",\"posZ\":\"-706.600\",\"rotX\":\"-2.350\",\"rotY\":\"-12.750\",\"rotZ\":\"-1.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-20180103000004",
+        "VideoName": "videos/08guizaitaimeiren.webm",
+        "Details": "{\"url\":\"videos/08guizaitaimeiren.webm\",\"width\":\"1920\",\"height\":\"1080\",\"posX\":\"-1827.500\",\"posY\":\"-36.000\",\"posZ\":\"-1429.600\",\"rotX\":\"-2.350\",\"rotY\":\"65.250\",\"rotZ\":\"1.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-20180103000064",
+        "VideoName": "videos/09jianbianyundong.webm",
+        "Details": "{\"url\":\"videos/09jianbianyundong.webm\",\"width\":\"1024\",\"height\":\"576\",\"posX\":\"630.500\",\"posY\":\"-10.000\",\"posZ\":\"419.400\",\"rotX\":\"-2.350\",\"rotY\":\"-122.750\",\"rotZ\":\"-2.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-20180103000073",
+        "VideoName": "videos/10laoyuanbaitai.webm",
+        "Details": "{\"url\":\"videos/10laoyuanbaitai.webm\",\"width\":\"1024\",\"height\":\"768\",\"posX\":\"1554.500\",\"posY\":\"148.000\",\"posZ\":\"1024.400\",\"rotX\":\"-2.350\",\"rotY\":\"-123.750\",\"rotZ\":\"-2.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-2018010300008600",
+        "VideoName": "videos/17mingguoluanxiang.webm",
+        "Details": "{\"url\":\"videos/17mingguoluanxiang.webm\",\"width\":\"1920\",\"height\":\"1080\",\"posX\":\"-156.500\",\"posY\":\"-40.000\",\"posZ\":\"-1728.600\",\"rotX\":\"-4.350\",\"rotY\":\"-390.750\",\"rotZ\":\"-2.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-20180102000015",
+        "VideoName": "videos/18huaqiaozaixinhaigemingzhong.webm",
+        "Details": "{\"url\":\"18huaqiaozaixinhaigemingzhong.webm\",\"width\":\"800\",\"height\":\"450\",\"posX\":\"-867.500\",\"posY\":\"-2.000\",\"posZ\":\"1049.400\",\"rotX\":\"-4.350\",\"rotY\":\"-212.250\",\"rotZ\":\"2.500\",\"scale\":\"0.5\",\"loop\":true,\"openBox\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000082",
+        "VideoName": "videos/22linjuemin.webm",
+        "Details": "{\"url\":\"videos/22linjuemin.webm\",\"width\":\"1020\",\"height\":\"576\",\"posX\":\"-181.500\",\"posY\":\"56.000\",\"posZ\":\"522.400\",\"rotX\":\"-2.350\",\"rotY\":\"-209.750\",\"rotZ\":\"1.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-20180103000060",
+        "VideoName": "videos/23xiaoxuesheng.webm",
+        "Details": "{\"url\":\"videos/23xiaoxuesheng.webm\",\"width\":\"720\",\"height\":\"576\",\"posX\":\"-645.500\",\"posY\":\"18.000\",\"posZ\":\"1191.400\",\"rotX\":\"-2.350\",\"rotY\":\"-215.750\",\"rotZ\":\"1.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-20180103000077",
+        "VideoName": "videos/24huguoyundong.webm",
+        "Details": "{\"url\":\"videos/24huguoyundong.webm\",\"width\":\"1920\",\"height\":\"1080\",\"posX\":\"-586.500\",\"posY\":\"140.000\",\"posZ\":\"2127.400\",\"rotX\":\"0.350\",\"rotY\":\"-207.750\",\"rotZ\":\"-1.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-20180102000005",
+        "VideoName": "videos/A-221S.webm",
+        "Details": "{\"url\":\"A-221S.webm\",\"width\":1920,\"height\":1080,\"posX\":\"323.700\",\"posY\":\"-33.700\",\"posZ\":\"-577.900\",\"rotX\":\"-0.450\",\"rotY\":\"-31.420\",\"rotZ\":\"-270.100\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-20180102000006",
+        "VideoName": "videos/A-222S.webm",
+        "Details": "{\"url\":\"A-222S.webm\",\"width\":1920,\"height\":1080,\"posX\":\"-338.200\",\"posY\":\"-29.500\",\"posZ\":\"548.400\",\"rotX\":0,\"rotY\":\"147.300\",\"rotZ\":\"90.000\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-20180102000012",
+        "VideoName": "videos/A-228S.webm",
+        "Details": "{\"url\":\"A-228S.webm\",\"width\":1920,\"height\":1080,\"posX\":\"385.600\",\"posY\":\"-29.400\",\"posZ\":\"-671.500\",\"rotX\":\"-0.700\",\"rotY\":\"-30.400\",\"rotZ\":\"89.700\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-20180102000016",
+        "VideoName": "videos/A-232S.webm",
+        "Details": "{\"url\":\"A-232S.webm\",\"width\":1920,\"height\":1080,\"posX\":\"-734.900\",\"posY\":\"-1.650\",\"posZ\":\"1138.900\",\"rotX\":\"0.600\",\"rotY\":\"148.800\",\"rotZ\":\"-270.250\",\"scale\":\"1\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-20180102000031",
+        "VideoName": "videos/A-247S.webm",
+        "Details": "{\"url\":\"A-247S.webm\",\"width\":1920,\"height\":1080,\"posX\":\"639.800\",\"posY\":\"-4.800\",\"posZ\":\"-507.600\",\"rotX\":\"1.200\",\"rotY\":\"-30.200\",\"rotZ\":\"90.600\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-20180102000037",
+        "VideoName": "videos/A-253S.webm",
+        "Details": "{\"url\":\"A-253S.webm\",\"width\":\"1920\",\"height\":\"1080\",\"posX\":\"-385.000\",\"posY\":\"-251.000\",\"posZ\":\"1466.400\",\"rotX\":\"0.400\",\"rotY\":\"147.200\",\"rotZ\":\"89.600\",\"scale\":\"0.8\",\"loop\":true}"
+    },
+    {
+        "PanoID": "A101-20180102000043",
+        "VideoName": "videos/A-259S.webm",
+        "Details": "{\"url\":\"A-259S.webm\",\"width\":1920,\"height\":1080,\"posX\":\"338.800\",\"posY\":\"-0.800\",\"posZ\":\"-573.200\",\"rotX\":\"1.200\",\"rotY\":\"-28.600\",\"rotZ\":\"90.500\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000009",
+        "VideoName": "videos/B-24Snew.webm",
+        "Details": "{\"url\":\"videos/B-24Snew.webm\",\"width\":\"1920\",\"height\":\"1080\",\"posX\":\"808.000\",\"posY\":\"-75.000\",\"posZ\":\"-1412.000\",\"rotX\":\"0.000\",\"rotY\":-30,\"rotZ\":-90,\"scale\":\"1.59\",\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000018",
+        "VideoName": "videos/B-33S.webm",
+        "Details": "{\"url\":\"videos/B-33S.webm\",\"width\":1920,\"height\":1080,\"posX\":-952.8000000000001,\"posY\":-226,\"posZ\":1306.4,\"rotX\":0,\"rotY\":148,\"rotZ\":-90,\"scale\":1.165,\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000035",
+        "VideoName": "videos/B-50Snew02.webm",
+        "Details": "{\"url\":\"videos/B-50Snew02.webm\",\"width\":1280,\"height\":720,\"posX\":278.3999999999999,\"posY\":-193.59999999999997,\"posZ\":-973.6000000000004,\"rotX\":0.30000000000000376,\"rotY\":-31.09999999999999,\"rotZ\":-89.99999999999994,\"scale\":0.5,\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000042",
+        "VideoName": "videos/B-57Snew04.webm",
+        "Details": "{\"url\":\"videos/B-57Snew04.webm\",\"width\":1174,\"height\":624,\"posX\":\"431.000\",\"posY\":\"-128.000\",\"posZ\":\"-1053.000\",\"rotX\":\"-1.700\",\"rotY\":\"-32.000\",\"rotZ\":\"89.000\",\"scale\":\"1.112\",\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000044",
+        "VideoName": "videos/B-59S.webm",
+        "Details": "{\"url\":\"videos/B-59S.webm\",\"width\":1920,\"height\":1080,\"posX\":-1384,\"posY\":-182,\"posZ\":-896,\"rotX\":0,\"rotY\":59.5,\"rotZ\":-90,\"scale\":1.03,\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000051",
+        "VideoName": "videos/B-66S.webm",
+        "Details": "{\"url\":\"videos/B-66S.webm\",\"width\":1920,\"height\":1080,\"posX\":-1224,\"posY\":-120,\"posZ\":1164,\"rotX\":0,\"rotY\":150,\"rotZ\":89.5,\"scale\":0.77,\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171215000060",
+        "VideoName": "videos/B-75S.webm",
+        "Details": "{\"url\":\"videos/B-75S.webm\",\"width\":1920,\"height\":1080,\"posX\":904,\"posY\":-134,\"posZ\":-1400,\"rotX\":0,\"rotY\":-31.3,\"rotZ\":90,\"scale\":0.896,\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171215000074",
+        "VideoName": "videos/B-89S.webm",
+        "Details": "{\"url\":\"videos/B-89S.webm\",\"width\":1920,\"height\":1080,\"posX\":-628.8000000000001,\"posY\":-175,\"posZ\":1369.6000000000001,\"rotX\":0,\"rotY\":150,\"rotZ\":89.9,\"scale\":0.806,\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171215000076",
+        "VideoName": "videos/B-93S-1.webm",
+        "Details": "{\"url\":\"videos/B-93S-1.webm\",\"width\":1920,\"height\":1080,\"posX\":\"552.300\",\"posY\":\"-553.000\",\"posZ\":\"-1496.300\",\"rotX\":\"-2.400\",\"rotY\":\"-25.000\",\"rotZ\":\"89.400\",\"scale\":\"0.8\",\"loop\":true}"
+    },
+    {
+        "PanoID": "B201-20171214000079",
+        "VideoName": "videos/B-99S.webm",
+        "Details": "{\"url\":\"videos/B-99S.webm\",\"width\":1920,\"height\":1080,\"posX\":-600.5999999999965,\"posY\":-158.39999999999992,\"posZ\":1278.8,\"rotX\":5.4,\"rotY\":155.1000000000005,\"rotZ\":87.89999999999999,\"scale\":0.73,\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-20180103000016",
+        "VideoName": "videos/C-142S.webm",
+        "Details": "{\"url\":\"videos/C-142S.webm\",\"width\":1920,\"height\":1080,\"posX\":\"-1034.200\",\"posY\":\"-36.000\",\"posZ\":\"-704.300\",\"rotX\":\"-1.690\",\"rotY\":\"56.150\",\"rotZ\":\"91.400\",\"scale\":\"1\",\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-20180103000036",
+        "VideoName": "videos/C-162S.webm",
+        "Details": "{\"url\":\"videos/C-162S.webm\",\"width\":\"1920\",\"height\":\"1080\",\"posX\":\"-1079.500\",\"posY\":\"-189.800\",\"posZ\":\"-296.600\",\"rotX\":\"1.380\",\"rotY\":\"59.220\",\"rotZ\":\"-271.340\",\"scale\":\"0.5\",\"loop\":true}"
+    },
+    {
+        "PanoID": "C301-20180103000078",
+        "VideoName": "videos/C-204S.webm",
+        "Details": "{\"url\":\"videos/C-204S.webm\",\"width\":1920,\"height\":1080,\"posX\":\"934.500\",\"posY\":\"-232.000\",\"posZ\":\"604.400\",\"rotX\":\"-2.350\",\"rotY\":\"-125.750\",\"rotZ\":\"88.000\",\"scale\":\"0.5\",\"loop\":true}"
+    }
+]

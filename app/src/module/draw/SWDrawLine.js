@@ -139,7 +139,7 @@ class SWDrawLine {
             num < 0 ? this.lineAllArr.splice(num * this.lineAllNum, Math.abs(num * this.lineAllNum)) :
             this.lineAllArr.splice(0, num * this.lineAllNum);
 
-        dArr.map((item, idx) => {
+        dArr.forEach((item) => {
 
             disposeNode(item);
 

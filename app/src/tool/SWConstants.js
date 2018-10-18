@@ -10,6 +10,8 @@ export var revision_type = 1;
 export var stats = "";
 /**相机*/
 export var camera = "";
+/**灯光对象 */
+export var ambientLight;
 /**正方形相机*/
 export var cubeCamera = "";
 /**场景*/
@@ -36,8 +38,12 @@ export var c_FaceDistance = 4096;
 export var c_WallDisplaySize = 20;
 /**地面片缩放比例*/
 export var c_groundDisplaySize = -500;
+/**漫游倍数 */
+export var c_roamingMultiple = 5;
 /**跳转之后需要看向的标注ID*/
 export var c_JumpMarkerID = "";
+/**小地图点击放大的站点名称*/
+export var c_minMapClickPanoID = "";
 /**坐标转换矩阵。坐标系 OpenGL -> 3DS*/
 export var c_OpenGLToDS3Mx4 = new THREE.Matrix4().fromArray([1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1]);
 /**坐标转换矩阵。坐标系 3DS -> OpenGL*/
@@ -47,21 +53,34 @@ export var c_wallClickRotateV3 = new THREE.Vector3();
 /**墙面鼠标按下位置*/
 export var c_wallStartPoint = new THREE.Vector3();
 
+/**漫游状态 */
+export var c_roamingStatus = false;
+/**是否显示探面 */
+export var c_isDisplayFace = true;
 /**测量状态*/
 export var c_isMeasureStatus = false;
 /**false-网络版，true-单机版 */
 export var c_isSingleVision = false;
 /**全景有几种版本 1-默认为PC版 2-手机版 3-编辑版 4-触屏版*/
-export var c_currentStateEnum = { pcStatus: 1, phoneStatus: 2, editorStatus: 3, touchStatus: 4 };
+export var c_currentStateEnum = {
+    pcStatus: 1,
+    phoneStatus: 2,
+    editorStatus: 3,
+    touchStatus: 4
+};
 /**当前运行的是什么版本 */
 export var c_currentState = c_currentStateEnum.pcStatus;
 
 /**编辑版的几种状态 1-默认编辑箭头 2-编辑标注*/
-export var c_editorStateEnum = { arrow: 1, markerPoint: 2 };
+export var c_editorStateEnum = {
+    arrow: 1,
+    markerPoint: 2
+};
 /**当前运行的是编辑版的什么状态 */
 export var c_editorState = c_editorStateEnum.markerPoint;
 
-
+/**跳转是否完毕 */
+export var c_JumpCompleted = false;
 /**是否加载缩略图中 */
 export var c_isPreviewImageLoadEnd = true;
 /**墙面探面加减号是否显示*/
@@ -157,3 +176,50 @@ export var sw_markerExhibits;
 export var sw_markPoint;
 /**热点文物墙*/
 export var sw_hotPhotoWall;
+/**漫游 */
+export var sw_roamingModule;
+
+export var fs_hdr = `
+    uniform sampler2D   tDiffuse;
+    uniform float       exposure;
+    uniform float       brightMax;
+
+    varying vec2  vUv;
+
+    vec3 decode_pnghdr( const in vec4 color ) {
+
+        // remove gamma correction
+        vec4 res = color * color;
+
+        // decoded RI
+        float ri = pow( 2.0, res.w * 32.0 - 16.0 );
+
+        // decoded HDR pixel
+        res.xyz = res.xyz * ri;
+        return res.xyz;
+
+    }
+
+    void main()	{
+
+        vec4 color = texture2D( tDiffuse, vUv );
+        color.xyz  = decode_pnghdr( color );
+
+        // apply gamma correction and exposure
+        //gl_FragColor = vec4( pow( exposure * color.xyz, vec3( 0.474 ) ), 1.0 );
+
+        // Perform tone-mapping
+        float Y = dot(vec4(0.30, 0.59, 0.11, 0.0), color);
+        float YD = exposure * (exposure/brightMax + 1.0) / (exposure + 1.0);
+        color *= YD;
+
+        gl_FragColor = vec4( color.xyz, 1.0 );
+    }`;
+
+export var vs_hdr = `
+    varying vec2 vUv;
+
+    void main()	{
+        vUv  = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    }`;

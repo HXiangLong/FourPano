@@ -1,0 +1,72 @@
+[
+    {
+        "ExhibitID": "50001",
+        "Name": "官斗",
+        "Description": "&P&马克思（1818-1883），德国人。无产阶级革命导师，科学社会主义的奠基人。&P&我们现在必须绝对保持党的纪律，否则将一事无成。&P&<right>——马克思</right>",
+        "MuseumID": "",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "",
+        "SceneID": "001|01wuchangqiyidebaofa.mp4|That Girl.mp3|SJ001",
+        "DisplayPriority": 0,
+        "Have3D": true,
+        "MarkerID": "001|023|333|100",
+        "FilePath": "BusinessData/ExhibitThumbnails/官斗.jpg",
+        "PanoID": "A101-20180102000001"
+    },
+    {
+        "ExhibitID": "50002",
+        "Name": "烟枪",
+        "Description": "",
+        "MuseumID": "",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "",
+        "SceneID": "|||",
+        "DisplayPriority": 0,
+        "Have3D": true,
+        "MarkerID": "002",
+        "FilePath": "BusinessData/ExhibitThumbnails/45  FMIV0001  烟枪.jpg",
+        "PanoID": "C301-20180103000064"
+    },
+    {
+        "ExhibitID": "50003",
+        "Name": "珐琅彩双旗杯",
+        "Description": "",
+        "MuseumID": "",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "",
+        "SceneID": "|||",
+        "DisplayPriority": 0,
+        "Have3D": true,
+        "MarkerID": "003",
+        "FilePath": "BusinessData/ExhibitThumbnails/珐琅彩双旗杯.jpg",
+        "PanoID": "C301-20180103000042"
+    },
+    {
+        "ExhibitID": "50004",
+        "Name": "民国双狮戏球枕",
+        "Description": "",
+        "MuseumID": "",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "",
+        "SceneID": "|||",
+        "DisplayPriority": 0,
+        "Have3D": true,
+        "MarkerID": "004",
+        "FilePath": "BusinessData/ExhibitThumbnails/91 CMIV0006 民国双狮戏球枕.jpg",
+        "PanoID": "C301-20180103000042"
+    },
+    {
+        "ExhibitID": "50005",
+        "Name": "民国纪念粉彩罐",
+        "Description": "",
+        "MuseumID": "",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "",
+        "SceneID": "|||",
+        "DisplayPriority": 0,
+        "Have3D": true,
+        "MarkerID": "005",
+        "FilePath": "BusinessData/ExhibitThumbnails/民国纪念粉彩罐.jpg",
+        "PanoID": "C301-20180103000042"
+    }
+]

@@ -26,7 +26,7 @@ const devWebpackConfig = merge(baseConfig, {
     plugins: [
         // 多入口的html文件用chunks这个参数来区分
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, '../app/views/PC/index.html'),
+            template: path.resolve(__dirname, '../app/views/index.html'),
             filename: 'index.html',
             chunks: ['index', 'common'],
             vendor: './vendor.dll.js', //与dll配置文件中output.fileName对齐

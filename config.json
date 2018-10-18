@@ -1,16 +1,34 @@
 {
+    "Description":"serverUrl-底层数据库链接，musServerUrl-业务层数据库链接，resourcesUrl-图片、视频资源链接，museumID-博物馆ID，displayID-楼栋ID，firstPanoID-默认进入时第一站ID，firstYaw、firstPitch-第一次进入朝向，firstAnimation-第一次进入时如果修改firstPanoID站点和朝向，则优先",
     "serverUrl": "http://localhost:8090/GZXHGM/DigitalMusBaseServices",
     "musServerUrl": "http://localhost:8090/GZXHGM/DigitalMusService/Services.aspx",
     "resourcesUrl": "http://localhost:8090/GZXHGM/DigitalMusService",
     "museumID": "5101-0010",
     "displayID": "5101-0010-0001",
     "firstPanoID": "A101-20180102000001",
+    "firstYaw": 0,
+    "firstPitch": 0,
+    "firstAnimation": false,
     "data": {
+        "Description":"bgMusic-背景音乐链接，Introduction-简介文本，InitialOrientation-指定站点朝向",
         "bgMusic": "http://localhost:8096/NodeAllProject/FourPano/app/commons/img/backmusic.mp3",
         "Introduction": {
             "imgUrl": "http://localhost:8096/NodeAllProject/FourPano/app/commons/img/jianjie.jpg",
             "title": "纪律建设永远在路上--中国共产党纪律建设历史陈列",
             "content": "<p style='text-align: center;'>前 言</p><p>中国共产党是按照马克思列宁主义建党思想建立的具有严格纪律的无产阶级政党。在近百年领导中国人民进行革命、建设、改革的伟大实践中， 中国共产党始终坚持从严治党理念，把加强纪律作为自身建设伟大工程的重要组成部分，常抓不懈，不断取得新的成就。</p><p>中国共产党为国家富强、民族振兴、人民幸福不懈奋斗的历史，也是党规党纪、党内监督工作和纪检监察机构从初步形成到发展完善的历史， 是党的纪律建设和监督执纪工作不断推进的历史。坚持全面从严治党，端正党风，严肃党纪，永远保持党的先进性和纯洁性， 带领全国人民实现中华民族伟大复兴的中国梦，是中国共产党人的庄严承诺。</p><p>在中国共产党第一个中央纪律检查机构——中央监察委员会(中央纪委前身)诞生地，举办纪律建设专题展览，对于我们重温历史， 不忘初心，砥砺前行，具有重要历史和现实意义。中国共产党纪律建设永远在路上！</p>"
-        }
+        },
+        "InitialOrientation": [{
+            "panoid": "G101-20180619000001",
+            "yaw": 147.32,
+            "pitch": 2.9
+        }, {
+            "panoid": "A101-20180102000001",
+            "yaw": 239.6,
+            "pitch": 3.05
+        }, {
+            "panoid": "C301-20180103000001",
+            "yaw": 240.59,
+            "pitch": -2.14
+        }]
     }
 }

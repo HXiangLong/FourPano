@@ -56,7 +56,7 @@ class SWDrawString {
 
         let dArr = num == 0 ? this.textArr.splice(0, this.textArr.length) : num < 0 ? this.textArr.splice(num, Math.abs(num)) : this.textArr.splice(0, num);
 
-        dArr.map((item, idx) => {
+        dArr.forEach((item) => {
 
             disposeNode(item);
 

@@ -1,20 +1,104 @@
 import * as constants from './SWConstants';
 import {
-    setCameraAngle,Vector3ToVP
+    setCameraAngle,
+    Vector3ToVP
 } from './SWTool';
 import SWMarkerArrowModule from '../module/marker/SWMarkerArrowModule';
 import SWMarkerSingleModule from '../module/marker/SWMarkerSingleModule';
 import SWMarkerMoreModule from '../module/marker/SWMarkerMoreModule';
+import SWMarkerVideoModule from '../module/marker/SWMarkerVideoModule';
+import initStore from '../../views/redux/store/store';
+import {
+    background_music_fun,
+    show_PanoMap_fun
+} from '../../views/redux/action';
+const swExternalConst = require('./SWExternalConst');
 
-/**
- * 初始化实例对象
- */
+/**加载完成之后调用 */
+export function LoadPreviewImage() {
+
+    //站点跳转之后需要更新一下小地图
+    let store = initStore();
+    store.dispatch(show_PanoMap_fun({
+        pID: constants.c_StationInfo.panoID
+    }));
+
+    AddMarkerMesh();
+
+    let waitTime = setTimeout(() => {
+
+        if (constants.c_isWallClickRotateBoo) {
+
+            constants.c_isWallClickRotateBoo = false;
+
+            rotateByWallClick();
+        }
+
+        InitialOrientation();
+
+        AddSmallVideo();
+
+        clearTimeout(waitTime);
+
+        constants.c_JumpCompleted = true;
+
+    }, 500);
+}
+
+/**跳转时需要清除所有的东西 */
+export function deleteAll() {
+
+    deleteMarker();
+
+    //清除箭头
+    constants.c_arrowArr.forEach((item) => {
+
+        if (item) item.clearArrow();
+
+    });
+    constants.c_arrowArr.length = 0;
+
+    //清除墙面片
+    constants.sw_wallMesh.clear();
+
+    //隐藏探面
+    constants.sw_wallProbeSurface.wallProbeSurfaceVisible(0, 0);
+
+    constants.sw_measure.clear();
+
+    constants.c_smallVideoArr.forEach((item) => {
+
+        if (item) item.clearSmallVideo();
+
+    });
+    constants.c_smallVideoArr.length = 0;
+
+    deleteMeasuring();
+}
+
+export function deleteMarker(){
+    //清理标注
+    constants.c_markerMeshArr.forEach((item) => {
+
+        item.clear();
+
+    });
+    constants.c_markerMeshArr.length = 0;
+}
+
+/**清除测量 */
+export function deleteMeasuring(){
+
+    constants.c_isMeasureStatus = false;
+    
+    constants.sw_measure.clear();
+}
 
 /**
  * 添加老箭头数据
  * */
 export function AddOldArrow() {
-    constants.c_AdjacentPanoInfoArr.map((obj) => {
+    constants.c_AdjacentPanoInfoArr.forEach((obj) => {
 
         constants.c_arrowArr.push(new SWMarkerArrowModule(obj));
 
@@ -35,11 +119,11 @@ export function AddNewArrow() {
         boo = false;
     }
 
-    constants.c_ArrowPanoInfoArr.map((obj) => {
+    constants.c_ArrowPanoInfoArr.forEach((obj) => {
 
         if (boo) {
 
-            constants.c_arrowArr.map((item) => {
+            constants.c_arrowArr.forEach((item) => {
 
                 if (item.arrowData.srcPanoID === obj.srcPanoID && item.arrowData.dstPanoID === obj.dstPanoID) {
 
@@ -58,45 +142,16 @@ export function AddNewArrow() {
 }
 
 /**
- * 清除所有箭头
- * */
-export function deleteAllArrow() {
-
-    constants.c_arrowArr.map((item) => {
-
-        if (item) item.clearArrow();
-
-    });
-    constants.c_arrowArr.length = 0;
-}
-
-/**
  * 跳站点
  * @param {String} panoID 站点ID
  */
 export function jumpSite(panoID) {
 
+    constants.c_JumpCompleted = false;
+
     deleteAll();
 
     constants.sw_getService.getPanoByID(panoID);
-}
-
-/**跳转时需要清除所有的东西 */
-export function deleteAll() {
-
-    deleteAllArrow();
-
-    constants.sw_wallMesh.clear();
-
-    constants.sw_wallProbeSurface.wallProbeSurfaceVisible(0, 0);
-
-    constants.c_markerMeshArr.map((item) => {
-
-        item.clear();
-
-    });
-
-    constants.sw_measure.clear();
 }
 
 /**
@@ -104,7 +159,7 @@ export function deleteAll() {
  * */
 export function AddMarkerMesh() {
 
-    constants.c_markerInfoArr.map((obj) => {
+    constants.c_markerInfoArr.forEach((obj) => {
 
         if (obj.centerX != 0 && obj.centerY != 0) {
 
@@ -126,17 +181,68 @@ export function AddMarkerMesh() {
     });
 }
 
-/**加载完成之后调用 */
-export function LoadPreviewImage(){
+/**
+ * 添加视频
+ * */
+export function AddSmallVideo() {
 
-    if (constants.c_isWallClickRotateBoo) {
+    let tableValue = constants.c_allVideoTable.getValues();
 
-        constants.c_isWallClickRotateBoo = false;
+    let vboo = false;
 
-        rotateByWallClick();
+    constants.c_isDisplayFace = true;
+
+    tableValue.forEach((obj) => {
+
+        if (obj.panoID == constants.c_StationInfo.panoID) {
+
+            vboo = true;
+
+            let details = JSON.parse(obj.details);
+
+            constants.c_smallVideoArr.push(new SWMarkerVideoModule(details, obj.panoID));
+
+            var yp = Vector3ToVP(new THREE.Vector3(details.posX, details.posY, details.posZ));
+
+            setCameraAngle(yp.Yaw, yp.Pitch, true);
+
+            constants.c_isDisplayFace = details.openBox || false;
+
+        }
+    });
+
+    if (vboo) {
+
+        let store = initStore();
+
+        store.dispatch(background_music_fun({
+            bgMusicOff: false
+        }));
     }
+};
 
-    AddMarkerMesh();
+/**初始朝向 */
+export function InitialOrientation() {
+
+    //如果传入站点和配置点冲突了，以传入站点为主
+    if(swExternalConst.server_json.firstAnimation && swExternalConst.server_json.firstPanoID == constants.c_StationInfo.panoID){
+
+        swExternalConst.server_json.firstAnimation = false;
+        
+        setCameraAngle(swExternalConst.server_json.firstYaw, swExternalConst.server_json.firstPitch, true);
+
+    }else{
+
+        swExternalConst.server_json.data.InitialOrientation.forEach((obj, idx) => {
+
+            if (obj.panoid == constants.c_StationInfo.panoID) {
+    
+                setCameraAngle(obj.yaw, obj.pitch, true);
+    
+            }
+        });
+
+    }
 }
 
 /**
@@ -150,7 +256,7 @@ export function rotateByWallClick() {
 
     let swvg = Vector3ToVP(new THREE.Vector3(bb.z, -bb.y, bb.x));
 
-    setCameraAngle(swvg.Yaw,  swvg.Pitch, true);
+    setCameraAngle(swvg.Yaw, swvg.Pitch, true);
 };
 
 /**
@@ -168,7 +274,7 @@ export function JumpLookMarker(obj) {
         let yaw = [],
             pitch = [];
 
-        obj.points.map((objs) => {
+        obj.points.forEach((objs) => {
 
             yaw.push(parseFloat(objs.yaw));
 

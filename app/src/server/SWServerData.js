@@ -14,11 +14,13 @@ import {
     AddNewArrow,
     AddOldArrow
 } from '../tool/SWInitializeInstance';
-import initStore from '../../views/PC/redux/store/store';
+import initStore from '../../views/redux/store/store';
 import {
     show_Thumbnails_fun,
-    show_PanoMap_fun
-} from '../../views/PC/redux/action';
+    show_PanoMap_fun,
+    show_MarkerInterface_fun,
+    show_ViewPicture_fun
+} from '../../views/redux/action';
 const external = require('../tool/SWExternalConst.js');
 const axios = require('axios');
 
@@ -41,6 +43,8 @@ class ServerData {
         this.resourcesUrl = "";
         /**功能对象*/
         this.featuresObj = {};
+        /**只加载一次 */
+        this.floorsForBuilding = true;
     }
 
     getmusServerURL() {
@@ -67,8 +71,6 @@ class ServerData {
         this.featuresObj = external.server_json.data;
 
         this.getPanoByID(this.firstPanoID);
-
-        this.getAllFloorsForBuilding();
     }
 
     /**
@@ -84,7 +86,7 @@ class ServerData {
             .then(json => {
                 if (json.data.Floors) {
 
-                    json.data.Floors.map((obj) => {
+                    json.data.Floors.forEach((obj) => {
 
                         new FloorsInfo(obj);
 
@@ -93,11 +95,12 @@ class ServerData {
                     //数据来之后可以弹出展厅列表
                     let store = initStore();
 
-                    store.dispatch(show_PanoMap_fun(true));
+                    store.dispatch(show_PanoMap_fun({off:true}));
                 }
 
                 this.getAllThumbnailsForMuseum();
                 this.getAllExhibitsForBuilding();
+                this.getAllVideos();
             });
     }
 
@@ -123,6 +126,12 @@ class ServerData {
 
                         constants.sw_skyBox.addThumbnail();
 
+                        if (this.floorsForBuilding) {
+
+                            this.floorsForBuilding = false;
+
+                            this.getAllFloorsForBuilding();
+                        }
                     }
                 }
             });
@@ -144,7 +153,7 @@ class ServerData {
 
                     constants.c_facadeByPanoIDInfoArr.length = 0;
 
-                    json.data.GetFacadeByPanoIDResult.map((obj) => {
+                    json.data.GetFacadeByPanoIDResult.forEach((obj) => {
 
                         constants.c_facadeByPanoIDInfoArr.push(new FacadeByPanoIDInfo(obj));
 
@@ -170,7 +179,7 @@ class ServerData {
 
                     constants.c_AdjacentPanoInfoArr.length = 0;
 
-                    json.data.GetAdjacentPanoResult.map((obj) => {
+                    json.data.GetAdjacentPanoResult.forEach((obj) => {
 
                         constants.c_AdjacentPanoInfoArr.push(new ArrowInfo(obj, 1));
 
@@ -200,7 +209,7 @@ class ServerData {
 
                 if (json.data.Link) {
 
-                    json.data.Link.map((obj) => {
+                    json.data.Link.forEach((obj) => {
 
                         constants.c_ArrowPanoInfoArr.push(new ArrowInfo(obj, 2));
 
@@ -290,7 +299,7 @@ class ServerData {
 
                 if (json.data.MarkerInfo) {
 
-                    json.data.MarkerInfo.map((obj) => {
+                    json.data.MarkerInfo.forEach((obj) => {
 
                         constants.c_markerInfoArr.push(new SWMarkerInfo(obj));
 
@@ -315,7 +324,7 @@ class ServerData {
 
                 if (json.data.thumbnails) {
 
-                    json.data.thumbnails.map((obj) => {
+                    json.data.thumbnails.forEach((obj) => {
 
                         constants.c_thumbnailsForMuseum.push(new ThumbnailsInfo(obj));
 
@@ -342,7 +351,7 @@ class ServerData {
 
                 if (json.data.Exhibits) {
 
-                    json.data.Exhibits.map((obj) => {
+                    json.data.Exhibits.forEach((obj) => {
 
                         let allExhibits = new AllExhibitsForBuilding(obj);
 
@@ -357,8 +366,9 @@ class ServerData {
     /**
      * 获取单个文物信息
      * */
-    getMultiDataByParentID(eid) {
+    getMultiDataByParentID(eid, type) {
         let urls = this.musServerURL + "?method=GetMultiDataByParentID&parentID=" + eid;
+        let muType = type;
 
         axios.get(urls, {
                 responseType: "json"
@@ -369,7 +379,7 @@ class ServerData {
 
                     let arr = [];
 
-                    json.data.MultiDatas.map((obj) => {
+                    json.data.MultiDatas.forEach((obj) => {
 
                         let multiData = new MultiDataByParentID(obj);
 
@@ -377,6 +387,41 @@ class ServerData {
                     });
 
                     constants.c_multiDataByParentIDTable.add(eid, arr);
+
+                    if (muType == 1) { //图文
+
+                        let store = initStore();
+
+                        store.dispatch(show_MarkerInterface_fun({
+                            imglist: arr
+                        }));
+
+                    } else { //图片
+                        let markerImgList = [],
+                            markerthumbs = [];
+
+                        arr.forEach((item) => {
+                            let imgUrl = `${this.resourcesUrl}/${item.filePath}`;
+
+                            let arr1 = item.filePath.split('/');
+
+                            let pp = `${this.resourcesUrl}/${arr1[0]}/${arr1[1]}/${arr1[2]}/phone/${arr1[3]}`;
+
+                            markerImgList.push(imgUrl);
+
+                            markerthumbs.push(pp);
+                        });
+
+                        let store = initStore();
+
+                        store.dispatch(show_ViewPicture_fun({
+                            off: true,
+                            idx: 0,
+                            imageList: markerImgList,
+                            thumbs: markerthumbs
+                        }));
+
+                    }
                 }
             });
     }
@@ -394,7 +439,7 @@ class ServerData {
 
                 if (json.data.videoInfo) {
 
-                    json.data.videoInfo.map((obj) => {
+                    json.data.videoInfo.forEach((obj) => {
 
                         let vd = new VideosData(obj);
 

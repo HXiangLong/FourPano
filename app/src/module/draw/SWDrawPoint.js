@@ -33,7 +33,7 @@ class SWDrawPoint {
      */
     clear(num = 0) {
         let dArr = num == 0 ? this.allPointArr.splice(0, this.allPointArr.length) : num < 0 ? this.allPointArr.splice(num, Math.abs(num)) : this.allPointArr.splice(0, num);
-        dArr.map((item, idx) => {
+        dArr.forEach((item) => {
 
             disposeNode(item);
 

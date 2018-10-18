@@ -1,10 +1,10 @@
 /* global THREE*/
 
 import * as constants from '../tool/SWConstants';
-import initStore from '../../views/PC/redux/store/store';
+import initStore from '../../views/redux/store/store';
 import {
     show_Thumbnails_fun
-} from '../../views/PC/redux/action';
+} from '../../views/redux/action';
 
 /**
  * 鼠标事件
@@ -234,6 +234,8 @@ class SWMouseModule {
         let store = initStore();
 
         store.dispatch(show_Thumbnails_fun(false));
+
+        constants.sw_roamingModule.EndRoaming();
         
         constants.sw_cameraManage.onMouseDown(e);
 
@@ -283,6 +285,8 @@ class SWMouseModule {
         let store = initStore();
 
         store.dispatch(show_Thumbnails_fun(false));
+
+        constants.sw_roamingModule.EndRoaming();//停止漫游
 
         constants.sw_cameraManage.onTouchStart(e);
 

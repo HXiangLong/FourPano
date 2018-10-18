@@ -15,7 +15,7 @@ class SWWallModule {
      */
     createWallFace() {
 
-        c_facadeByPanoIDInfoArr.map((item) => {
+        c_facadeByPanoIDInfoArr.forEach((item) => {
 
             if (c_StationInfo.point.clone().distanceTo(item.points.p1) < 100) { //100 限制不在眼前的面片不显示
 
@@ -34,7 +34,7 @@ class SWWallModule {
      */
     clear() {
 
-        this.wallMeshArr.map((item) => {
+        this.wallMeshArr.forEach((item) => {
 
             item.clearWallMesh();
 

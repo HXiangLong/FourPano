@@ -33,7 +33,7 @@ class SWBoxTilesModule {
 
         this.geometry = new THREE.PlaneGeometry(this.planeW, this.planeW, 1, 1);
 
-        this.material = new THREE.MeshBasicMaterial({ map: null });
+        this.material = new THREE.MeshBasicMaterial({ map: null ,depthTest: true});
 
         this.mesh = new THREE.Mesh(this.geometry, this.material);
 

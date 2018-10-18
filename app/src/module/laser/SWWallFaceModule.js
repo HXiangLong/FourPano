@@ -111,7 +111,7 @@ class SWWallFaceModule {
         }
 
         //鼠标弹起
-        this.wallmesh.mouseUp = (e, obj) => { //鼠标点击事件
+        this.wallmesh.mouseUp = (e, obj) => { 
 
             let event = e || window.event;
 
@@ -161,7 +161,7 @@ class SWWallFaceModule {
 
             this.startPoint.y = event.clientY;
 
-        };
+        };        
     }
 
     /**清除墙面片 */

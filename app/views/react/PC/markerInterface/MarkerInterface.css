@@ -1,0 +1,218 @@
+.MarkerInterface {
+    position: absolute;
+    z-index: 11;
+    width: 100%;
+    height: 100%;
+}
+
+.MarkerInterface .detailbox {
+    width: 980px;
+    height: 430px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(255, 255, 255, .5);
+    -webkit-box-sizing: border-box;
+    background-color: rgba(0, 0, 0, .7);
+    border-radius: 3px;
+}
+
+.MarkerInterface .detailbox .imgbox {
+    width: 280px;
+    height: 375px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 1);
+    cursor: pointer;
+}
+
+.MarkerInterface .detailbox .imgbox .wwimglist {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(1, 0, 0, .4);
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.MarkerInterface .detailbox .imgbox .wwimglist ul {
+    width: 20000px;
+    height: 100%;
+}
+
+.MarkerInterface .detailbox .imgbox .wwimglist li {
+    width: 280px;
+    height: 375px;
+    display: inline-block;
+    text-align: center;
+    position: relative;
+}
+
+.MarkerInterface .detailbox .imgbox .wwimglist img {
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.wwimglistLeft {
+    font-size: 45px;
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.wwimglistRight {
+    font-size: 45px;
+    position: absolute;
+    top: 50%;
+    right: -5px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.MarkerInterface .detailbox .imgbox .num {
+    width: 44px;
+    height: 21px;
+    position: absolute;
+    font-size: 14px;
+    color: #e8e8e8;
+    background: rgba(0, 0, 0, .7);
+    text-align: center;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.MarkerInterface .detailbox .imgbox .quickmenu {
+    position: absolute;
+    width: 100%;
+    bottom: -32px;
+    text-align: center;
+}
+
+.MarkerInterface .detailbox .imgbox .quickmenu li {
+    display: inline-block;
+    margin: 0px 10px;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 14px;
+    color: #e8e8e8;
+}
+
+.MarkerInterface .detailbox .detail {
+    color: #e8e8e8;
+    width: 435px;
+    height: 377px;
+    left: 302px;
+    top: 10px;
+    position: absolute;
+}
+
+.MarkerInterface .detailbox .detail .title {
+    line-height: 52px;
+    overflow: hidden;
+    color: #eddc9b;
+    font-size: 16px;
+    text-align: center;
+    height: 52px;
+}
+
+.MarkerInterface .detailbox .detail .cont {
+    font-size: 14px;
+    line-height: 26px;
+    height: 324px;
+    outline: 0;
+    position: absolute;
+    overflow: auto;
+}
+
+.MarkerInterface .detailbox .detail .cont p {
+    text-indent: 2em;
+}
+
+.MarkerInterface .detailbox .detail .detailQuickmenu {
+    position: absolute;
+    right: 0;
+    height: 20px;
+    bottom: -26px;
+    right: 0px;
+}
+
+.MarkerInterface .detailbox .detail .detailQuickmenu li {
+    display: inline-block;
+    margin: 0 10px;
+    padding: 0px 10px;
+    cursor: pointer;
+}
+
+.MarkerInterface .detailbox .detail .detailQuickmenu li p {
+    font-size: 12px;
+    position: static;
+    position: initial;
+    display: inline-block;
+    padding-left: 5px;
+    color: #e8e8e8;
+    position: absolute;
+    top: -2px;
+    left: 27px;
+}
+
+.MarkerInterface .detailbox .commentbox {
+    width: 235px;
+    height: 428px;
+    position: absolute;
+    right: 0px;
+    border-left: 1px solid rgba(255, 255, 255, .5);
+    -webkit-box-sizing: border-box;
+    background-color: rgba(0, 0, 0, .7);
+    border-radius: 3px;
+    color: #e8e8e8;
+}
+
+.MarkerInterface .detailbox .commentbox p {
+    color: #eddc9b;
+    font-size: 14px;
+    margin: 7px;
+}
+
+.MarkerInterface .detailbox .commentbox ul {
+    position: absolute;
+    top: 35px;
+    left: 8px;
+    right: 8px;
+    bottom: 5px;
+    overflow: auto;
+}
+
+.MarkerInterface .detailbox .commentbox li {
+    font-size: 13px;
+    color: #e8e8e8;
+    line-height: 1.4;
+    padding: 9px;
+    border-bottom: 1px dashed #565656;
+}
+
+.dianzhan {
+    color: rgb(247, 4, 4);
+    font-size: 24px;
+    top: 4px;
+    position: relative;
+}
+
+.gengduo {
+    font-size: 18px;
+}

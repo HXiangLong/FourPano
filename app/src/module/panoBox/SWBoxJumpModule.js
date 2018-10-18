@@ -37,9 +37,13 @@ class SWBoxJumpModule {
      */
     addThumbnail() {
 
+        constants.sw_getService.getOldArrow();
+        constants.sw_getService.getFacadeByPanoID();
+        constants.sw_getService.getMarkerByPanoID();
+
         if (this.imageUrl == "") { //由于加载数据需要时间，这个第一次加载缩略图时记录路径
 
-            this.imageUrl = `${constants.sw_getService.getmusServerURL().split('/S')[0]}/panoImages/`;
+            this.imageUrl = `${constants.sw_getService.resourcesUrl}/panoImages/`;
         }
 
         if (constants.c_StationInfo.panoID != this.previousPano.panoID) { //同站点跳转忽略
@@ -64,10 +68,6 @@ class SWBoxJumpModule {
                 });
             }
         }
-
-        constants.sw_getService.getOldArrow();
-        constants.sw_getService.getFacadeByPanoID();
-        constants.sw_getService.getMarkerByPanoID();
     }
 
     /**
@@ -188,7 +188,6 @@ class SWBoxJumpModule {
                 if (callfun) {
 
                     callfun(texture);
-
                 }
             },
             (xhr) => {},
@@ -216,7 +215,6 @@ class SWBoxJumpModule {
                 itemArr.push(item.panoID);
 
             });
-
         });
 
         // 生成一个Promise对象的数组

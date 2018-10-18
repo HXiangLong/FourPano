@@ -20,7 +20,7 @@ module.exports = merge(baseConfig, {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, '../app/views/PC/index.html'),
+            template: path.resolve(__dirname, '../app/views/index.html'),
             filename: 'index.html',
             chunks: ['index', 'common'],
             vendor: './vendor.dll.js',
@@ -40,14 +40,14 @@ module.exports = merge(baseConfig, {
             verbose: true,
             dry: false
         }),
-        new OptimizeCSSPlugin({
-            cssProcessorOptions: {
-                safe: true
-            }
-        }),
-        new PurifyCSSPlugin({
-            paths: glob.sync(path.join(__dirname, '../app/views/PC/*.html'))
-        }),
+        // new OptimizeCSSPlugin({
+        //     cssProcessorOptions: {
+        //         safe: true
+        //     }
+        // }),
+        // new PurifyCSSPlugin({
+        //     paths: glob.sync(path.join(__dirname, '../app/views/PC/*.html'))
+        // }),
         new WebpackParallelUglifyPlugin({
             uglifyJS: {
                 output: {

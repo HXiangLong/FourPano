@@ -25,7 +25,7 @@ class AllExhibitsForBuilding {
 
         this.panoID = obj.PanoID; //站点编号
 
-        this.sceneID = obj.SceneID; //场景编号（无用）
+        this.sceneID = obj.SceneID.split('|'); //文物列表功能格式为 三维|视频|音频|书籍
 
     }
 }

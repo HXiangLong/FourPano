@@ -29,7 +29,7 @@ function assetsPath(_path_) {
 module.exports = {
     context: path.resolve(__dirname, '../'),
     entry: {
-        index: './app/views/PC/index.js',
+        index: './app/views/index.js',
     },
     output: {
         path: resolve('dist'),

@@ -341,7 +341,7 @@ export function getArrowsAngle(v1, v2) {
  * @param ifParent 是否用父类删除自己
  * */
 export function disposeNode(node, ifParent = true) {
-    if (node instanceof THREE.Mesh || node instanceof THREE.Sprite || node instanceof THREE.Line || node instanceof THREE.BoxHelper) {
+    if (node instanceof THREE.Mesh || node instanceof THREE.Sprite || node instanceof THREE.Line || node instanceof THREE.BoxHelper || node instanceof THREE.Group) {
         if (node.geometry) {
             node.geometry.dispose();
         }

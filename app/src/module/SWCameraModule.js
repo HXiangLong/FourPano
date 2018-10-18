@@ -12,6 +12,11 @@ import {
 	YPRToVector3,
 	getNumberMax360
 } from '../tool/SWTool';
+import initStore from '../../views/redux/store/store';
+import {
+	show_PanoMap_fun
+} from '../../views/redux/action';
+
 const TWEEN = require('@tweenjs/tween.js');
 
 /**
@@ -122,6 +127,8 @@ class SWCameraModule {
 		/**相机是否推进放大 */
 		this.ifCameraEnlarge = false;
 
+		this.store = initStore();
+
 		this.setHousesViewAngle(0, 0, true);
 	}
 
@@ -188,12 +195,6 @@ class SWCameraModule {
 	dollyIn(dollyScale) {
 		let fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov + dollyScale));
 
-		if (camera.fov > (c_Maxfov + c_Minfov) * 0.5) {
-			this.ifCameraEnlarge = false;
-
-			sw_skyBox.panoBox.clearFaceTiles();
-		}
-
 		let from = {
 			x: camera.fov
 		};
@@ -208,7 +209,14 @@ class SWCameraModule {
 			.onUpdate(function () {
 				camera.fov = this._object.x;
 			})
-			.onComplete(() => {})
+			.onComplete(() => {
+				if (camera.fov > (c_Maxfov + c_Minfov) * 0.5) {
+
+					this.ifCameraEnlarge = false;
+
+					sw_skyBox.panoBox.clearFaceTiles();
+				}
+			})
 			.start();
 
 		camera.updateProjectionMatrix();
@@ -220,12 +228,6 @@ class SWCameraModule {
 
 		camera.updateProjectionMatrix();
 
-		if (camera.fov < (c_Maxfov + c_Minfov) * 0.5) {
-			this.ifCameraEnlarge = true;
-
-			sw_skyBox.panoBox.addFaceTiles();
-		}
-
 		let from = {
 			x: camera.fov
 		};
@@ -240,7 +242,15 @@ class SWCameraModule {
 			.onUpdate(function () {
 				camera.fov = this._object.x;
 			})
-			.onComplete(() => {})
+			.onComplete(() => {
+
+				if (camera.fov < (c_Maxfov + c_Minfov) * 0.5) {
+
+					this.ifCameraEnlarge = true;
+
+					sw_skyBox.panoBox.addFaceTiles();
+				}
+			})
 			.start();
 	}
 
@@ -442,7 +452,7 @@ class SWCameraModule {
 			this.rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
 
 			this.rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
-			
+
 		} else if (event.touches.length === 0) {
 
 			this.state = this.STATE.NONE;
@@ -511,15 +521,16 @@ class SWCameraModule {
 	 * 有激光点云时点击墙面会放大
 	 */
 	setWallWheel() {
+
 		if (camera.isPerspectiveCamera) {
+
 			if (camera.fov > c_Minfov) {
-				//放大
 
-				this.dollyOut((c_Maxfov - c_Minfov) / 3);
+				this.dollyOut((c_Maxfov - c_Minfov) / 3); //放大
+
 			} else if (camera.fov == c_Minfov) {
-				//还原
 
-				this.dollyIn(100);
+				this.dollyIn(100); //还原
 			}
 		}
 	}
@@ -531,6 +542,9 @@ class SWCameraModule {
 	 * @param {*} updatas 更新坐标
 	 */
 	setHousesViewAngle(yaws, pitch, updatas) {
+		if (this.yaw_Camera == getNumberMax360(yaws) && this.picth_Camera == pitch) {
+			return;
+		}
 		if (yaws) this.yaw_Camera = getNumberMax360(yaws);
 
 		if (pitch) this.picth_Camera = pitch;
@@ -539,6 +553,10 @@ class SWCameraModule {
 			this.config.yaw = this.yaw_Camera;
 			this.config.pitch = this.picth_Camera;
 		}
+
+		this.store.dispatch(show_PanoMap_fun({
+			radarAngle: this.yaw_Camera
+		}));
 
 		camera.lookAt(YPRToVector3(this.yaw_Camera, this.picth_Camera));
 
@@ -553,15 +571,11 @@ class SWCameraModule {
 	 * @param {*} pitch 纬度
 	 */
 	setOverlayViewAngle(yaws, pitch) {
-		this.picth_Camera = Math.max(c_minPitch, Math.min(c_maxPitch, this.picth_Camera + pitch));
+		// let picthCamera = this.picth_Camera + pitch;
 
-		this.yaw_Camera = getNumberMax360(this.yaw_Camera + yaws);
+		let yawCamera = getNumberMax360(this.yaw_Camera + yaws);
 
-		if (isNaN(this.picth_Camera)) this.picth_Camera = 0;
-
-		if (isNaN(this.yaw_Camera)) this.yaw_Camera = 0;
-
-		this.setHousesViewAngle();
+		this.setHousesViewAngle(yawCamera, pitch, true);
 	}
 }
 

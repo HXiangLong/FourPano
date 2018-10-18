@@ -11,11 +11,64 @@ import SWGroundModule from "./module/laser/SWGroundModule";
 import SWWallSurfaceModule from "./module/laser/SWWallSurfaceModule";
 import SWMeasureModule from './module/draw/SWMeasureModule';
 import SWMarkerTakePictureModule from "./module/marker/SWMarkerTakePictureModule";
+import SWRoamingModule from "./module/roaming/SWRoamingModule";
+import initStore from '../views/redux/store/store';
+import {
+    background_music_fun,
+    show_VideoBox_fun
+} from '../views/redux/action';
 
 const TWEEN = require('@tweenjs/tween.js');
 
 class SWPano {
-    constructor() {}
+    constructor() {
+        //监听界面是否失去焦点，停止所有声音
+        document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this), false);
+    }
+
+    handleVisibilityChange() {
+
+        let store = initStore();
+
+        if (document.hidden) { // 用户按home，或者锁屏
+            store.dispatch(background_music_fun({
+                bgMusicOff: false
+            }));
+
+            store.dispatch(show_VideoBox_fun({
+                videoOff: false
+            }));
+
+            constants.c_smallVideoArr.forEach((obj) => {
+                if (obj.panoID == constants.c_StationInfo.panoID) {
+                    obj.stopVideo();
+                }
+            });
+
+        } else {
+            let vboo = false;
+            let storeObj = store.getState();
+
+            if (storeObj.OpenVideoBox.off) { //视频弹出框优先等级最高
+                store.dispatch(show_VideoBox_fun({
+                    videoOff: true
+                }));
+            } else {
+                constants.c_smallVideoArr.forEach((obj) => { //嵌入视频其次
+                    if (obj.panoID == constants.c_StationInfo.panoID) {
+                        obj.playVideo();
+                        vboo = true;
+                    }
+                });
+            }
+
+            if (!vboo) {
+                store.dispatch(background_music_fun({ //背景音乐最次
+                    bgMusicOff: true
+                }));
+            }
+        }
+    }
 
     /**性能监测*/
     initStats() {
@@ -40,8 +93,8 @@ class SWPano {
 
     /**初始化灯光*/
     initLight() {
-        var ambientLight = new THREE.AmbientLight(0xFFFFFF, 4);
-        constants.scene.add(ambientLight);
+        constants.ambientLight = new THREE.AmbientLight(0xFFFFFF, 1);
+        constants.scene.add(constants.ambientLight);
     }
 
     /**初始化场景*/
@@ -51,7 +104,11 @@ class SWPano {
 
     /**初始化渲染*/
     initRenderer() {
-        constants.renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, alpha: true });
+        constants.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            logarithmicDepthBuffer: true,
+            alpha: true
+        });
         constants.renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas3d').appendChild(constants.renderer.domElement);
         constants.renderer.domElement.style.position = "absolute";
@@ -83,18 +140,27 @@ class SWPano {
         //计时器
         let delta = constants.c_clock.getDelta();
 
+        //漫游
+        if (constants.sw_roamingModule) constants.sw_roamingModule.update();
+
         //相机旋转
         if (constants.sw_cameraManage) constants.sw_cameraManage.update();
 
         //箭头动画
-        if (constants.c_arrowArr.length > 0) {
+        constants.c_arrowArr.forEach((item) => {
 
-            constants.c_arrowArr.map((item) => {
+            item.update(delta);
 
-                item.update(delta);
+        });
 
-            });
-        }
+        constants.c_markerMeshArr.forEach((item) => {
+            item.update(delta);
+        })
+
+        //讲解视频、电视视频
+        constants.c_smallVideoArr.forEach((markerVideo) => {
+            markerVideo.updataSmallVideo();
+        });
     }
 
     /**初始化读取数据对象*/
@@ -125,6 +191,11 @@ class SWPano {
         constants.sw_groundMesh = new SWGroundModule();
         constants.sw_wallProbeSurface = new SWWallSurfaceModule();
         constants.sw_measure = new SWMeasureModule();
+    }
+
+    /**漫游程序初始化 */
+    initRoaming() {
+        constants.sw_roamingModule = new SWRoamingModule();
     }
 
     /**初始化编辑版需要的内容 */
