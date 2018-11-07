@@ -51,7 +51,6 @@ class VideoBox extends Component {
 			<div className="videos">
 				<div className="UIBG" onClick={this.closeVideoBoxs.bind(this)} />
 				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeVideoBoxs.bind(this)} />
-				{/* <div className="videobox"> */}
 				<video
 					ref={this.myVideoRef}
 					src={`${constants.sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/videos/${this.props
@@ -60,7 +59,6 @@ class VideoBox extends Component {
 					controls="true"
 					controlsList="nodownload"
 				/>
-				{/* </div> */}
 			</div>
 		) : (
 			''

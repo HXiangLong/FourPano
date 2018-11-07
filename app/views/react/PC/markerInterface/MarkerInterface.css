@@ -16,7 +16,7 @@
     border: 1px solid rgba(255, 255, 255, .5);
     -webkit-box-sizing: border-box;
     background-color: rgba(0, 0, 0, .7);
-    border-radius: 3px;
+    border-radius: 5px;
 }
 
 .MarkerInterface .detailbox .imgbox {
@@ -172,7 +172,7 @@
 }
 
 .MarkerInterface .detailbox .commentbox {
-    width: 235px;
+    width: 242px;
     height: 428px;
     position: absolute;
     right: 0px;
@@ -192,8 +192,8 @@
 .MarkerInterface .detailbox .commentbox ul {
     position: absolute;
     top: 35px;
-    left: 8px;
-    right: 8px;
+    left: 5px;
+    right: 5px;
     bottom: 5px;
     overflow: auto;
 }
@@ -206,6 +206,24 @@
     border-bottom: 1px dashed #565656;
 }
 
+.MarkerInterface .detailbox .commentbox .userName{
+    font-size: 12px;
+    color: #e8e8e8;
+    padding: 0px -5px;
+}
+
+.MarkerInterface .detailbox .commentbox .content{
+    font-size: 14px;
+    color: #e8e8e8;
+    word-break: break-all;
+}
+
+.MarkerInterface .detailbox .commentbox .timers{
+    font-size: 12px;
+    color: #8a8a8a;
+    text-align: right;
+}
+
 .dianzhan {
     color: rgb(247, 4, 4);
     font-size: 24px;
@@ -215,4 +233,5 @@
 
 .gengduo {
     font-size: 18px;
+    color: #e8e8e8;
 }

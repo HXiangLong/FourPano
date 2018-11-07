@@ -6,12 +6,11 @@ const external = require('../../../../src/tool/SWExternalConst.js');
 class IntroductionSimple extends Component {
 	constructor() {
 		super();
-		this.closeIntroductionSimple = this.closeIntroductionSimple.bind(this);
 	}
 
 	componentWillMount() {
 		this.props.IntroductionState({
-			imgurl: external.server_json.data.Introduction.imgUrl,
+			imgurl:  external.server_json.data.resourcePath + external.server_json.data.Introduction.imgUrl,
 			title: external.server_json.data.Introduction.title,
 			content: external.server_json.data.Introduction.content
 		});
@@ -26,8 +25,8 @@ class IntroductionSimple extends Component {
 	render() {
 		return this.props.off ? (
 			<div className="introductionShade">
-				<div className="UIBG" onClick={this.closeIntroductionSimple} />
-				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeIntroductionSimple} />
+				<div className="UIBG" onClick={this.closeIntroductionSimple.bind(this)} />
+				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeIntroductionSimple.bind(this)} />
 				<div className="detailbox">
 					<div className="imgbox">
 						<div className="imgstyle">

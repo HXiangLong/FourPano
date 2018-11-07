@@ -66,14 +66,31 @@ class SWMarkerModule {
 
         this.mesh = new THREE.Mesh(this.geometry, this.material);
 
-        this.textDiv = new TextDiv(new THREE.Vector3(0, 0, 0), 12, "");
-        this.textDiv.id = "markerMesh";
+        // this.textDiv = new TextDiv(new THREE.Vector3(0, 0, 0), 12, "");
+        // this.textDiv.id = "markerMesh";
+        // this.textDiv.style.display = "none";
+        // this.textDiv.style.color = "#FFF";
+        // this.textDiv.style.borderRadius = "3px";
+        // this.textDiv.style.backgroundColor = "rgba(16, 16, 16, 0.3)";
+        // this.textDiv.style.padding = "3px 10px";
+        // this.textDiv.style.letterSpacing = "2px";
+        this.textDiv = new TextDiv(new THREE.Vector3(0, 0, 0));
+
+        this.textDiv.id = "markerArrowMesh";
+
+        this.textDiv.style.fontFamily = "Arial";
+
         this.textDiv.style.display = "none";
-        this.textDiv.style.color = "#FFF";
-        this.textDiv.style.borderRadius = "3px";
-        this.textDiv.style.backgroundColor = "rgba(16, 16, 16, 0.3)";
-        this.textDiv.style.padding = "3px 10px";
+
+        this.textDiv.style.padding = "4px";
+
+        this.textDiv.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+
         this.textDiv.style.letterSpacing = "2px";
+
+        this.textDiv.style.border = "1px solid rgba(255, 255, 255, 0.5)";
+
+        this.textDiv.style.borderRadius = "5px";
     }
 
     /**
@@ -115,16 +132,9 @@ class SWMarkerModule {
                                     if (!constants.c_multiDataByParentIDTable.containsKey(item.exhibitID)) {
 
                                         if (this.markerObj.type == 1) {
-                                            store.dispatch(show_MarkerInterface_fun({
-                                                off: true,
-                                                exhibitID:item.exhibitID,
-                                                title: item.name,
-                                                content: item.description,
-                                                d3: item.sceneID[0],
-                                                video: item.sceneID[1],
-                                                audio: item.sceneID[2],
-                                                book: item.sceneID[3]
-                                            }));
+
+                                            this.showMarkerUI(item,[]);
+                                            
                                         }
 
                                         constants.sw_getService.getMultiDataByParentID(item.exhibitID, this.markerObj.type);
@@ -134,19 +144,9 @@ class SWMarkerModule {
                                         let imageArr = constants.c_multiDataByParentIDTable.getValue(item.exhibitID);
 
                                         if (this.markerObj.type == 1) {
-                                            store.dispatch(show_MarkerInterface_fun({
-                                                off: true,
-                                                exhibitID:item.exhibitID,
-                                                imglist: imageArr,
-                                                title: item.name,
-                                                content: item.description,
-                                                links: "https://www.baidu.com",
-                                                d3: item.sceneID[0],
-                                                video: item.sceneID[1],
-                                                audio: item.sceneID[2],
-                                                book: item.sceneID[3]
-                                            }));
 
+                                            this.showMarkerUI(item,imageArr);
+                                            
                                         } else {
 
                                             let markerImgList = [],
@@ -220,6 +220,27 @@ class SWMarkerModule {
 
     }
 
+    /**显示标注UI界面 */
+    showMarkerUI(item,imageArr){
+        let store = initStore();
+        store.dispatch(show_MarkerInterface_fun({
+            off: true,
+            exhibitID:item.exhibitID,
+            imglist: imageArr,
+            title: item.name,
+            content: item.description,
+            d3: item.featuresList[0],
+            video: item.featuresList[1],
+            audio: item.featuresList[2],
+            book: item.featuresList[3],
+            links: item.featuresList[4],
+            likeNum: item.likes
+        }));
+        constants.c_likeToExhibitID = item.exhibitID;
+        constants.sw_getService.GetLikesForExhibitID(item.exhibitID);//获取点赞数
+        constants.sw_getService.GetNewestComment(item.exhibitID);//获取最新20条评论
+    }
+
     /**
      * 不停的更新动画
      * @param {Number} delta 补帧时间
@@ -244,7 +265,7 @@ class SWMarkerModule {
 
             var labelPos = getWorldToScene(obj.point);
 
-            this.textDiv.style.left = (labelPos.x - 30) + "px";
+            this.textDiv.style.left = labelPos.x + "px";
 
             this.textDiv.style.top = (labelPos.y - 40) + "px";
 

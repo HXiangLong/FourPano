@@ -10,6 +10,7 @@ import ThumbnailsInfo from '../data/SWThumbnailsInfo';
 import StationInfo from '../data/SWStationInfo';
 import AllExhibitsForBuilding from '../data/SWAllExhibitsForBuilding';
 import VideosData from '../data/SWVideosData';
+import SWExhibitComment from '../data/SWExhibitComment';
 import {
     AddNewArrow,
     AddOldArrow
@@ -21,6 +22,7 @@ import {
     show_MarkerInterface_fun,
     show_ViewPicture_fun
 } from '../../views/redux/action';
+import HashTable from '../tool/SWHashTable';
 const external = require('../tool/SWExternalConst.js');
 const axios = require('axios');
 
@@ -78,7 +80,7 @@ class ServerData {
      */
     getAllFloorsForBuilding() {
 
-        let urls = this.musServerURL + "?method=GetAllFloorsForBuilding&buildingID=" + this.displayID + "&random=" + Math.random() * 10;
+        let urls = `${this.musServerURL}?method=GetAllFloorsForBuilding&buildingID=${this.displayID }&random=${Math.random() * 10}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -92,10 +94,12 @@ class ServerData {
 
                     });
 
-                    //数据来之后可以弹出展厅列表
+                    //数据来之后可以显示小地图
                     let store = initStore();
 
-                    store.dispatch(show_PanoMap_fun({off:true}));
+                    store.dispatch(show_PanoMap_fun({
+                        off: true
+                    }));
                 }
 
                 this.getAllThumbnailsForMuseum();
@@ -110,7 +114,7 @@ class ServerData {
      */
     getPanoByID(panoid) {
 
-        let urls = this.serverURL + "/GetPanoByID?ImageID=" + panoid;
+        let urls = `${this.serverURL}/GetPanoByID?ImageID=${panoid}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -121,6 +125,8 @@ class ServerData {
                     if (!constants.c_StationInfo || (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != json.data.GetPanoByIDResult.ImageID)) {
 
                         constants.c_isPreviewImageLoadEnd = false;
+
+                        constants.c_StationInfo && (constants.c_LastStopPanoID = constants.c_StationInfo.panoID); //记录上一站ID
 
                         constants.c_StationInfo = new StationInfo(json.data.GetPanoByIDResult);
 
@@ -142,7 +148,7 @@ class ServerData {
      * */
     getFacadeByPanoID() {
 
-        let urls = this.serverURL + "/GetFacadeByPanoID/?Z=" + constants.c_StationInfo.nz + "&PanoID=" + constants.c_StationInfo.panoID + "&TolerateZ=" + 5;
+        let urls = `${this.serverURL}/GetFacadeByPanoID/?Z=${constants.c_StationInfo.nz}&PanoID=${constants.c_StationInfo.panoID}&TolerateZ=5`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -169,7 +175,7 @@ class ServerData {
      * */
     getOldArrow() {
 
-        let urls = this.serverURL + "/GetAdjacentPano/?date=" + Math.random() * 100 + "&ImageID=" + constants.c_StationInfo.panoID;
+        let urls = `${this.serverURL}/GetAdjacentPano/?date=${Math.random() * 100}&ImageID=${constants.c_StationInfo.panoID}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -198,7 +204,7 @@ class ServerData {
     //获得新箭头
     getNewArrow() {
 
-        let urls = this.musServerURL + "?method=getLinkByPanoID&panoID=" + constants.c_StationInfo.panoID;
+        let urls = `${this.musServerURL}?method=getLinkByPanoID&panoID=${constants.c_StationInfo.panoID}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -226,7 +232,7 @@ class ServerData {
      * */
     getOtherPanoByPosition(x, y, z, panoid) {
 
-        let urls = this.serverURL + "/GetOtherPanoByPosition1?TolerateZ=5&Tolerate=100&Z=" + z + "&Y=" + y + "&ImageID=" + panoid + "&X=" + x;
+        let urls = `${this.serverURL}/GetOtherPanoByPosition1?TolerateZ=5&Tolerate=100&Z=${z}&Y=${y}&ImageID=${panoid}&X=${x}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -238,6 +244,8 @@ class ServerData {
                     if (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != json.data.GetOtherPanoByPositionResult.ImageID) {
 
                         constants.c_isPreviewImageLoadEnd = false;
+
+                        constants.c_StationInfo && (constants.c_LastStopPanoID = constants.c_StationInfo.panoID); //记录上一站ID
 
                         constants.c_StationInfo = new StationInfo(json.data.GetOtherPanoByPositionResult);
 
@@ -258,7 +266,7 @@ class ServerData {
      */
     getOtherPanoByFacadeID(x, y, z, facadeid) {
 
-        let urls = this.serverURL + "/GetOtherPanoByFacadeID?facadeID=" + facadeid + "&Z=" + z + "&Y=" + y + "&X=" + x;
+        let urls = `${this.serverURL}/GetOtherPanoByFacadeID?facadeID=${facadeid}&Z=${z}&Y=${y}&X=${x}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -272,6 +280,8 @@ class ServerData {
                         constants.c_isPreviewImageLoadEnd = false;
 
                         constants.c_isWallClickRotateBoo = true;
+
+                        constants.c_StationInfo && (constants.c_LastStopPanoID = constants.c_StationInfo.panoID); //记录上一站ID
 
                         constants.c_StationInfo = new StationInfo(json.data.GetOtherPanoByFacadeIDResult);
 
@@ -290,7 +300,7 @@ class ServerData {
 
         constants.c_markerInfoArr.length = 0;
 
-        let urls = this.musServerURL + "?method=getMarkerByPanoID&panoID=" + constants.c_StationInfo.panoID;
+        let urls = `${this.musServerURL}?method=getMarkerByPanoID&panoID=${constants.c_StationInfo.panoID}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -315,7 +325,7 @@ class ServerData {
         if (constants.c_isEditorStatus || constants.c_thumbnailsForMuseum.length > 0) {
             return;
         }
-        let urls = this.musServerURL + "?method=GetAllThumbnailsForBuilding&buildingID=" + this.displayID;
+        let urls = `${this.musServerURL}?method=GetAllThumbnailsForBuilding&buildingID=${this.displayID}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -330,10 +340,12 @@ class ServerData {
 
                     });
 
-                    //数据来之后可以弹出展厅列表
-                    // let store = initStore();
+                    if (constants.c_thumbnailsShow) {
+                        //数据来之后可以弹出展厅列表
+                        let store = initStore();
 
-                    // store.dispatch(show_Thumbnails_fun(true));
+                        store.dispatch(show_Thumbnails_fun(true));
+                    }
                 }
             });
     }
@@ -342,7 +354,7 @@ class ServerData {
      * 获取所有文物信息列表
      * */
     getAllExhibitsForBuilding() {
-        let urls = this.musServerURL + "?method=GetAllExhibitsForBuilding&buildingID=" + this.displayID;
+        let urls = `${this.musServerURL}?method=GetAllExhibitsForBuilding&buildingID=${this.displayID}`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -367,7 +379,7 @@ class ServerData {
      * 获取单个文物信息
      * */
     getMultiDataByParentID(eid, type) {
-        let urls = this.musServerURL + "?method=GetMultiDataByParentID&parentID=" + eid;
+        let urls = `${this.musServerURL}?method=GetMultiDataByParentID&parentID=${eid}`;
         let muType = type;
 
         axios.get(urls, {
@@ -429,8 +441,8 @@ class ServerData {
     /**
      * 获取所有视频列表
      * */
-    getAllVideos = function () {
-        let urls = this.musServerURL + "?method=getAllVideos";
+    getAllVideos() {
+        let urls = `${this.musServerURL}?method=getAllVideos`;
 
         axios.get(urls, {
                 responseType: "json"
@@ -449,6 +461,166 @@ class ServerData {
             });
     }
 
+    /**获取喜欢数 */
+    GetLikesForExhibitID(exhibitid) {
+        let urls = `${this.musServerURL}?method=GetLikesForExhibitID&exhibitid=${exhibitid}`;
+
+        axios.get(urls, {
+                responseType: "json"
+            })
+            .then(json => {
+
+                if (json.data.Likes) {
+
+                    let allExhibits = constants.c_allExhibitsForBuildingTable.getValues();
+
+                    allExhibits.forEach((item) => {
+
+                        if (item.exhibitID == constants.c_likeToExhibitID) {
+
+                            item.Likes = json.data.Likes;
+
+                        }
+                    });
+
+                    let store = initStore();
+
+                    store.dispatch(show_MarkerInterface_fun({
+                        likeNum: json.data.Likes
+                    }));
+                }
+            });
+    }
+
+    /**新增喜欢数 */
+    SetLikesForExhibitID(exhibitid) {
+        let urls = `${this.musServerURL}?method=SetLikesForExhibitID&exhibitid=${exhibitid}`;
+
+        axios.get(urls, {
+                responseType: "json"
+            })
+            .then(json => {
+
+                if (json.data.Likes) {
+
+                    let allExhibits = constants.c_allExhibitsForBuildingTable.getValues();
+
+                    allExhibits.forEach((item) => {
+
+                        if (item.exhibitID == constants.c_likeToExhibitID) {
+
+                            item.likes = json.data.Likes;
+
+                        }
+                    });
+
+                    let store = initStore();
+
+                    store.dispatch(show_MarkerInterface_fun({
+                        likeNum: json.data.Likes
+                    }));
+                }
+            });
+    }
+
+    /**新增评论 按照文物列表exhibitid*/
+    AddComment(exhibitid, contents) {
+
+        let urls = `${this.musServerURL}?method=AddComment&panoid=&uid=&exhibitid=${exhibitid}&contents=${contents}`;
+
+        axios.get(urls, {
+                responseType: "json"
+            })
+            .then(json => {
+
+                if (json.data.Message) {
+
+                    let allExhibits = constants.c_allExhibitsForBuildingTable.getValues();
+
+                    allExhibits.forEach((item) => {
+
+                        if (item.exhibitID == constants.c_likeToExhibitID) {
+
+                            item.commentNum = parseInt(json.data.Message);
+
+                        }
+                    });
+                }
+            });
+    }
+
+    /**查询总数 */
+    SelectCommentNum(exhibitid) {
+        let urls = `${this.musServerURL}?method=SelectCommentNum&panoid=&exhibitid=${exhibitid}`;
+
+        axios.get(urls, {
+                responseType: "json"
+            })
+            .then(json => {
+
+                if (json.data.Message) {
+
+                    let allExhibits = constants.c_allExhibitsForBuildingTable.getValues();
+
+                    allExhibits.forEach((item) => {
+
+                        if (item.exhibitID == constants.c_likeToExhibitID) {
+
+                            item.commentNum = parseInt(json.data.Message);
+
+                        }
+                    });
+                }
+            });
+    }
+
+    /**查询最新评论20条 */
+    GetNewestComment(exhibitid) {
+        let urls = `${this.musServerURL}?method=GetNewestComment&panoid=&exhibitid=${exhibitid}`;
+
+        axios.get(urls, {
+                responseType: "json"
+            })
+            .then(json => {
+
+                if (json.data.Message) {
+
+                    // let commentTable = new HashTable();
+
+                    // let exhibitID = "";
+
+                    // json.data.Message.forEach((obj, idx) => {
+
+                    //     let swComment = new SWExhibitComment(obj);
+
+                    //     exhibitID = swComment.exhibitID;
+
+                    //     commentTable.add(swComment.gUID, swComment);
+                    // });
+
+                    // let allExhibits = constants.c_allExhibitsForBuildingTable.getValues();
+
+                    // allExhibits.forEach((item) => {
+
+                    //     if (item.exhibitID == exhibitID) {
+
+                    //         item.commentTable = commentTable;
+                    //     }
+                    // });
+
+                    let store = initStore();
+
+                    store.dispatch(show_MarkerInterface_fun({
+                        commentList: json.data.Message
+                    }));
+                }
+            });
+    }
+
+    /**分页查询，每次50条 */
+    GetAllComment() {
+
+    }
 
 }
 export default ServerData;

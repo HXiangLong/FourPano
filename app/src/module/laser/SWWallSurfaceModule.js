@@ -156,7 +156,7 @@ class SWWallSurfaceModule {
 
             this.textDiv.style.display = "block";
 
-            var labelPos = getWorldToScene(obj.point);
+            let labelPos = getWorldToScene(obj.point);
 
             this.textDiv.style.left = (labelPos.x - 30) + "px";
 

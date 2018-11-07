@@ -1,8 +1,9 @@
 {
-    "Description":"serverUrl-底层数据库链接，musServerUrl-业务层数据库链接，resourcesUrl-图片、视频资源链接，museumID-博物馆ID，displayID-楼栋ID，firstPanoID-默认进入时第一站ID，firstYaw、firstPitch-第一次进入朝向，firstAnimation-第一次进入时如果修改firstPanoID站点和朝向，则优先",
+    "Description":"serverUrl-底层数据库链接，musServerUrl-业务层数据库链接，resourcesUrl-图片、视频资源链接，fontUrl-字体地址 museumID-博物馆ID，displayID-楼栋ID，firstPanoID-默认进入时第一站ID，firstYaw、firstPitch-第一次进入朝向，firstAnimation-第一次进入时如果修改firstPanoID站点和朝向，则优先",
     "serverUrl": "http://localhost:8090/GZXHGM/DigitalMusBaseServices",
     "musServerUrl": "http://localhost:8090/GZXHGM/DigitalMusService/Services.aspx",
     "resourcesUrl": "http://localhost:8090/GZXHGM/DigitalMusService",
+    "fontUrl":"/BusinessData/ExhibitDetails/Font/optimer_regular.typeface.json",
     "museumID": "5101-0010",
     "displayID": "5101-0010-0001",
     "firstPanoID": "A101-20180102000001",
@@ -10,12 +11,32 @@
     "firstPitch": 0,
     "firstAnimation": false,
     "data": {
-        "Description":"bgMusic-背景音乐链接，Introduction-简介文本，InitialOrientation-指定站点朝向",
-        "bgMusic": "http://localhost:8096/NodeAllProject/FourPano/app/commons/img/backmusic.mp3",
+        "Description":"bgMusic-背景音乐链接，Introduction-简单版简介文本，ComplexIntroduction-复杂版简介，InitialOrientation-指定站点朝向",
+        "resourcePath":"http://localhost:8096/NodeAllProject/FourPano/app/commons/img/",
+        "bgMusic": "backmusic.mp3",
         "Introduction": {
-            "imgUrl": "http://localhost:8096/NodeAllProject/FourPano/app/commons/img/jianjie.jpg",
+            "imgUrl": "jianjie.jpg",
             "title": "纪律建设永远在路上--中国共产党纪律建设历史陈列",
             "content": "<p style='text-align: center;'>前 言</p><p>中国共产党是按照马克思列宁主义建党思想建立的具有严格纪律的无产阶级政党。在近百年领导中国人民进行革命、建设、改革的伟大实践中， 中国共产党始终坚持从严治党理念，把加强纪律作为自身建设伟大工程的重要组成部分，常抓不懈，不断取得新的成就。</p><p>中国共产党为国家富强、民族振兴、人民幸福不懈奋斗的历史，也是党规党纪、党内监督工作和纪检监察机构从初步形成到发展完善的历史， 是党的纪律建设和监督执纪工作不断推进的历史。坚持全面从严治党，端正党风，严肃党纪，永远保持党的先进性和纯洁性， 带领全国人民实现中华民族伟大复兴的中国梦，是中国共产党人的庄严承诺。</p><p>在中国共产党第一个中央纪律检查机构——中央监察委员会(中央纪委前身)诞生地，举办纪律建设专题展览，对于我们重温历史， 不忘初心，砥砺前行，具有重要历史和现实意义。中国共产党纪律建设永远在路上！</p>"
+        },
+        "ComplexIntroduction": {
+            "bgUrl": "jianjie/bg.png",
+            "title": "中国共产党纪律建设历史陈列馆数字展馆",
+            "content": "<p style='text-align: center;'>前 言</p><p>中国共产党是按照马克思列宁主义建党思想建立的具有严格纪律的无产阶级政党。在近百年领导中国人民进行革命、建设、改革的伟大实践中， 中国共产党始终坚持从严治党理念，把加强纪律作为自身建设伟大工程的重要组成部分，常抓不懈，不断取得新的成就。</p><p>中国共产党为国家富强、民族振兴、人民幸福不懈奋斗的历史，也是党规党纪、党内监督工作和纪检监察机构从初步形成到发展完善的历史， 是党的纪律建设和监督执纪工作不断推进的历史。坚持全面从严治党，端正党风，严肃党纪，永远保持党的先进性和纯洁性， 带领全国人民实现中华民族伟大复兴的中国梦，是中国共产党人的庄严承诺。</p><p>在中国共产党第一个中央纪律检查机构——中央监察委员会(中央纪委前身)诞生地，举办纪律建设专题展览，对于我们重温历史， 不忘初心，砥砺前行，具有重要历史和现实意义。中国共产党纪律建设永远在路上！</p><p style='text-align: center;'>Foreword</p><p>The Communist Party of China (CPC) is a proletarian political party established on Marxism-Leninism with strict discipline. In the great course of leading the Chinese people in the country’s revolution, development and reform over the past century, the CPC has always upheld the principle of “comprehensively and strictly governing the Party” and made improving self-discipline as an integral part of the great development of the Party. The CPC has never slackened its efforts, a persistence that wins the Party numerous new achievements.</p> <p>The history of the CPC’s tireless efforts to build a strong, prosperous nation, achieve national rejuvenation, and promote people’s wellbeing mirrors the process where the Party regulations and rules, intraparty supervision and discipline inspection departments originated, developed and eventually matured, as well as how the Party has increasingly strengthened its discipline supervision and enforcement. It has been a solemn commitment of all members of the CPC to always keep the Party advanced and pure through adhering to the comprehensive and strict governance of the Party, improving the Party conduct and enforce the Party discipline, and to lead the Chinese people to realize the Chinese Dream of the great rejuvenation.</p><p>That is why it is of historical significance for us to hold an exhibition dedicated to discipline construction at the birthplace of the Central Supervision Commission (what would eventually become the Central Commission for Discipline Inspection of the CPC, or the CCDI), the first department for central discipline supervision of the CPC. Always remember the history, keep in mind our initial goals, and move forward through persistent endeavors. The CPC will never halt its efforts in strengthening discipline construction.</p>",
+            "birdUrl":"jianjie/bird/",
+            "birdNum":1,
+            "birdSuffix":".jpg",
+            "birdText":["鸟瞰图"],
+            "picUrl":"jianjie/pic/",
+            "picNum":3,
+            "picSuffix":".jpg",
+            "picText":["门厅1","门厅2","门厅3"],
+            "mapPicUrl":"jianjie/map/",
+            "mapPicNum":2,
+            "mapPicSuffix":".jpg",
+            "mapPicText":["一层","二层"],
+            "videos":"jianjie/videos/gggg.mp4",
+            "baiduMap":"http://map.baidu.com/?l=&s=s%26wd%3D%E6%AD%A6%E6%B1%89%E9%9D%A9%E5%91%BD%E5%8D%9A%E7%89%A9%E9%A6%86"
         },
         "InitialOrientation": [{
             "panoid": "G101-20180619000001",

@@ -2,9 +2,21 @@
 
 import SWMarkerModule from "./SWMarkerModule";
 import SWViewGesture from "../../tool/SWViewGesture";
-import { camera, scene } from '../../tool/SWConstants';
-import { VPToVector3 } from '../../tool/SWTool';
-import { jumpSite } from '../../tool/SWInitializeInstance';
+import {
+    camera,
+    scene,
+    c_LastStopPanoID
+} from '../../tool/SWConstants';
+import {
+    TextDiv,
+    VPToVector3,
+    textSize,
+    getWorldToScene,
+    delectTextDiv
+} from '../../tool/SWTool';
+import {
+    jumpSite
+} from '../../tool/SWInitializeInstance';
 const external = require('../../tool/SWExternalConst');
 
 /**
@@ -17,7 +29,12 @@ class SWMarkerArrowModule extends SWMarkerModule {
      */
     constructor(date) {
 
-        super(external.arrow_icon, 2, { fpsNum: 27, wPlane: 144, hPlane: 64 });
+        super(external.arrow_icon, 2, {
+            fpsNum: 27,
+            wPlane: 144,
+            hPlane: 64
+        });
+
 
         this.arrowData = date;
 
@@ -39,6 +56,12 @@ class SWMarkerArrowModule extends SWMarkerModule {
 
         this.mouseDownBoo = false;
 
+        let text = (this.arrowData.dstPanoID == c_LastStopPanoID ? "上一站" : "下一站") + (this.arrowData.dstPanoName == "" ? "" : "：") + this.arrowData.dstPanoName;
+
+        this.textDiv.innerHTML = text;
+
+        this.textWidth = textSize("18px", "Arial", text).width * 0.5;
+
         setTimeout(() => {
 
             this.mesh.visible = true;
@@ -56,6 +79,29 @@ class SWMarkerArrowModule extends SWMarkerModule {
             if (this.mouseDownBoo) jumpSite(obj.object.name);
 
         };
+
+        //鼠标进入
+        this.mesh.mouseOver = (e, obj) => {
+
+            if (this.textDiv) {
+
+                this.textDiv.style.display = "block";
+
+                let labelPos = getWorldToScene(this.mesh.position);
+    
+                this.textDiv.style.left = (labelPos.x - this.textWidth) + "px";
+    
+                this.textDiv.style.top = (labelPos.y - 60) + "px";
+            }
+
+        }
+
+        //出去
+        this.mesh.mouseOut = (e, obj) => {
+
+            this.textDiv.style.display = "none";
+
+        }
     }
 
     /**

@@ -23,6 +23,7 @@ class SWDrawPoint {
         });
         let dotMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
         dotMesh.position.copy(point);
+        dotMesh.userData.depthlevel = 100;
         scene.add(dotMesh);
         this.allPointArr.push(dotMesh);
     }

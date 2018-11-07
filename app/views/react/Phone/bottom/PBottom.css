@@ -69,19 +69,19 @@
     background-image: url(../../../../commons/img/menuicon-collect.png);
 }
 
-.PMainMenu ul li.exhibithall.active i {
+.PMainMenu ul li.exhibithall.active {
     background-image: url(../../../../commons/img/menuicon-exhibithall-active.png);
 }
 
-.PMainMenu ul li.summary.active i {
+.PMainMenu ul li.summary.active {
     background-image: url(../../../../commons/img/menuicon-summary-active.png);
 }
 
-.PMainMenu ul li.roam.close i {
+.PMainMenu ul li.roam.close {
     background-image: url(../../../../commons/img/menuicon-roam-close.png);
 }
 
-.PMainMenu ul li.collect.active i {
+.PMainMenu ul li.collect.active {
     background-image: url(../../../../commons/img/menuicon-collect-active.png);
 }
 

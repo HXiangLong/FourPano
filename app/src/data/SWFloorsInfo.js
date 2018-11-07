@@ -33,6 +33,8 @@ class FloorsInfo {
             let floorsMarkerInfo = new FloorsMarkerInfo(mapMarker);
 
             this.rasterMapMarkers.add(floorsMarkerInfo.markerID, floorsMarkerInfo);
+
+            constants.c_panoIDTable.add(floorsMarkerInfo.panoID, floorsMarkerInfo);
             
         });
     }

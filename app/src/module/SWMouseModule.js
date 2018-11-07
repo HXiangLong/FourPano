@@ -3,8 +3,12 @@
 import * as constants from '../tool/SWConstants';
 import initStore from '../../views/redux/store/store';
 import {
-    show_Thumbnails_fun
+    show_Thumbnails_fun,
+    show_HotPhotoWall_fun
 } from '../../views/redux/action';
+import {
+    notify
+} from 'reapop';
 
 /**
  * 鼠标事件
@@ -25,7 +29,7 @@ class SWMouseModule {
         this.raycaster = new THREE.Raycaster();
 
         if ('ontouchstart' in window) {
-            // this.addGyroEvent();
+            //this.addGyroEvent();
             this.addTouchEvent();
         } else {
             this.addMosueEvent();
@@ -174,6 +178,18 @@ class SWMouseModule {
 
                 this.intersect.object.mouseUp(e, this.intersect);
 
+            } else if (!this.intersect && constants.c_isMeasureStatus) { //测量状态时点击空白处
+
+                let store = initStore();
+
+                store.dispatch(notify({
+                    title: '此处不能测量，请点击附近墙面和地面。',
+                    message: '',
+                    position: 'tc',
+                    status: 'error',
+                    dismissible: true,
+                    dismissAfter: 5000
+                }));
             }
         }
     }
@@ -234,9 +250,12 @@ class SWMouseModule {
         let store = initStore();
 
         store.dispatch(show_Thumbnails_fun(false));
+        store.dispatch(show_HotPhotoWall_fun({
+            off: false
+        }));
 
         constants.sw_roamingModule.EndRoaming();
-        
+
         constants.sw_cameraManage.onMouseDown(e);
 
         this.startMouse = new THREE.Vector2(e.clientX, e.clientY);
@@ -285,8 +304,11 @@ class SWMouseModule {
         let store = initStore();
 
         store.dispatch(show_Thumbnails_fun(false));
+        store.dispatch(show_HotPhotoWall_fun({
+            off: false
+        }));
 
-        constants.sw_roamingModule.EndRoaming();//停止漫游
+        constants.sw_roamingModule.EndRoaming(); //停止漫游
 
         constants.sw_cameraManage.onTouchStart(e);
 

@@ -8,6 +8,8 @@ export const show_maptipbox_state = 'SHOW_MAPTIPBOX_STATE';
 export const show_Iframe_state = 'SHOW_IFRAME_STATE';
 /**显示简介界面 */
 export const show_Introduction_state = 'SHOW_INTRODUCTION_STATE';
+/**显示复杂版简介 */
+export const show_IntroductionComplex_state = 'SHOW_INTRODUCTIONCOMPLEX_STATE';
 /**显示推荐展厅 */
 export const show_Thumbnails_state = 'SHOW_THUMBNAILS_STATE';
 /**文物墙 */
@@ -28,6 +30,10 @@ export const show_OtherLinks_state = 'SHOW_OTHERLINKS_STATE';
 export const open_roaming_state = 'OPEN_ROAMING_STATE';
 /**显示设置界面 */
 export const show_Setting_state = 'SHOW_SETTING_STATE';
+/**各种提示文本 */
+export const pano_prompt_state = 'PANO_PROMPT_STATE';
+/**目录树 */
+export const pano_TreeShape_state = 'PANO_TREESHAPE_STATE';
 
 //Action Creator
 /**背景音乐方法 */
@@ -65,6 +71,14 @@ export const show_Iframe_fun = function (datas) {
 export const show_Introduction_fun = function (datas) {
     return {
         type: show_Introduction_state,
+        data: datas
+    }
+}
+
+/**复杂简介界面 */
+export const show_IntroductionComplex_fun = function (datas) {
+    return {
+        type: show_IntroductionComplex_state,
         data: datas
     }
 }
@@ -148,3 +162,20 @@ export const show_Setting_fun = function(datas){
         data: datas
     }
 }
+
+/**各种提示文本显示 */
+export const pano_prompt_fun = function(datas){
+    return {
+        type:pano_prompt_state,
+        data:datas
+    }
+}
+
+/**目录树 */
+export const pano_TreeShape_fun = function(datas){
+    return {
+        type:pano_TreeShape_state,
+        data:datas
+    }
+}
+

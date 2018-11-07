@@ -1,5 +1,6 @@
 /**评论输入界面 */
 import React, { Component } from 'react';
+import * as constants from '../../../../src/tool/SWConstants';
 import './ReviewInput.css';
 
 class ReviewInput extends Component {
@@ -26,6 +27,7 @@ class ReviewInput extends Component {
 
 	/**发布按钮点击事件 */
 	handleSubmit() {
+		constants.sw_getService.AddComment(this.props.exhibitID,this.state.content);
 		this.setState({
 			content: ""
 		});

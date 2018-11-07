@@ -3,20 +3,27 @@ import {
     connect
 } from 'react-redux'
 import {
-    show_help_fun
-} from '../../../redux/action'
+    show_VideoBox_fun,
+    background_music_fun
+} from '../../../redux/action';
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        openHelp: state.OpenHelp
-    }
-}
-const mapDispatchToProps = (dispatch, ownProps) => {
-    return {
-        closeHelp: () => {
-            dispatch(show_help_fun(false))
-        }
+        bgMusicOff: state.BGMusicOff.bgMusicOff,
+        off: state.OpenVideoBox.off,
+        videoUrl: state.OpenVideoBox.videoUrl,
+        videoOff: state.OpenVideoBox.videoOff,
     }
 }
 
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        closeVideoBox: (flag) => {
+            dispatch(show_VideoBox_fun(flag))
+        },
+        open_close_Audio: (flag) => {
+            dispatch(background_music_fun(flag))
+        }
+    }
+}
 export default connect(mapStateToProps, mapDispatchToProps)(PVideoBox);

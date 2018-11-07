@@ -31,3 +31,7 @@
 .index-quickmenu li.music.close {
     background-image: url(../../../../commons/img/rmenu-music.png);
 }
+
+.index-quickmenu li.set {
+	background-image: url(../../../../commons/img/rmenu-set.png)
+}

@@ -414,9 +414,9 @@ export function getFullScreen() {
 
 /**
  * DIV文本显示
- * @param {*} labelPos 
- * @param {*} fontSize 
- * @param {*} text 
+ * @param {*} labelPos 三维坐标
+ * @param {*} fontSize 字体大小
+ * @param {*} text 文本
  */
 export function TextDiv(labelPos, fontSize, text) {
 
@@ -461,10 +461,13 @@ export function TextDiv(labelPos, fontSize, text) {
  * @param {*} textdiv 
  */
 export function delectTextDiv(textdiv) {
+    if (textdiv) {
 
-    if (textdiv && textdiv.parent != null) {
+        let child = document.getElementById(textdiv.id);
 
-        textdiv.parent.removeChild(textdiv);
+        child && child.parentNode.removeChild(child);
+
+        textdiv.parent && textdiv.parent.removeChild(textdiv);
 
         textdiv = null;
 
@@ -524,4 +527,51 @@ export function setCameraAngle(yaw, pitch, move) {
     } else {
         constants.sw_cameraManage.setHousesViewAngle(yaw, pitch, true);
     }
+}
+
+/**
+ * 获取文本框宽高
+ * @param {String} fontSize 字号
+ * @param {String} fontFamily 字体
+ * @param {String} text 文本
+ */
+export function textSize(fontSize, fontFamily, text) {
+
+    let span = document.createElement("span");
+
+    span.id = "span";
+
+    let result = {};
+
+    result.width = span.offsetWidth;
+
+    result.height = span.offsetHeight;
+
+    span.style.visibility = "hidden";
+
+    span.style.fontSize = fontSize;
+
+    span.style.fontFamily = fontFamily;
+
+    span.style.display = "inline-block";
+
+    document.body.appendChild(span);
+
+    if (typeof span.textContent != "undefined") {
+
+        span.textContent = text;
+
+    } else {
+
+        span.innerText = text;
+
+    }
+
+    result.width = parseFloat(window.getComputedStyle(span).width) - result.width;
+
+    result.height = parseFloat(window.getComputedStyle(span).height) - result.height;
+
+    delectTextDiv(span);
+    
+    return result;
 }

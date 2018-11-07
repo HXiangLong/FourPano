@@ -11,9 +11,10 @@ class MainMenu extends Component {
 
 	/**显示简介界面 */
 	showIntroduction() {
-		this.props.IntroductionState({
-			off: true
-		});
+		// this.props.IntroductionState({//简单版
+		// 	off: true
+		// });
+		this.props.IntroductionComplex(); //复杂版
 		this.props.closeThumbnails();
 	}
 
@@ -49,6 +50,7 @@ class MainMenu extends Component {
 		this.props.closeThumbnails();
 		constants.c_isMeasureStatus = !constants.c_isMeasureStatus;
 		!constants.c_isMeasureStatus && deleteMeasuring();
+		this.props.openMeasuring(constants.c_isMeasureStatus);
 	}
 
 	turnLinks() {
@@ -59,7 +61,7 @@ class MainMenu extends Component {
 	render() {
 		return (
 			<div>
-				<div className="lightDiv" style={{backgroundColor:`rgba(0,0,0,${this.props.brightness})`}}/>
+				<div className="lightDiv" style={{ backgroundColor: `rgba(0,0,0,${this.props.brightness})` }} />
 				<div className="mainmenu" url="">
 					<ul>
 						<li className="exhibithall" title="展厅" onClick={this.showThumbnails.bind(this)}>
@@ -74,7 +76,11 @@ class MainMenu extends Component {
 							<i />
 							<p>文物</p>
 						</li>
-						<li className="measure" title="测量" onClick={this.turnMeasurement.bind(this)}>
+						<li
+							className="measure"
+							title={constants.c_isMeasureStatus ? '关闭测量' : '开启测量'}
+							onClick={this.turnMeasurement.bind(this)}
+						>
 							<i />
 							<p>测量</p>
 						</li>

@@ -68,7 +68,7 @@ class MapTipBox extends Component {
 							<i>
 								<img src={markingImgArr[6]} />
 							</i>
-							<span>左键按下拖拽、中键滚轮缩放</span>
+							{this.props.phoneOff ? <span>单指拖拽、双指缩放</span> : <span>左键按下拖拽、中键滚轮缩放</span>}
 						</li>
 					</ul>
 				</div>

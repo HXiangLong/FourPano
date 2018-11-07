@@ -1,20 +1,23 @@
 import PHotPhotoWall from './PHotPhotoWall'
 import {
     connect
-} from 'react-redux'
+} from 'react-redux';
 import {
-    show_help_fun
-} from '../../../redux/action'
+    show_HotPhotoWall_fun
+} from '../../../redux/action';
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        openHelp: state.OpenHelp
+        off: state.OpenHotPhotoWall.off,
+        allShow: state.OpenHotPhotoWall.allShow
     }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        closeHelp: () => {
-            dispatch(show_help_fun(false))
+        closeHotPhotoWall: () => {
+            dispatch(show_HotPhotoWall_fun({
+                off:false
+            }))
         }
     }
 }

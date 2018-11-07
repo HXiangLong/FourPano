@@ -10,7 +10,14 @@ const happyThreadPool = HappyPack.ThreadPool({
     size: os.cpus().length
 });
 
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');//CSS文件单独提取出来
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); //CSS文件单独提取出来
+
+var CSSLoader = [
+    'css-loader?sourceMap&-minimize',
+    'modules',
+    'importLoaders=1',
+    'localIdentName=[name]__[local]__[hash:base64:5]'
+].join('&');
 
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
@@ -42,20 +49,29 @@ module.exports = {
     module: {
         // 多个loader是有顺序要求的，从右往左写，因为转换的时候是从右往左转换的
         rules: [{
-                test: /\.(css|pcss)$/,
-                use: ['css-hot-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
-                include: [resolve('app')], //限制范围，提高打包速度
-                exclude: /node_modules/
+                test: /\.css$/,
+                use: [
+                    require.resolve('style-loader'),
+                    {
+                        loader: require.resolve('css-loader'),
+                        options: {
+                            importLoaders: 1
+                        }
+                    },
+                    {
+                        loader: require.resolve('postcss-loader')
+                    }
+                ]
             },
             {
                 test: /\.less$/,
-                use: ['css-hot-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'less-loader'],
+                use: ['css-hot-loader', MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
                 include: [resolve('app')],
                 exclude: /node_modules/
             },
             {
                 test: /\.scss$/,
-                use: ['css-hot-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
+                use: ['css-hot-loader', MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
                 include: [resolve('app')],
                 exclude: /node_modules/
             },
@@ -63,11 +79,7 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 loader: 'happypack/loader?id=happy-babel-js',
                 include: [resolve('app')],
-                exclude: /node_modules/,
-                // query: {
-                //     presets: ['es2015','react','stage-1'],
-                //     plugins: ['transform-decorators-legacy','transform-decorators']
-                // }
+                exclude: /node_modules/
             },
             { //file-loader 解决css等文件中引入图片路径的问题
                 // url-loader 当图片较小的时候会把图片BASE64编码，大于limit参数的时候还是使用file-loader 进行拷贝
@@ -89,13 +101,14 @@ module.exports = {
                 }
             },
             {
-                test: /\.(woff|woff2?|eot|ttf|otf)(\?.*)?$/,
-                loader: 'url-loader',
-                options: {
-                    limit: 10000,
-                    name: assetsPath('fonts/[name].[hash:7].[ext]')
-                }
+                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: "url-loader?limit=10000&minetype=application/font-woff"
+            },
+            {
+                test: /\.(ttf|eot|svg|gif)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: "file-loader"
             }
+
         ]
     },
 
@@ -106,8 +119,8 @@ module.exports = {
                     chunks: "initial",
                     name: "common",
                     minChunks: 2,
-                    maxInitialRequests: 5, 
-                    minSize: 0, 
+                    maxInitialRequests: 5,
+                    minSize: 0,
                     reuseExistingChunk: true // 可设置是否重用该chunk（查看源码没有发现默认值）
                 }
             }
@@ -117,7 +130,7 @@ module.exports = {
     plugins: [
         new HappyPack({
             id: 'happy-babel-js',
-            loaders: ['cache-loader','babel-loader?cacheDirectory=true'],
+            loaders: ['cache-loader', 'babel-loader?cacheDirectory=true'],
             threadPool: happyThreadPool
         }),
         new MiniCssExtractPlugin({
@@ -127,6 +140,10 @@ module.exports = {
         new ProgressBarPlugin({
             format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)'
         }),
-        new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', THREE: 'three' }),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            THREE: 'three'
+        }),
     ]
 }

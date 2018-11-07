@@ -13,6 +13,7 @@
     border: 1px solid #585757;
     background-color: #000000a3;
     transform: translate(-50%, -50%);
+    width: 230px;
 }
 
 .maptipbox {}

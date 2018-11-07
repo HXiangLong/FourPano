@@ -3,6 +3,10 @@
 import { sw_groundMesh, c_WallDisplaySize } from '../../tool/SWConstants';
 import SWDrawPoint from './SWDrawPoint';
 import SWDrawLine from './SWDrawLine';
+import initStore from '../../../views/redux/store/store';
+import {
+    notify
+} from 'reapop';
 
 /**
  * 测量功能
@@ -27,7 +31,18 @@ class SWMeasureModule {
 
         if (obj) {
 
-            if (this.swDrawLine.lineTimeBoo) return; //绘制中请稍等
+            if (this.swDrawLine.lineTimeBoo){
+                let store = initStore();
+                store.dispatch(notify({
+                    title: `绘制时间冷却中，请稍后点击。`,
+                    message: '',
+                    position: 'tc',
+                    status: 'success',
+                    dismissible: true,
+                    dismissAfter: 5000
+                }));
+                return; //绘制中请稍等
+            }
 
             let poi = new THREE.Vector3(obj.point.x, obj.point.y, obj.point.z);
 

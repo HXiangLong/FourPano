@@ -25,8 +25,15 @@ class AllExhibitsForBuilding {
 
         this.panoID = obj.PanoID; //站点编号
 
-        this.sceneID = obj.SceneID.split('|'); //文物列表功能格式为 三维|视频|音频|书籍
+        this.sceneID = obj.SceneID; //楼栋号
 
+        this.featuresList = obj.FeaturesList.split('|');//文物列表功能格式为 三维|视频|音频|书籍|链接
+
+        this.likes = obj.Likes;//喜爱数
+
+        this.commentNum = 0;//评论总数
+
+        this.commentTable = undefined;//评论集合
     }
 }
 

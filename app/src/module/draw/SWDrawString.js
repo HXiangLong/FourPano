@@ -1,7 +1,8 @@
 /* global THREE*/
-import { scene, camera, sw_getService } from '../../tool/SWConstants';
+import { scene, camera} from '../../tool/SWConstants';
 import { disposeNode, getFont } from '../../tool/SWTool';
-// const external = require('../../tool/SWExternalConst');
+
+const external = require('../../tool/SWExternalConst');
 /**
  * 绘制字符串
  */
@@ -13,11 +14,17 @@ class SWDrawString {
         this.textArr = [];
 
         //字体用的是绝对地址
-        getFont('http://ojv7mano6.bkt.clouddn.com/optimer_regular.typeface.json').then((response) => {
+        getFont(external.server_json.resourcesUrl + external.server_json.fontUrl).then((response) => {
             this.font = response;
         });
     }
 
+    /**
+     * 显示文本
+     * @param {Vector3} labelPos 文本坐标
+     * @param {String} text 文本
+     * @param {Number} dotRadius 字体
+     */
     drawString(labelPos, text, dotRadius) {
 
         let fontSize = dotRadius * 3;
@@ -42,6 +49,8 @@ class SWDrawString {
         meshText.lookAt(camera.position);
 
         meshText.scale.set(0.3, 0.3, 0.3);
+        
+        meshText.userData.depthlevel = 100;
 
         scene.add(meshText);
 

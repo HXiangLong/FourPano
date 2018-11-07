@@ -1,6 +1,6 @@
 .videos {
     position: absolute;
-    z-index: 11;
+    z-index: 15;
     width: 100%;
     height: 100%;
 }
@@ -44,3 +44,4 @@ video::-webkit-media-controls-enclosure {
 video::-webkit-media-controls-panel {
     width: calc(100% + 30px);
 }
+  

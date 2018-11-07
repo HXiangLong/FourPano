@@ -6,13 +6,13 @@ import {
     show_HotPhotoWall_fun
 } from '../../../redux/action';
 
-const thumbnailsStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, ownProps) => {
     return {
         off: state.OpenHotPhotoWall.off,
         allShow: state.OpenHotPhotoWall.allShow
     }
 }
-const thumbnailsDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         closeHotPhotoWall: () => {
             dispatch(show_HotPhotoWall_fun({
@@ -22,4 +22,4 @@ const thumbnailsDispatchToProps = (dispatch, ownProps) => {
     }
 }
 
-export default connect(thumbnailsStateToProps, thumbnailsDispatchToProps)(HotPhotoWall);
+export default connect(mapStateToProps, mapDispatchToProps)(HotPhotoWall);

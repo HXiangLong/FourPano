@@ -1,0 +1,15 @@
+.PHotPhotoWall{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    bottom: 4rem;
+    width: 100%;
+    z-index: 10;
+    height: 86px;
+}
+
+.PHotPhotoWall .Pwwlistbox{
+    width: 100%;
+    top: 50%;
+    position: absolute;
+    transform: translateY(-50%);
+}

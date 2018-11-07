@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import './PanoMap.css';
 import * as constants from '../../../../src/tool/SWConstants';
-// import HashTable from '../../../../src/tool/SWHashTable';
 import SWKMeans from './SWKMeans';
 import MapMarker from './MapMarker';
 
@@ -27,7 +26,6 @@ class PanoMap extends Component {
 		this.markerLeft = 0; //标注层位置
 		this.markerTop = 0; //标注层位置
 		this.serverUrl = ''; //小地图服务地址
-		this.deviationAngle = -145; //偏差角
 		this.kmTable = []; //聚类需要的数据
 		this.SWKMeans = new SWKMeans(); //聚合算法
 		this.radarTop = 0; //雷达层位置
@@ -316,7 +314,7 @@ class PanoMap extends Component {
 							className="mapRadar"
 							style={{
 								transform: `translate3d(${this.radarLeft - 16}px, ${this.radarTop -
-									8}px, 0px) rotate(${-(this.deviationAngle - 90 + this.props.radarAngle)}deg)`
+									8}px, 0px) rotate(${-(constants.c_deviationAngle - 90 + this.props.radarAngle)}deg)`
 							}}
 						>
 							<div className="mapRadarImg" />

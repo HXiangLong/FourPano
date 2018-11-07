@@ -6,6 +6,9 @@ import initStore from '../../../views/redux/store/store';
 import {
     open_roaming_fun
 } from '../../../views/redux/action';
+import {
+    notify
+} from 'reapop';
 
 /**漫游对象类 */
 class SWRoamingModule {
@@ -141,6 +144,9 @@ class SWRoamingModule {
     /**结束漫游 */
     EndRoaming() {
 
+        if(!constants.c_roamingStatus){
+            return;
+        }
         constants.c_roamingStatus = false;
 
         this.picthAngle = 0;
@@ -150,6 +156,14 @@ class SWRoamingModule {
         let store = initStore();
         store.dispatch(open_roaming_fun({
             roamingOff: false
+        }));
+        store.dispatch(notify({
+            title: `关闭漫游。`,
+            message: '',
+            position: 'tc',
+            status: 'success',
+            dismissible: true,
+            dismissAfter: 5000
         }));
     }
 }

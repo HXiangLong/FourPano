@@ -3,18 +3,21 @@ import {
     connect
 } from 'react-redux'
 import {
-    show_help_fun
-} from '../../../redux/action'
+    show_Thumbnails_fun
+} from '../../../redux/action';
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        openHelp: state.OpenHelp
+        off: state.OpenThumbnails
     }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        closeHelp: () => {
-            dispatch(show_help_fun(false))
+        closeThumbnails: () => {
+            dispatch(show_Thumbnails_fun(false))
+        },
+        showThumbnails: () => {
+            dispatch(show_Thumbnails_fun(true))
         }
     }
 }

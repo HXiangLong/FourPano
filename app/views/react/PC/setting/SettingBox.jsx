@@ -9,10 +9,9 @@ class SettingBox extends Component {
 	constructor() {
 		super();
 		this.state = {
-			lightValue: 9,
+			lightValue: 10,
 			roamingValue: 5
 		};
-		this.lightDiv = document.getElementsByClassName('lightDiv');
 	}
 
 	/**关闭界面 */

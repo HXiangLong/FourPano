@@ -24,8 +24,11 @@ class SWPano {
     constructor() {
         //监听界面是否失去焦点，停止所有声音
         document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this), false);
+        //监听屏幕是否变化
+        window.addEventListener('resize', this.onWindowResize.bind(this), false);
     }
 
+    /**页面失去焦点之后做出了相应改变 */
     handleVisibilityChange() {
 
         let store = initStore();
@@ -70,6 +73,26 @@ class SWPano {
         }
     }
 
+    /**检测浏览器是否支持webgl */
+    webglAvailable() {
+        try {
+            let canvas = document.createElement('canvas');
+            return !!(window.WebGLRenderingContext && (
+                canvas.getContext('webgl') ||
+                canvas.getContext('experimental-webgl')));
+        } catch (e) {
+            return false;
+        }
+    }
+
+    /**屏幕分辨率变化 */
+    onWindowResize() {
+        constants.camera.aspect = window.innerWidth / window.innerHeight;
+        constants.camera.updateProjectionMatrix();
+        if (constants.c_currentState != constants.c_currentStateEnum.phoneStatus) constants.renderer.setPixelRatio(window.devicePixelRatio);
+        constants.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
     /**性能监测*/
     initStats() {
         constants.stats = new Stats();
@@ -104,11 +127,15 @@ class SWPano {
 
     /**初始化渲染*/
     initRenderer() {
+        // if (this.webglAvailable()) {
         constants.renderer = new THREE.WebGLRenderer({
             antialias: true,
             logarithmicDepthBuffer: true,
             alpha: true
         });
+        // } else {
+        // constants.renderer = new THREE.CanvasRenderer();
+        // }
         constants.renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas3d').appendChild(constants.renderer.domElement);
         constants.renderer.domElement.style.position = "absolute";
@@ -116,6 +143,19 @@ class SWPano {
         //设置canvas背景色(clearColor)
         constants.renderer.setClearColor(0xffffff, 1.0);
         constants.renderer.shadowMapEnabled = true;
+        // constants.renderer.vr.enabled = true;
+
+        // checkAvailability();
+    }
+
+    /**初始化CSS渲染 */
+    initCSSRenderer() {
+        let container = document.getElementById('canvas3d');
+        constants.renderer = new THREE.CSS3DRenderer();
+        constants.renderer.setSize(window.innerWidth, window.innerHeight);
+        constants.renderer.domElement.style.position = 'absolute';
+        constants.renderer.domElement.style.top = 0;
+        container.appendChild(constants.renderer.domElement);
     }
 
     /**每帧调用*/
@@ -126,10 +166,6 @@ class SWPano {
 
         this.Update();
 
-        constants.camera.aspect = window.innerWidth / window.innerHeight;
-        constants.camera.updateProjectionMatrix();
-        constants.renderer.setPixelRatio(window.devicePixelRatio);
-        constants.renderer.setSize(window.innerWidth, window.innerHeight);
         constants.renderer.render(constants.scene, constants.camera);
 
     }
@@ -207,3 +243,39 @@ class SWPano {
 
 
 export default SWPano;
+
+
+
+
+function getVRDisplays(onDisplay) {
+
+    if ('getVRDisplays' in navigator) {
+
+        navigator.getVRDisplays()
+            .then(function (displays) {
+                onDisplay(displays[0]);
+            });
+
+    }
+
+}
+
+// getVRDisplay(function (display) {
+//     renderer.vr.setDevice(display);
+// });
+
+function checkAvailability() {
+    return new Promise(function (resolve, reject) {
+        if (navigator.getVRDisplays !== undefined) {
+            navigator.getVRDisplays().then(function (displays) {
+                if (displays.length === 0) {
+                    reject('no vr');
+                } else {
+                    resolve();
+                }
+            });
+        } else {
+            reject('no vr');
+        }
+    });
+}

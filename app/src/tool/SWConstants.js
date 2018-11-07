@@ -40,10 +40,16 @@ export var c_WallDisplaySize = 20;
 export var c_groundDisplaySize = -500;
 /**漫游倍数 */
 export var c_roamingMultiple = 5;
+/**偏差角 */
+export var c_deviationAngle = -145;
 /**跳转之后需要看向的标注ID*/
 export var c_JumpMarkerID = "";
 /**小地图点击放大的站点名称*/
 export var c_minMapClickPanoID = "";
+/**当前点赞的是哪个编号 */
+export var c_likeToExhibitID = "";
+/**上一站全景ID */
+export var c_LastStopPanoID = "";
 /**坐标转换矩阵。坐标系 OpenGL -> 3DS*/
 export var c_OpenGLToDS3Mx4 = new THREE.Matrix4().fromArray([1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1]);
 /**坐标转换矩阵。坐标系 3DS -> OpenGL*/
@@ -53,6 +59,8 @@ export var c_wallClickRotateV3 = new THREE.Vector3();
 /**墙面鼠标按下位置*/
 export var c_wallStartPoint = new THREE.Vector3();
 
+/**初始化完成之后是否弹出展厅推荐列表 */
+export var c_thumbnailsShow = false;
 /**漫游状态 */
 export var c_roamingStatus = false;
 /**是否显示探面 */
@@ -115,6 +123,8 @@ export var c_datGuiArr = [];
 export var c_arrowArr = [];
 /**楼层集合*/
 export var c_FloorsMapTable = new HashTable();
+/**所有站点集合 */
+export var c_panoIDTable = new HashTable();
 /**所有墙面片集合*/
 export var c_allFacadeByPanoIDInfoTbale = new HashTable();
 /**当前站点所需要的墙面片集合*/

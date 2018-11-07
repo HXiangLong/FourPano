@@ -7,23 +7,27 @@ import {
     show_maptipbox_fun
 } from '../../../redux/action';
 
-const thumbnailsStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, ownProps) => {
     return {
         off: state.OpenPanoMap.off,
-        radarAngle:state.OpenPanoMap.radarAngle,
-        pid:state.OpenPanoMap.pID
+        radarAngle: state.OpenPanoMap.radarAngle,
+        pid: state.OpenPanoMap.pID
     }
 }
 
-const thumbnailsDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         closePanoMap: () => {
-            dispatch(show_PanoMap_fun({off:false}))
+            dispatch(show_PanoMap_fun({
+                off: false
+            }))
         },
-        showMaptipBox:() => {
-            dispatch(show_maptipbox_fun(true))
+        showMaptipBox: () => {
+            dispatch(show_maptipbox_fun({
+                off: true
+            }))
         }
     }
 }
 
-export default connect(thumbnailsStateToProps, thumbnailsDispatchToProps)(PanoMap);
+export default connect(mapStateToProps, mapDispatchToProps)(PanoMap);

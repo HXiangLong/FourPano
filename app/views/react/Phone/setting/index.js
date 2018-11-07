@@ -3,18 +3,24 @@ import {
     connect
 } from 'react-redux'
 import {
-    show_help_fun
+    show_Setting_fun,
+    show_Introduction_fun
 } from '../../../redux/action'
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        openHelp: state.OpenHelp
+        boxOff:state.OpenSetting.off
     }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        closeHelp: () => {
-            dispatch(show_help_fun(false))
+        OpenSettingFun: () => {
+            dispatch(show_Setting_fun({
+                off:false
+            }))
+        },
+        setBrightness:(flag)=>{
+            dispatch(show_Setting_fun(flag))
         }
     }
 }

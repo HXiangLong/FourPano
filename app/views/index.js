@@ -7,8 +7,11 @@ import {
 } from 'react-redux';
 import Index from './react/index';
 import SWPano from '../src/SWPano';
+import * as constants from '../src/tool/SWConstants';
 import initStore from './redux/store/store';
 import Detector from '../src/libs/Detector';
+require('../src/libs/CSS3DRenderer');
+// require('../src/libs/CanvasRenderer');
 const swExternalConst = require('../src/tool/SWExternalConst');
 const axios = require('axios');
 
@@ -34,6 +37,12 @@ function init() {
   let detector = new Detector();
   if (!detector.detector.webgl) detector.addGetWebGLMessage();
 
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    constants.c_currentState = constants.c_currentStateEnum.phoneStatus;
+  } else {
+    constants.c_currentState = constants.c_currentStateEnum.pcStatus;
+  }
+
   //外部传入站点和看向点
   let firtPanoid = swExternalConst.server_json.firstPanoID;
   let htmlPanoId = document.URL.getQuery('PanoID');
@@ -45,10 +54,12 @@ function init() {
   swExternalConst.server_json.firstYaw = htmlYaw;
   swExternalConst.server_json.firstPitch = htmlPicth;
 
+  //全景底层
   let swPano = new SWPano();
-  swPano.initStats();
+  // swPano.initStats();
   swPano.initScene();
   swPano.initCamera();
+  // constants.c_currentState == constants.c_currentStateEnum.phoneStatus ? swPano.initCSSRenderer() : swPano.initRenderer();
   swPano.initRenderer();
   swPano.initLight();
   swPano.initService();

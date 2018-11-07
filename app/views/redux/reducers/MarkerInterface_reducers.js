@@ -14,12 +14,13 @@ export default function OpenMarkerInterface(state = {
     title: "",
     content: "",
     likeNum: 9,
-    commentList: ["啊实打实大所多按时达到阿萨德按时", "文琪奥无所大所大所大硕大的阿打算达到安定啊", "啊实打实的啊实打实大师大师啊", "qqqqqqqqqq", "qwertyuiop[]dasdfghk", "sd", "111112222", "啊实打实大所多按时达到阿萨德按时", "文琪奥无所大所大所大硕大的阿打算达到安定啊", "啊实打实的啊实打实大师大师啊", "qqqqqqqqqq", "qwertyuiop[]dasdfghk", "sd", "111112222"],
+    commentList: [],
     links: "",
     d3: "",
     book: "",
     video: "",
-    audio: ""
+    audio: "",
+    phoneCommnetOff:false
 }, action) {
     switch (action.type) {
         case show_MarkerInterface_state:

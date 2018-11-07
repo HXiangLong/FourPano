@@ -24,16 +24,16 @@ class Thumbnails extends Component {
 
 	componentWillUpdate() {
 		this.amountNum =
-			constants.c_thumbnailsForMuseum.length - 6 < 0 ? 0 : constants.c_thumbnailsForMuseum.length - 6;
+			constants.c_thumbnailsForMuseum.length - 5 < 0 ? 0 : constants.c_thumbnailsForMuseum.length - 5;
 		this.controlArrow = this.amountNum > 0;
 	}
 
 	itemOnClick(panoID) {
-        this.props.closeThumbnails();
-        if(panoID != constants.c_StationInfo.panoID){
-            jumpSite(panoID);
-        }
-    }
+		this.props.closeThumbnails();
+		if (panoID != constants.c_StationInfo.panoID) {
+			jumpSite(panoID);
+		}
+	}
 
 	createTable() {
 		let museumID, exhibID;
@@ -51,10 +51,17 @@ class Thumbnails extends Component {
 		let table = [];
 		constants.c_thumbnailsForMuseum.forEach((item, idx) => {
 			if (museumID == item.sceneID || item.sceneID == '') {
+				//同一楼层需要分展厅列表展示时用到floorInfo的DisplayPriority与Thumbnail的SceneID
 				table.push(
 					<Exhiblistbox
 						key={`thumbnails${idx}`}
-						active={exhibID == item.floorID}
+						active={
+							item.displayPriority == 1 ? (
+								exhibID == item.floorID
+							) : (
+								item.panoID == constants.c_StationInfo.panoID
+							)
+						} //另一种极端情况 把当前楼层（展厅）的所有站点列举出来了，这个时候就要对应Thumbnail的DisplayPriority，当DisplayPriority=2时
 						getPhotoWall={this.itemOnClick.bind(this)}
 						markerID={item.panoID}
 						name={item.name}
@@ -88,9 +95,13 @@ class Thumbnails extends Component {
 	}
 
 	mouseDown(event) {
-		event.preventDefault();
-		event.stopPropagation();
-		this.mouseX = event.clientX;
+		if (event.type == 'touchstart') {
+			this.mouseX = event.changedTouches[0].clientX;
+		} else {
+			event.preventDefault();
+			event.stopPropagation();
+			this.mouseX = event.clientX;
+		}
 		this.mouseDownBoo = true;
 		this.setState({
 			animationTime: 0
@@ -98,26 +109,40 @@ class Thumbnails extends Component {
 	}
 
 	mouseMove(event) {
-		event.preventDefault();
-		event.stopPropagation();
-		if (this.mouseDownBoo && this.controlArrow) {
-			let mouseMoveX = event.clientX - this.mouseX;
-			let num = this.state.translateX + mouseMoveX;
-			let num1 = num < this.amountNum * this.interval ? this.amountNum * this.interval : num > 0 ? 0 : num;
-			this.setState({
-				translateX: num1
-			});
+		if (event.type == 'touchmove') {
+			if (this.mouseDownBoo && this.controlArrow) {
+				let mouseMoveX = event.changedTouches[0].clientX - this.mouseX;
+				let num = this.state.translateX + mouseMoveX;
+				let num1 = num < this.amountNum * this.interval ? this.amountNum * this.interval : num > 0 ? 0 : num;
+				this.setState({
+					translateX: num1
+				});
+				this.mouseX = event.changedTouches[0].clientX;
+			}
+		} else {
+			event.preventDefault();
+			event.stopPropagation();
+			if (this.mouseDownBoo && this.controlArrow) {
+				let mouseMoveX = event.clientX - this.mouseX;
+				let num = this.state.translateX + mouseMoveX;
+				let num1 = num < this.amountNum * this.interval ? this.amountNum * this.interval : num > 0 ? 0 : num;
+				this.setState({
+					translateX: num1
+				});
 
-			this.mouseX = event.clientX;
+				this.mouseX = event.clientX;
+			}
 		}
 	}
 
 	mouseUp(event) {
-		event.preventDefault();
-		event.stopPropagation();
+		if (event.type == 'mouseup') {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+
 		if (this.mouseDownBoo && this.controlArrow) {
 			this.mouseDownBoo = false;
-
 			let rounding = Math.round(this.state.translateX / this.interval);
 			this.setState({
 				nowItem: rounding,
@@ -130,36 +155,46 @@ class Thumbnails extends Component {
 	render() {
 		return this.props.off ? (
 			<div className="ThumbnailsBox">
-				{this.controlArrow ? (
-					<div className="iconfont icon-zuo left" onClick={this.leftArrow.bind(this)} />
-				) : (
-					''
-				)}
-				<div
-					className="exhiblistItem"
-					onMouseDown={this.mouseDown.bind(this)}
-					onMouseMove={this.mouseMove.bind(this)}
-					onMouseUp={this.mouseUp.bind(this)}
-					onTouchStart={this.mouseDown.bind(this)}
-					onTouchMove={this.mouseMove.bind(this)}
-					onTouchEnd={this.mouseUp.bind(this)}
-				>
-					<ul
-						style={{
-							textAlign: `${this.controlArrow ? 'left' : 'center'}`,
-							width: `${this.controlArrow ? '20000px' : '1195px'}`,
-							transform: `translateX(${this.state.translateX}px)`,
-							transition: `-webkit-transform ${this.state.animationTime}ms ease 0s`
-						}}
+				<div className="itemBox">
+					{this.controlArrow ? (
+						<div
+							className={`iconfont icon-zuo left ${this.state.nowItem <= 0 ? 'hui' : ''}`}
+							onClick={this.leftArrow.bind(this)}
+						/>
+					) : (
+						''
+					)}
+					<div
+						className="exhiblistItem"
+						onMouseDown={this.mouseDown.bind(this)}
+						onMouseMove={this.mouseMove.bind(this)}
+						onMouseUp={this.mouseUp.bind(this)}
+						onTouchStart={this.mouseDown.bind(this)}
+						onTouchMove={this.mouseMove.bind(this)}
+						onTouchEnd={this.mouseUp.bind(this)}
 					>
-						{this.createTable()}
-					</ul>
+						<ul
+							style={{
+								textAlign: `${this.controlArrow ? 'left' : 'center'}`,
+								width: `${this.controlArrow ? '20000px' : '1195px'}`,
+								transform: `translateX(${this.state.translateX}px)`,
+								transition: `-webkit-transform ${this.state.animationTime}ms ease 0s`
+							}}
+						>
+							{this.createTable()}
+						</ul>
+					</div>
+					{this.controlArrow ? (
+						<div
+							className={`iconfont icon-gengduo right ${this.state.nowItem >= this.amountNum
+								? 'hui'
+								: ''}`}
+							onClick={this.rightArrow.bind(this)}
+						/>
+					) : (
+						''
+					)}
 				</div>
-				{this.controlArrow ? (
-					<div className="iconfont icon-gengduo right" onClick={this.rightArrow.bind(this)} />
-				) : (
-					''
-				)}
 			</div>
 		) : (
 			''

@@ -95,9 +95,7 @@ class MarkerInterface extends Component {
 
 	/**喜欢点赞 */
 	onLike() {
-		this.props.markerInterfaceState({
-			likeNum: this.props.likeNum + 10
-		});
+		constants.sw_getService.SetLikesForExhibitID(this.props.exhibitID);
 	}
 
 	/**介绍文本解析 */
@@ -185,17 +183,27 @@ class MarkerInterface extends Component {
 	onComment() {
 		let commentList = [];
 
-		this.props.commentList.forEach((item,idx) => {
-			commentList.push(<li key={`comment${idx}`}>{item}</li>);
-		});
+		if (this.props.commentList.length == 0) {
+			commentList.push(<li key={`comment0`}>{'还没有评论，快来抢沙发啦~~~~'}</li>);
+		} else {
+			this.props.commentList.forEach((item, idx) => {
+				commentList.push(
+					<li key={`comment${idx}`}>
+						<p className="userName">{item.UserID == '' ? '游客：' : item.UserID}</p>
+						<p className="content">{item.Contents}</p>
+						<p className="timers">{item.AddTime}</p>
+					</li>
+				);
+			});
+		}
 
 		return commentList;
 	}
 
 	showComment() {
 		this.props.show_ReviewInput({
-			off:true,
-			exhibitID:this.props.exhibitID
+			off: true,
+			exhibitID: this.props.exhibitID
 		});
 	}
 
@@ -267,7 +275,7 @@ class MarkerInterface extends Component {
 						<div className="cont" dangerouslySetInnerHTML={{ __html: this.markerContent() }} />
 						<ul className="detailQuickmenu">
 							<li title="喜欢" className="iconfont icon-xihuan dianzhan" onClick={this.onLike.bind(this)}>
-								<p>{this.props.likeNum >= 99 ? '99+' : this.props.likeNum}</p>
+								<p>{parseInt(this.props.likeNum) >= 99 ? '99+' : this.props.likeNum}</p>
 							</li>
 							{/* <li title="收藏" className="iconfont icon-shoucang1">
 							</li> */}

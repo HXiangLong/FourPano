@@ -1,20 +1,32 @@
 import PPanoMap from './PPanoMap'
 import {
     connect
-} from 'react-redux'
+} from 'react-redux';
 import {
-    show_help_fun
-} from '../../../redux/action'
+    show_PanoMap_fun,
+    show_maptipbox_fun
+} from '../../../redux/action';
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        openHelp: state.OpenHelp
+        phoneOff: state.OpenPanoMap.phoneOff,
+        radarAngle: state.OpenPanoMap.radarAngle,
+        pid: state.OpenPanoMap.pID
     }
 }
+
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        closeHelp: () => {
-            dispatch(show_help_fun(false))
+        closePanoMap: () => {
+            dispatch(show_PanoMap_fun({
+                phoneOff: false
+            }))
+        },
+        showMaptipBox: () => {
+            dispatch(show_maptipbox_fun({
+                off: true,
+                phoneOff:true
+            }))
         }
     }
 }

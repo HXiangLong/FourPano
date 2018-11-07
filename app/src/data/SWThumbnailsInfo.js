@@ -14,6 +14,8 @@ class ThumbnailsInfo {
         this.sceneID = obj.SceneID; //对应场景ID
         
         this.floorID = obj.FloorID; //对应场景ID
+
+        this.displayPriority = obj.DisplayPriority; //对应优先级 1-按照楼层（展厅来） 2-按照站点来
     }
 }
 export default ThumbnailsInfo;

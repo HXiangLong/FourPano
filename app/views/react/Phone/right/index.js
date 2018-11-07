@@ -3,18 +3,32 @@ import {
     connect
 } from 'react-redux'
 import {
-    show_help_fun
+    background_music_fun,
+    show_Setting_fun,
+    show_PanoMap_fun
 } from '../../../redux/action'
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        openHelp: state.OpenHelp
+        closeYourself: state.BGMusicOff.closeYourself,
+        bgMusicOff: state.BGMusicOff.bgMusicOff,
+        audioUrl: state.BGMusicOff.audioUrl,
+        openPanoMapOff: state.OpenPanoMap.phoneOff
     }
 }
+
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        closeHelp: () => {
-            dispatch(show_help_fun(false))
+        open_close_Audio: (flag) => {
+            dispatch(background_music_fun(flag))
+        },
+        show_Setting:()=>{
+            dispatch(show_Setting_fun({
+                off:true
+            }))
+        },
+        showPanoMap: (flag) => {
+            dispatch(show_PanoMap_fun(flag))
         }
     }
 }

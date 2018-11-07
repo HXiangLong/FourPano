@@ -124,6 +124,8 @@ class SWDrawLine {
 
         line.position.set(0, 0, 0);
 
+        line.userData.depthlevel = 100;
+        
         scene.add(line);
 
         this.lineAllArr.push(line);

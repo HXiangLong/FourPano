@@ -10,17 +10,24 @@ import SWMarkerVideoModule from '../module/marker/SWMarkerVideoModule';
 import initStore from '../../views/redux/store/store';
 import {
     background_music_fun,
-    show_PanoMap_fun
+    show_PanoMap_fun,
+    pano_prompt_fun
 } from '../../views/redux/action';
 const swExternalConst = require('./SWExternalConst');
 
 /**加载完成之后调用 */
 export function LoadPreviewImage() {
 
+    let panoData = constants.c_panoIDTable.getValue(constants.c_StationInfo.panoID);
+
     //站点跳转之后需要更新一下小地图
     let store = initStore();
     store.dispatch(show_PanoMap_fun({
         pID: constants.c_StationInfo.panoID
+    }));
+
+    store.dispatch(pano_prompt_fun({
+        panoNames: panoData.names == "" ? panoData.markerContent : panoData.names
     }));
 
     AddMarkerMesh();
@@ -36,7 +43,11 @@ export function LoadPreviewImage() {
 
         InitialOrientation();
 
-        AddSmallVideo();
+        if (constants.c_currentState != constants.c_currentStateEnum.phoneStatus) { //手机版现在还不能嵌入视频
+
+            AddSmallVideo();
+
+        }
 
         clearTimeout(waitTime);
 
@@ -76,7 +87,7 @@ export function deleteAll() {
     deleteMeasuring();
 }
 
-export function deleteMarker(){
+export function deleteMarker() {
     //清理标注
     constants.c_markerMeshArr.forEach((item) => {
 
@@ -87,10 +98,10 @@ export function deleteMarker(){
 }
 
 /**清除测量 */
-export function deleteMeasuring(){
+export function deleteMeasuring() {
 
     constants.c_isMeasureStatus = false;
-    
+
     constants.sw_measure.clear();
 }
 
@@ -225,20 +236,20 @@ export function AddSmallVideo() {
 export function InitialOrientation() {
 
     //如果传入站点和配置点冲突了，以传入站点为主
-    if(swExternalConst.server_json.firstAnimation && swExternalConst.server_json.firstPanoID == constants.c_StationInfo.panoID){
+    if (swExternalConst.server_json.firstAnimation && swExternalConst.server_json.firstPanoID == constants.c_StationInfo.panoID) {
 
         swExternalConst.server_json.firstAnimation = false;
-        
+
         setCameraAngle(swExternalConst.server_json.firstYaw, swExternalConst.server_json.firstPitch, true);
 
-    }else{
+    } else {
 
         swExternalConst.server_json.data.InitialOrientation.forEach((obj, idx) => {
 
             if (obj.panoid == constants.c_StationInfo.panoID) {
-    
+
                 setCameraAngle(obj.yaw, obj.pitch, true);
-    
+
             }
         });
 

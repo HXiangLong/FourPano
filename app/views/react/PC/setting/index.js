@@ -3,25 +3,26 @@ import {
     connect
 } from 'react-redux';
 import {
-    show_Setting_fun,
-    show_Introduction_fun
+    show_Setting_fun
 } from '../../../redux/action';
 
-const thumbnailsStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, ownProps) => {
     return {
-        boxOff:state.OpenSetting
+        boxOff:state.OpenSetting.off
     }
 }
 
-const thumbnailsDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         OpenSettingFun: () => {
-            dispatch(show_Setting_fun(false))
+            dispatch(show_Setting_fun({
+                off:false
+            }))
         },
         setBrightness:(flag)=>{
-            dispatch(show_Introduction_fun(flag))
+            dispatch(show_Setting_fun(flag))
         }
     }
 }
 
-export default connect(thumbnailsStateToProps, thumbnailsDispatchToProps)(SettingBox);
+export default connect(mapStateToProps, mapDispatchToProps)(SettingBox);

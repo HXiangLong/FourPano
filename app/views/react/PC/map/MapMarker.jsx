@@ -64,7 +64,7 @@ class MapMarker extends Component {
 				onMouseOut={this.mouseOut.bind(this)}
 				onClick={this.mouseClick.bind(this)}
 			>
-				{this.state.off ? (
+				{this.state.off && constants.c_currentState != constants.c_currentStateEnum.phoneStatus ? (
 					<div className="mapMarkerImgDiv">
 						<img src={src} />
 					</div>

@@ -6,12 +6,12 @@ import {
     show_Thumbnails_fun
 } from '../../../redux/action';
 
-const thumbnailsStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, ownProps) => {
     return {
         off: state.OpenThumbnails
     }
 }
-const thumbnailsDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         closeThumbnails: () => {
             dispatch(show_Thumbnails_fun(false))
@@ -22,4 +22,4 @@ const thumbnailsDispatchToProps = (dispatch, ownProps) => {
     }
 }
 
-export default connect(thumbnailsStateToProps, thumbnailsDispatchToProps)(Thumbnails);
+export default connect(mapStateToProps, mapDispatchToProps)(Thumbnails);

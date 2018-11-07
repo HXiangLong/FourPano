@@ -5,11 +5,23 @@ import './Exhiblistbox.css';
 class Exhiblistbox extends Component {
 	constructor() {
 		super();
+		this.intervalTime = 0;
+		this.downTime = 0;
     }
     
     mouseClick(){
-        this.props.getPhotoWall(this.props.markerID);
-    }
+		if(this.intervalTime < 200){
+			this.props.getPhotoWall(this.props.markerID);
+		}
+	}
+
+	mouseDown(){
+		this.downTime = new Date().getTime();
+	}
+	
+	mouseUp(){
+		this.intervalTime = new Date().getTime() - this.downTime;
+	}
 
 	render() {
 		return (
@@ -18,6 +30,8 @@ class Exhiblistbox extends Component {
 				onClick={this.mouseClick.bind(this)}
 				name={this.props.markerID}
 				title={this.props.name}
+				onMouseDown={this.mouseDown.bind(this)}
+				onMouseUp={this.mouseUp.bind(this)}
 			>
 				{this.props.sanwei ? <div className="sanwei" /> : ''}
 				<div className="imgstyle">

@@ -6,14 +6,14 @@ import {
     show_ReviewInput_fun
 } from '../../../redux/action';
 
-const thumbnailsStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, ownProps) => {
     return {
         off: state.OpenReviewInput.off,
         exhibitID:state.OpenMarkerInterface.exhibitID,
     }
 }
 
-const thumbnailsDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         changeViewPicture: (flag) => {
             dispatch(show_ReviewInput_fun(flag))
@@ -21,4 +21,4 @@ const thumbnailsDispatchToProps = (dispatch, ownProps) => {
     }
 }
 
-export default connect(thumbnailsStateToProps, thumbnailsDispatchToProps)(ReviewInput);
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewInput);

@@ -18,7 +18,7 @@ class Header extends Component {
 
 	componentWillMount() {
 		this.props.open_close_Audio({
-			audioUrl: external.server_json.data.bgMusic
+			audioUrl: external.server_json.data.resourcePath + external.server_json.data.bgMusic
 		});
 	}
 
@@ -38,6 +38,9 @@ class Header extends Component {
 		this.props.openHelp(true);
 	}
 
+	showTreeShape() {
+		this.props.openTreeShape ? this.props.pano_TreeShape(false) : this.props.pano_TreeShape(true);
+	}
 	/**全屏 */
 	fullScreen() {
 		console.log('fullscreen:', this.state.isFullScreen);
@@ -110,7 +113,7 @@ class Header extends Component {
 	}
 
 	/**显示设置界面 */
-	showSetting(){
+	showSetting() {
 		this.props.show_Setting();
 	}
 
@@ -129,49 +132,62 @@ class Header extends Component {
 		}
 
 		return (
-			<div className="header">
-				<ul className="quickmenu">
-					<li className="headerLi share_share">
-						<i />
-						<span>分享</span>
-						<ShareButtons
-							sites={[ 'weibo', 'qzone', 'qq', 'douban', 'wechat' ]}
-							title="全景"
-							description="一键分享到各大社交网站的react组件"
-						/>
-					</li>
-					<li
-						className={
-							'headerLi BGMusic' + (this.props.closeYourself && this.props.bgMusicOff ? '' : ' closed')
-						}
-						title={this.props.closeYourself && this.props.bgMusicOff ? '关闭声音' : '开启声音'}
-						onClick={this.playBackAudio.bind(this)}
-					>
-						<i />
-						<span>音频</span>
-						{this.props.closeYourself && this.props.bgMusicOff ? (
-							<audio ref={this.myRef} src={this.props.audioUrl} autoPlay="autoplay" loop="loop" />
-						) : (
-							''
-						)}
-					</li>
-					<li className="headerLi help" onClick={this.showHelp.bind(this)}>
-						<i />
-						<span>帮助</span>
-					</li>
-					<li
-						className={`headerLi ${!this.state.isFullScreen ? 'full' : 'half'}`}
-						onClick={this.fullScreen.bind(this)}
-						title={!this.state.isFullScreen ? '开启全屏' : '退出全屏'}
-					>
-						<i />
-						<span>全屏</span>
-					</li>
-					<li className="headerLi setup" onClick={this.showSetting.bind(this)}>
-						<i />
-						<span>设置</span>
-					</li>
-				</ul>
+			<div>
+				<div className="PanoName" onClick={this.showTreeShape.bind(this)}>
+					//站点名称
+					<div
+						className={`iconfont ${this.props.openTreeShape
+							? 'icon-caret-down'
+							: 'icon-caret-right'} iconCaretArrow`}
+					/>
+					<div className="titles">当前位置：</div>
+					<div className="conts">第一部分 创立与探索（1921-1949）</div>
+				</div>
+				<div className="header">
+					<ul className="quickmenu">
+						<li className="headerLi share_share">
+							<i />
+							<span>分享</span>
+							<ShareButtons
+								sites={[ 'weibo', 'qzone', 'qq', 'douban', 'wechat' ]}
+								title="全景"
+								description="一键分享到各大社交网站的react组件"
+							/>
+						</li>
+						<li
+							className={
+								'headerLi BGMusic' +
+								(this.props.closeYourself && this.props.bgMusicOff ? '' : ' closed')
+							}
+							title={this.props.closeYourself && this.props.bgMusicOff ? '关闭声音' : '开启声音'}
+							onClick={this.playBackAudio.bind(this)}
+						>
+							<i />
+							<span>音频</span>
+							{this.props.closeYourself && this.props.bgMusicOff ? (
+								<audio ref={this.myRef} src={this.props.audioUrl} autoPlay="autoplay" loop="loop" />
+							) : (
+								''
+							)}
+						</li>
+						<li className="headerLi help" onClick={this.showHelp.bind(this)}>
+							<i />
+							<span>帮助</span>
+						</li>
+						<li
+							className={`headerLi ${!this.state.isFullScreen ? 'full' : 'half'}`}
+							onClick={this.fullScreen.bind(this)}
+							title={!this.state.isFullScreen ? '开启全屏' : '退出全屏'}
+						>
+							<i />
+							<span>全屏</span>
+						</li>
+						<li className="headerLi setup" onClick={this.showSetting.bind(this)}>
+							<i />
+							<span>设置</span>
+						</li>
+					</ul>
+				</div>
 			</div>
 		);
 	}

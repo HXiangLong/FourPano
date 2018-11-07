@@ -18,7 +18,7 @@ class POpenIframe extends Component {
 	render() {
 		return this.props.iframeOff ? (
 			<div className="threeiframe">
-				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeIframe} />
+				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeIframe.bind(this)} />
 				<iframe src={this.props.iframeUrl} />
 			</div>
 		) : (

@@ -46,23 +46,6 @@ class SWBoxFaceModule {
         this.geometry = new THREE.PlaneGeometry(c_FaceDistance, c_FaceDistance, 1, 1);
 
         this.material = new THREE.MeshBasicMaterial({ map: texture ,depthTest: true});
-        // this.material = new THREE.ShaderMaterial({
-
-        //     uniforms: {
-        //         tDiffuse: {
-        //             value: texture
-        //         },
-        //         exposure: {
-        //             value: 0.125
-        //         },
-        //         brightMax: {
-        //             value: 0.5
-        //         }
-        //     },
-        //     vertexShader: vs_hdr,
-        //     fragmentShader: fs_hdr
-
-        // });
 
         this.thumbnails = new THREE.Mesh(this.geometry, this.material);
 
@@ -206,10 +189,6 @@ class SWBoxFaceModule {
                 texture.anisotropy = 1;
 
                 this.thumbnails.material.map = texture;
-
-                // this.thumbnails.material.lights = true;
-
-                // this.thumbnails.material.aoMapIntensity = 0.001;
 
                 this.thumbnails.material.map.needsUpdate = true;
 

@@ -4,6 +4,7 @@ import {
 
 export default function OpenPanoMap(state = {
     off: false,
+    phoneOff:false,
     radarAngle: 0,
     pID: ""
 }, action) {

@@ -3,6 +3,9 @@
 import React, { Component } from 'react';
 import './index.css';
 import '../common_img/font_icon/iconfont.css';
+import NotificationsSystem from 'reapop';
+import 'font-awesome/css/font-awesome.min.css';
+import theme from 'reapop-theme-wybo';
 //PC版
 import Header from './PC/header';
 import Help from './PC/help';
@@ -11,6 +14,7 @@ import MainMenu from './PC/menu';
 import Loading from './PC/load';
 import OpenIframe from './PC/iframe';
 import IntroductionSimple from './PC/Introduction';
+import IntroductionComplex from './PC/Introduction/complex';
 import ViewPicture from './PC/viewPicture';
 import Thumbnails from './PC/thumbnails';
 import HotPhotoWall from './PC/hotWall';
@@ -22,6 +26,7 @@ import VideoPeople from './PC/videoBox/VideoPeople';
 import OtherLinks from './PC/links';
 import RoamingBox from './PC/roaming';
 import SettingBox from './PC/setting';
+import TreeShape from './PC/tree';
 //手机版
 import PBottom from './Phone/bottom';
 import PHotPhotoWall from './Phone/hotWall';
@@ -34,33 +39,45 @@ import PRight from './Phone/right';
 import PSettingBox from './Phone/setting';
 import PThumbnails from './Phone/thumbnails';
 import PVideoBox from './Phone/videoBox';
+import PRoamingBox from './Phone/roaming';
+import PReviewInput from './Phone/reviewInput';
+import PReviewOutput from './Phone/reviewOutput';
 
 class Index extends Component {
 	render() {
-		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? (//手机版UI界面
+		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? ( //手机版UI界面
 			<div className="reactApp">
 				<PBottom />
 				<PRight />
 				<PIntroductionSimple />
-				{/* <PHotPhotoWall />
-				<POpenIframe />
-				
-				<PLoading />
-				<PPanoMap />
-				<PMarkerInterface />
 				<PSettingBox />
+				<PRoamingBox />
+				<POpenIframe />
+				<PVideoBox />
+				<PMarkerInterface />
+				<ViewPicture />
+				<PReviewInput />
+				<PReviewOutput />
 				<PThumbnails />
-				<PVideoBox /> */}
+				<PHotPhotoWall />
+				<PPanoMap />
+				<MapTipBox />
+				{/* 
+				<PLoading />
+				 */}
 			</div>
-		) : (//PC版UI界面
+		) : (
+			//PC版UI界面
 			<div className="reactApp">
 				<Header />
+				<TreeShape />
 				<MainMenu />
 				<Help />
 				<MapTipBox />
 				<Loading />
 				<OpenIframe />
 				<IntroductionSimple />
+				<IntroductionComplex />
 				<ViewPicture />
 				<Thumbnails />
 				<HotPhotoWall />
@@ -72,6 +89,7 @@ class Index extends Component {
 				<OtherLinks />
 				<RoamingBox />
 				<SettingBox />
+				<NotificationsSystem theme={theme} />
 			</div>
 		);
 	}
