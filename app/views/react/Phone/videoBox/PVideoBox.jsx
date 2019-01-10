@@ -53,7 +53,7 @@ class PVideoBox extends Component {
 				{/* <div className="videobox"> */}
 				<video
 					ref={this.myVideoRef}
-					src={`${constants.sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/videos/${this.props
+					src={`${constants.sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/Video/${this.props
 						.videoUrl}`}
 					autoPlay="autoPlay"
 					controls="true"

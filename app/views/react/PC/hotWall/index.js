@@ -8,8 +8,7 @@ import {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        off: state.OpenHotPhotoWall.off,
-        allShow: state.OpenHotPhotoWall.allShow
+        off: state.OpenHotPhotoWall.off
     }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {

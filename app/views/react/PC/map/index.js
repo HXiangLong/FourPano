@@ -11,7 +11,9 @@ const mapStateToProps = (state, ownProps) => {
     return {
         off: state.OpenPanoMap.off,
         radarAngle: state.OpenPanoMap.radarAngle,
-        pid: state.OpenPanoMap.pID
+        pid: state.OpenPanoMap.pID,
+        imgUrl:state.OpenPanoMap.imgUrl,
+        floorsMapData:state.OpenPanoMap.floorsMapData
     }
 }
 

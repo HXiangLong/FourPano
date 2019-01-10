@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import './Header.css';
 import ShareButtons from '../share';
+import * as constants from '../../../../src/tool/SWConstants';
 const external = require('../../../../src/tool/SWExternalConst.js');
 
 class Header extends Component {
@@ -11,15 +12,10 @@ class Header extends Component {
 
 		this.state = {
 			//检测全屏状态
-			isFullScreen: false
+			isFullScreen: false,
+			locking: false
 		};
 		this.myRef = React.createRef();
-	}
-
-	componentWillMount() {
-		this.props.open_close_Audio({
-			audioUrl: external.server_json.data.resourcePath + external.server_json.data.bgMusic
-		});
 	}
 
 	componentDidMount() {
@@ -117,6 +113,22 @@ class Header extends Component {
 		this.props.show_Setting();
 	}
 
+	/**放大 */
+	plusClick() {
+		constants.sw_cameraManage.dollyOut(15);
+	}
+
+	/**缩小 */
+	minusClick() {
+		constants.sw_cameraManage.dollyIn(15);
+	}
+
+	showLocking() {
+		this.setState({
+			locking: !this.state.locking
+		});
+	}
+
 	render() {
 		const audioNode = this.myRef.current;
 		if (audioNode) {
@@ -133,59 +145,116 @@ class Header extends Component {
 
 		return (
 			<div>
-				<div className="PanoName" onClick={this.showTreeShape.bind(this)}>
-					//站点名称
-					<div
-						className={`iconfont ${this.props.openTreeShape
-							? 'icon-caret-down'
-							: 'icon-caret-right'} iconCaretArrow`}
-					/>
-					<div className="titles">当前位置：</div>
-					<div className="conts">第一部分 创立与探索（1921-1949）</div>
-				</div>
-				<div className="header">
+				{external.server_json.features.exhibitionName ? external.server_json.features.directory ? (
+					<div className="PanoName" onClick={this.showTreeShape.bind(this)}>
+						//站点名称
+						<div
+							className={`iconfont ${this.props.openTreeShape
+								? 'icon-caret-down'
+								: 'icon-caret-right'} iconCaretArrow`}
+						/>
+						<div className="titles">当前位置：</div>
+						<div className="conts">{this.props.panoNames}</div>
+					</div>
+				) : (
+					<div className="PanoName">
+						<div className="titles">当前位置：</div>
+						<div className="conts">{this.props.panoNames}</div>
+					</div>
+				) : (
+					''
+				)}
+
+				<div className="header" style={this.state.locking ? { opacity: 1 } : {}}>
 					<ul className="quickmenu">
-						<li className="headerLi share_share">
-							<i />
-							<span>分享</span>
-							<ShareButtons
-								sites={[ 'weibo', 'qzone', 'qq', 'douban', 'wechat' ]}
-								title="全景"
-								description="一键分享到各大社交网站的react组件"
-							/>
-						</li>
-						<li
-							className={
-								'headerLi BGMusic' +
-								(this.props.closeYourself && this.props.bgMusicOff ? '' : ' closed')
-							}
-							title={this.props.closeYourself && this.props.bgMusicOff ? '关闭声音' : '开启声音'}
-							onClick={this.playBackAudio.bind(this)}
-						>
-							<i />
-							<span>音频</span>
-							{this.props.closeYourself && this.props.bgMusicOff ? (
-								<audio ref={this.myRef} src={this.props.audioUrl} autoPlay="autoplay" loop="loop" />
-							) : (
-								''
-							)}
-						</li>
-						<li className="headerLi help" onClick={this.showHelp.bind(this)}>
-							<i />
-							<span>帮助</span>
-						</li>
-						<li
-							className={`headerLi ${!this.state.isFullScreen ? 'full' : 'half'}`}
-							onClick={this.fullScreen.bind(this)}
-							title={!this.state.isFullScreen ? '开启全屏' : '退出全屏'}
-						>
-							<i />
-							<span>全屏</span>
-						</li>
-						<li className="headerLi setup" onClick={this.showSetting.bind(this)}>
-							<i />
-							<span>设置</span>
-						</li>
+						{external.server_json.features.puls ? (
+							<li className="headerLi plus" onClick={this.plusClick.bind(this)}>
+								<i />
+								<span>放大</span>
+							</li>
+						) : (
+							''
+						)}
+						{external.server_json.features.minus ? (
+							<li className="headerLi minus" onClick={this.minusClick.bind(this)}>
+								<i />
+								<span>缩小</span>
+							</li>
+						) : (
+							''
+						)}
+						{external.server_json.features.share ? (
+							<li className="headerLi share_share">
+								<i />
+								<span>分享</span>
+								<ShareButtons
+									sites={[ 'weibo', 'qzone', 'qq', 'douban', 'wechat' ]}
+									title={external.server_json.projectName}
+									description=""
+								/>
+							</li>
+						) : (
+							''
+						)}
+						{external.server_json.features.music ? (
+							<li
+								className={
+									'headerLi BGMusic' +
+									(this.props.closeYourself && this.props.bgMusicOff ? '' : ' closed')
+								}
+								title={this.props.closeYourself && this.props.bgMusicOff ? '关闭声音' : '开启声音'}
+								onClick={this.playBackAudio.bind(this)}
+							>
+								<i />
+								<span>音频</span>
+								{this.props.closeYourself && this.props.bgMusicOff ? (
+									<audio ref={this.myRef} src={this.props.audioUrl} autoPlay="autoplay" loop="loop" />
+								) : (
+									''
+								)}
+							</li>
+						) : (
+							''
+						)}
+						{external.server_json.features.help ? (
+							<li className="headerLi help" onClick={this.showHelp.bind(this)}>
+								<i />
+								<span>帮助</span>
+							</li>
+						) : (
+							''
+						)}
+						{external.server_json.features.fullScreen ? (
+							<li
+								className={`headerLi ${!this.state.isFullScreen ? 'full' : 'half'}`}
+								onClick={this.fullScreen.bind(this)}
+								title={!this.state.isFullScreen ? '开启全屏' : '退出全屏'}
+							>
+								<i />
+								<span>全屏</span>
+							</li>
+						) : (
+							''
+						)}
+						{external.server_json.features.setup ? (
+							<li className="headerLi setup" onClick={this.showSetting.bind(this)}>
+								<i />
+								<span>设置</span>
+							</li>
+						) : (
+							''
+						)}
+						{external.server_json.features.locking ? (
+							<li
+								className={`headerLi ${this.state.locking ? 'locking' : 'unlock'}`}
+								onClick={this.showLocking.bind(this)}
+							>
+								<i />
+								<span>{this.state.locking ? '已锁定' : '未锁定'}</span>
+							</li>
+						) : (
+							''
+						)}
 					</ul>
 				</div>
 			</div>

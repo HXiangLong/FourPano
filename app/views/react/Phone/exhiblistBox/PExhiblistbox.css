@@ -2,13 +2,14 @@
     margin: 10px;
     border: 1px solid;
     position: relative;
+    color: #e8e8e8;
 }
 
 .PExhiblistBox:hover {
     border: 2px solid #ffc603;
 }
 
-.active {
+.PExhiblistBox.active {
     color: #ffc603;
 }
 

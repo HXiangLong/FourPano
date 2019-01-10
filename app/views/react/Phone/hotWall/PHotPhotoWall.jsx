@@ -19,30 +19,25 @@ class PHotPhotoWall extends Component {
 		this.props.closeHotPhotoWall();
 	}
 
-	componentWillUpdate() {
-		for (let i = 0; i < constants.c_FloorsMapTable.getValues().length; i++) {
-			let floormap = constants.c_FloorsMapTable.getValue(i + 1);
+	createTable() {
+		
+		if(!constants.c_StationInfo) return;
 
-			let mapmarker = floormap.rasterMapMarkers.getValues();
+		let mapmarker = constants.c_panoIDTable.getValue(constants.c_StationInfo.panoID);
 
-			$.each(mapmarker, (idx, obj) => {
-				if (obj.panoID == constants.c_StationInfo.panoID) {
-					if (this.exhibID != floormap.floorID) {
-						this.pageArr.length = 0;
+		if (this.exhibID != mapmarker.rasterMapID) {
+			this.pageArr.length = 0;
 
-						this.exhibID = floormap.floorID;
+			this.exhibID = mapmarker.rasterMapID;
 
-						this.lastStop = 1;
-					}
-				}
-			});
+			this.lastStop = 0;
 		}
 
 		if (this.pageArr.length == 0) {
 			let buildingArr = constants.c_allExhibitsForBuildingTable.getValues();
 
 			buildingArr.forEach((item) => {
-				if (this.props.allShow) {
+				if (constants.c_collectAll) {
 					this.pageArr.push(item);
 				} else {
 					if (item.floorID == this.exhibID) {
@@ -51,9 +46,7 @@ class PHotPhotoWall extends Component {
 				}
 			});
 		}
-	}
 
-	createTable() {
 		let table = [];
 		this.pageArr.map((items, idx) => {
 			table.push(
@@ -141,7 +134,7 @@ class PHotPhotoWall extends Component {
 		return this.props.off ? (
 			<div className="PHotPhotoWall">
 				<div className="Pwwlistbox">
-					<Slider ref={slider => (slider && slider.slickGoTo(this.lastStop))} {...settings}>
+					<Slider ref={(slider) => slider && slider.slickGoTo(this.lastStop)} {...settings}>
 						{this.createTable()}
 					</Slider>
 				</div>

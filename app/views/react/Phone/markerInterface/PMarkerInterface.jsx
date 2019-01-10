@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import './PMarkerInterface.css';
 import * as constants from '../../../../src/tool/SWConstants';
+const external = require('../../../../src/tool/SWExternalConst.js');
 
 class PMarkerInterface extends Component {
 	constructor() {
@@ -166,19 +167,15 @@ class PMarkerInterface extends Component {
 		this.markerthumbs = [];
 
 		this.props.imglist.forEach((item, idx) => {
-			let imgUrl = `${constants.sw_getService.resourcesUrl}/${item.filePath}`;
+			this.markerImgList.push(
+				constants.c_currentState == constants.c_currentStateEnum.phoneStatus ? item.phoneMax : item.PCMax
+			);
 
-			this.markerImgList.push(imgUrl);
-
-			let arr1 = item.filePath.split('/');
-
-			let pp = `${constants.sw_getService.resourcesUrl}/${arr1[0]}/${arr1[1]}/${arr1[2]}/phone/${arr1[3]}`;
-
-			this.markerthumbs.push(pp);
+			this.markerthumbs.push(item.thumbnail);
 
 			imgArr.push(
 				<li key={`markerImg${idx}`} style={{ width: this.state.imgWidth, height: this.state.imgHeight }}>
-					<img draggable={false} src={pp} onClick={this.enlargeImage.bind(this, idx)} />
+					<img draggable={false} src={item.thumbnail} onClick={this.enlargeImage.bind(this, idx)} />
 				</li>
 			);
 		});
@@ -212,6 +209,11 @@ class PMarkerInterface extends Component {
 	}
 
 	render() {
+		let boo = false;
+		if (external.server_json.features.like || (this.props.links != '' && this.props.links)) {
+			boo = true;
+		}
+
 		return this.props.off ? (
 			<div className="MarkerInterface">
 				<div className="UIBG" onClick={this.closeMarkerInterface.bind(this)} />
@@ -227,7 +229,7 @@ class PMarkerInterface extends Component {
 									(this.props.video != '' && this.props.video != undefined) ||
 									(this.props.book != '' && this.props.book != undefined) ||
 									(this.props.audio != '' && this.props.audio != undefined)
-										? 23
+										? 20
 										: 5
 							}}
 						>
@@ -287,24 +289,50 @@ class PMarkerInterface extends Component {
 
 					<div className="detail">
 						<div className="title">{this.props.title}</div>
-						<div className="cont" dangerouslySetInnerHTML={{ __html: this.markerContent() }} />
+						<div
+							className="cont"
+							style={
+								boo ? (
+									{ height: 'calc(100% - 4.4rem)' }
+								) : external.server_json.features.comment ? (
+									{ height: 'calc(100% - 4.4rem)' }
+								) : (
+									{ height: 'calc(100% - 2.4rem)' }
+								)
+							}
+							dangerouslySetInnerHTML={{ __html: this.markerContent() }}
+						/>
 						<ul className="detailQuickmenu">
-							<li title="喜欢" className="iconfont icon-xihuan dianzhan1" onClick={this.onLike.bind(this)}>
-								<p>{parseInt(this.props.likeNum) >= 99 ? '99+' : this.props.likeNum}</p>
-							</li>
-							{/* <li title="收藏" className="iconfont icon-shoucang1">
-							</li> */}
-							<li
-								title="评论"
-								className="iconfont icon-pinglun gengduo1"
-								onClick={this.showCommentInput.bind(this)}
-							/>
-							<li
-								title="查看评论"
-								className="iconfont icon-pinglunliebiao gengduo1"
-								onClick={this.showCommentOutput.bind(this)}
-							/>
-							{this.props.links != '' ? (
+							{external.server_json.features.like ? (
+								<li
+									title="喜欢"
+									className="iconfont icon-xihuan dianzhan1"
+									onClick={this.onLike.bind(this)}
+								>
+									<p>{parseInt(this.props.likeNum) >= 99 ? '99+' : this.props.likeNum}</p>
+								</li>
+							) : (
+								''
+							)}
+							{external.server_json.features.comment ? (
+								<li
+									title="评论"
+									className="iconfont icon-pinglun gengduo1"
+									onClick={this.showCommentInput.bind(this)}
+								/>
+							) : (
+								''
+							)}
+							{external.server_json.features.comment ? (
+								<li
+									title="查看评论"
+									className="iconfont icon-pinglunliebiao gengduo1"
+									onClick={this.showCommentOutput.bind(this)}
+								/>
+							) : (
+								''
+							)}
+							{this.props.links != '' && this.props.links ? (
 								<a href={this.props.links} target="_blank">
 									<li title="想了解更多" className="iconfont icon-gengduo-2 gengduo1" />
 								</a>

@@ -10,7 +10,7 @@ import ThumbnailsInfo from '../data/SWThumbnailsInfo';
 import StationInfo from '../data/SWStationInfo';
 import AllExhibitsForBuilding from '../data/SWAllExhibitsForBuilding';
 import VideosData from '../data/SWVideosData';
-import SWExhibitComment from '../data/SWExhibitComment';
+
 import {
     AddNewArrow,
     AddOldArrow
@@ -22,7 +22,6 @@ import {
     show_MarkerInterface_fun,
     show_ViewPicture_fun
 } from '../../views/redux/action';
-import HashTable from '../tool/SWHashTable';
 const external = require('../tool/SWExternalConst.js');
 const axios = require('axios');
 
@@ -73,6 +72,8 @@ class ServerData {
         this.featuresObj = external.server_json.data;
 
         this.getPanoByID(this.firstPanoID);
+        
+        constants.sw_SWModel.init();
     }
 
     /**
@@ -80,32 +81,41 @@ class ServerData {
      */
     getAllFloorsForBuilding() {
 
-        let urls = `${this.musServerURL}?method=GetAllFloorsForBuilding&buildingID=${this.displayID }&random=${Math.random() * 10}`;
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) {
+            let data = constants.sw_GetSQLData.GetAllFloorsForBuildingFun();
+            this.ReadFloorsForBuildingData(data);
+            return;
+        }
 
+        let urls = `${this.musServerURL}?method=GetAllFloorsForBuilding&buildingID=${this.displayID }&random=${Math.random() * 10}`;
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
-                if (json.data.Floors) {
+                this.ReadFloorsForBuildingData(json.data);
+            });
+    }
 
-                    json.data.Floors.forEach((obj) => {
-
-                        new FloorsInfo(obj);
-
-                    });
-
-                    //数据来之后可以显示小地图
+    /**读取楼层数据 */
+    ReadFloorsForBuildingData(data) {
+        if (data) {
+            if (data.Floors) {
+                data.Floors.forEach((obj) => {
+                    new FloorsInfo(obj);
+                });
+                //数据来之后可以显示小地图
+                if (constants.c_mapShow) {
                     let store = initStore();
-
                     store.dispatch(show_PanoMap_fun({
-                        off: true
+                        off: true,
+                        phoneOff: true
                     }));
                 }
-
-                this.getAllThumbnailsForMuseum();
-                this.getAllExhibitsForBuilding();
-                this.getAllVideos();
-            });
+            }
+        }
+        this.getAllThumbnailsForMuseum();
+        this.getAllExhibitsForBuilding();
+        this.getAllVideos();
     }
 
     /**
@@ -114,33 +124,40 @@ class ServerData {
      */
     getPanoByID(panoid) {
 
-        let urls = `${this.serverURL}/GetPanoByID?ImageID=${panoid}`;
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) {
+            let data = constants.sw_GetSQLData.GetPanoByIDFun(panoid);
+            this.ReadPanoByIDData(data);
+            return;
+        }
 
+        let urls = `${this.serverURL}/GetPanoByID?ImageID=${panoid}`;
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
-                if (json.data.GetPanoByIDResult) {
-
-                    if (!constants.c_StationInfo || (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != json.data.GetPanoByIDResult.ImageID)) {
-
-                        constants.c_isPreviewImageLoadEnd = false;
-
-                        constants.c_StationInfo && (constants.c_LastStopPanoID = constants.c_StationInfo.panoID); //记录上一站ID
-
-                        constants.c_StationInfo = new StationInfo(json.data.GetPanoByIDResult);
-
-                        constants.sw_skyBox.addThumbnail();
-
-                        if (this.floorsForBuilding) {
-
-                            this.floorsForBuilding = false;
-
-                            this.getAllFloorsForBuilding();
-                        }
-                    }
-                }
+                this.ReadPanoByIDData(json.data.GetPanoByIDResult);
             });
+    }
+
+    /**
+     * 读取所有拍摄站点数据
+     * @param {Object} data 
+     */
+    ReadPanoByIDData(data) {
+        if (data) {
+            if (!constants.c_StationInfo || (!constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != data.ImageID)) {
+                constants.c_isPreviewImageLoadEnd = true;
+                constants.c_StationInfo && (constants.c_LastStopPanoID = constants.c_StationInfo.panoID); //记录上一站ID
+                constants.c_StationInfo = new StationInfo(data);
+                constants.sw_skyBox && constants.sw_skyBox.addThumbnail();
+                if (this.floorsForBuilding) {
+                    this.floorsForBuilding = false;
+                    this.getAllFloorsForBuilding();
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -148,150 +165,149 @@ class ServerData {
      * */
     getFacadeByPanoID() {
 
-        let urls = `${this.serverURL}/GetFacadeByPanoID/?Z=${constants.c_StationInfo.nz}&PanoID=${constants.c_StationInfo.panoID}&TolerateZ=5`;
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) { //读取本地文件
+            let data = constants.sw_GetSQLData.GetFacadeByPanoIDFun(constants.c_StationInfo.panoID);
+            this.ReadFacadeByPanoIDData(data);
+            return;
+        }
 
+        let urls = `${this.serverURL}/GetFacadeByPanoID/?Z=${constants.c_StationInfo.nz}&PanoID=${constants.c_StationInfo.panoID}&TolerateZ=5`;
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
-
-                if (json.data.GetFacadeByPanoIDResult) {
-
-                    constants.c_facadeByPanoIDInfoArr.length = 0;
-
-                    json.data.GetFacadeByPanoIDResult.forEach((obj) => {
-
-                        constants.c_facadeByPanoIDInfoArr.push(new FacadeByPanoIDInfo(obj));
-
-                    });
-
-                    constants.sw_wallMesh.createWallFace();
-                }
+                this.ReadFacadeByPanoIDData(json.data.GetFacadeByPanoIDResult);
             });
     }
+
+    /**读取墙面片数据 */
+    ReadFacadeByPanoIDData(data) {
+
+        if (data) {
+            constants.c_facadeByPanoIDInfoArr.length = 0;
+            data.forEach((obj) => {
+                constants.c_facadeByPanoIDInfoArr.push(new FacadeByPanoIDInfo(obj));
+            });
+            constants.sw_wallMesh.createWallFace();
+        }
+    }
+
 
     /**
      * 获取老箭头方法
      * */
     getOldArrow() {
 
-        let urls = `${this.serverURL}/GetAdjacentPano/?date=${Math.random() * 100}&ImageID=${constants.c_StationInfo.panoID}`;
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) { //读取本地文件
 
+            let arrowArr;
+            if (constants.c_siteRepresentation) {
+                arrowArr = constants.sw_GetSQLData.GetAdjacentPanoFun(constants.c_StationInfo.panoID);
+                this.ReadOldArrowData(arrowArr, 1);
+            } else {
+                arrowArr = constants.sw_GetSQLData.GetStreetViewLinkFun(constants.c_StationInfo.panoID);
+                this.ReadOldArrowData(arrowArr, 3);
+            }
+            return;
+        }
+
+        let urls = `${this.serverURL}/GetAdjacentPano/?date=${Math.random() * 100}&ImageID=${constants.c_StationInfo.panoID}`;
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
-                if (json.data.GetAdjacentPanoResult) {
-
-                    constants.c_AdjacentPanoInfoArr.length = 0;
-
-                    json.data.GetAdjacentPanoResult.forEach((obj) => {
-
-                        constants.c_AdjacentPanoInfoArr.push(new ArrowInfo(obj, 1));
-
-                    });
-
-                    AddOldArrow();
-
-                } else {
-
-                    this.getNewArrow();
-
-                }
+                this.ReadOldArrowData(json.data.GetAdjacentPanoResult);
             });
+    }
+
+    /**读取旧箭头数据 */
+    ReadOldArrowData(data, type) {
+        if (data && data.length != 0) {
+            constants.c_AdjacentPanoInfoArr.length = 0;
+            data.forEach((obj) => {
+                constants.c_AdjacentPanoInfoArr.push(new ArrowInfo(obj, type));
+            });
+            AddOldArrow();
+        } else {
+            this.getNewArrow();
+        }
     }
 
     //获得新箭头
     getNewArrow() {
 
-        let urls = `${this.musServerURL}?method=getLinkByPanoID&panoID=${constants.c_StationInfo.panoID}`;
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus && constants.c_siteRepresentation) { //读取本地文件
+            let arrowArr = constants.sw_GetSQLData.getLinkByPanoIDFun(constants.c_StationInfo.panoID);
+            this.ReadNewArrowData(arrowArr);
+            return;
+        }
 
+        let urls = `${this.musServerURL}?method=getLinkByPanoID&panoID=${constants.c_StationInfo.panoID}`;
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
-
-                constants.c_ArrowPanoInfoArr.length = 0;
-
-                if (json.data.Link) {
-
-                    json.data.Link.forEach((obj) => {
-
-                        constants.c_ArrowPanoInfoArr.push(new ArrowInfo(obj, 2));
-
-                    });
-
-                    AddNewArrow();
-
-                }
+                this.ReadNewArrowData(json.data.Link);
             });
+    }
+
+    /**读取新箭头数据 */
+    ReadNewArrowData(data) {
+
+        constants.c_ArrowPanoInfoArr.length = 0;
+        if (data && data.length != 0) {
+            data.forEach((obj) => {
+                constants.c_ArrowPanoInfoArr.push(new ArrowInfo(obj, 2));
+            });
+            AddNewArrow();
+        }
     }
 
     /**
      * 地面跳转
+     * @param {Object} obj 传入参数 obj.type = 1 单机版 =2网络版 {obj.panoID 单机版参数 ,obj.x 3DS坐标X, obj.y 3DS坐标Y, obj.z 3DS坐标Z, obj.panoid 面片ID}
      * */
-    getOtherPanoByPosition(x, y, z, panoid) {
+    getOtherPanoByPosition(obj) {
 
-        let urls = `${this.serverURL}/GetOtherPanoByPosition1?TolerateZ=5&Tolerate=100&Z=${z}&Y=${y}&ImageID=${panoid}&X=${x}`;
-
-        axios.get(urls, {
-                responseType: "json"
-            })
-            .then(json => {
-
-                if (json.data.GetOtherPanoByPositionResult) {
-
-                    if (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != json.data.GetOtherPanoByPositionResult.ImageID) {
-
-                        constants.c_isPreviewImageLoadEnd = false;
-
-                        constants.c_StationInfo && (constants.c_LastStopPanoID = constants.c_StationInfo.panoID); //记录上一站ID
-
-                        constants.c_StationInfo = new StationInfo(json.data.GetOtherPanoByPositionResult);
-
-                        constants.sw_skyBox.addThumbnail();
-
-                    }
-
-                }
-            });
+        if (obj.type == 1) {
+            let data = constants.sw_GetSQLData.GetPanoByIDFun(obj.panoID);
+            this.ReadPanoByIDData(data);
+        } else {
+            let urls = `${this.serverURL}/GetOtherPanoByPosition1?TolerateZ=5&Tolerate=100&Z=${obj.z}&Y=${obj.y}&ImageID=${obj.panoid}&X=${obj.x}`;
+            axios.get(urls, {
+                    responseType: "json"
+                })
+                .then(json => {
+                    this.ReadPanoByIDData(json.data.GetOtherPanoByPositionResult);
+                });
+        }
     }
 
     /**
      * 墙面跳转
-     * @param {Number} x 3DS坐标X
-     * @param {Number} y 3DS坐标Y
-     * @param {Number} z 3DS坐标Z
-     * @param {Number} facadeid 点击跳转的墙面片ID
+     * @param {Object} obj 传入参数 obj.type = 1 单机版 =2网络版 {obj.panoID 单机版参数 ,obj.x 3DS坐标X, obj.y 3DS坐标Y, obj.z 3DS坐标Z, obj.facadeid 面片ID}
      */
-    getOtherPanoByFacadeID(x, y, z, facadeid) {
+    getOtherPanoByFacadeID(obj) {
 
-        let urls = `${this.serverURL}/GetOtherPanoByFacadeID?facadeID=${facadeid}&Z=${z}&Y=${y}&X=${x}`;
+        if (obj.type == 1) {
+            let data = constants.sw_GetSQLData.GetPanoByIDFun(obj.panoID);
+            if (this.ReadPanoByIDData(data)) {
+                constants.c_isWallClickRotateBoo = true;
+            }
 
-        axios.get(urls, {
-                responseType: "json"
-            })
-            .then(json => {
-
-                if (json.data.GetOtherPanoByFacadeIDResult) {
-
-                    if (constants.c_isPreviewImageLoadEnd && constants.c_StationInfo.panoID != json.data.GetOtherPanoByFacadeIDResult.ImageID) {
-
-                        constants.c_isPreviewImageLoadEnd = false;
-
+        } else {
+            let urls = `${this.serverURL}/GetOtherPanoByFacadeID?facadeID=${obj.facadeid}&Z=${obj.z}&Y=${obj.y}&X=${obj.x}`;
+            axios.get(urls, {
+                    responseType: "json"
+                })
+                .then(json => {
+                    if (this.ReadPanoByIDData(json.data.GetOtherPanoByFacadeIDResult)) {
                         constants.c_isWallClickRotateBoo = true;
-
-                        constants.c_StationInfo && (constants.c_LastStopPanoID = constants.c_StationInfo.panoID); //记录上一站ID
-
-                        constants.c_StationInfo = new StationInfo(json.data.GetOtherPanoByFacadeIDResult);
-
-                        constants.sw_skyBox.addThumbnail();
-
                     }
-
-                }
-            });
+                });
+        }
     }
+
 
     /**
      * 获取标注
@@ -299,149 +315,212 @@ class ServerData {
     getMarkerByPanoID() {
 
         constants.c_markerInfoArr.length = 0;
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) { //读取本地文件
+            let data = constants.sw_GetSQLData.getMarkByPanoIDFun(constants.c_StationInfo.panoID);
+            this.ReadAllMarkerData(data);
+            return;
+        }
 
         let urls = `${this.musServerURL}?method=getMarkerByPanoID&panoID=${constants.c_StationInfo.panoID}`;
-
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
-
-                if (json.data.MarkerInfo) {
-
-                    json.data.MarkerInfo.forEach((obj) => {
-
-                        constants.c_markerInfoArr.push(new SWMarkerInfo(obj));
-
-                    });
-                }
+                this.ReadAllMarkerData(json.data.MarkerInfo);
             });
+    }
+
+    /**
+     * 读取标注信息
+     * @param {Object} data 
+     */
+    ReadAllMarkerData(data) {
+        if (data) {
+            data.forEach((obj) => {
+                constants.c_markerInfoArr.push(new SWMarkerInfo(obj));
+            });
+        }
     }
 
     /**
      * 获取推荐展厅数据
      * */
     getAllThumbnailsForMuseum() {
+
         if (constants.c_isEditorStatus || constants.c_thumbnailsForMuseum.length > 0) {
             return;
         }
-        let urls = `${this.musServerURL}?method=GetAllThumbnailsForBuilding&buildingID=${this.displayID}`;
 
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) { //读取本地文件
+            let data = constants.sw_GetSQLData.GetAllThumbnailsForBuildingFun();
+            this.ReadAllThumbnailsData(data);
+            return;
+        }
+
+        let urls = `${this.musServerURL}?method=GetAllThumbnailsForBuilding&buildingID=${this.displayID}`;
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
-
-                if (json.data.thumbnails) {
-
-                    json.data.thumbnails.forEach((obj) => {
-
-                        constants.c_thumbnailsForMuseum.push(new ThumbnailsInfo(obj));
-
-                    });
-
-                    if (constants.c_thumbnailsShow) {
-                        //数据来之后可以弹出展厅列表
-                        let store = initStore();
-
-                        store.dispatch(show_Thumbnails_fun(true));
-                    }
-                }
+                this.ReadAllThumbnailsData(json.data.thumbnails);
             });
+    }
+
+    /**
+     * 读取所有推荐展厅
+     * @param {Object} data 
+     */
+    ReadAllThumbnailsData(data) {
+        if (data) {
+            data.forEach((obj) => {
+                constants.c_thumbnailsForMuseum.push(new ThumbnailsInfo(obj));
+            });
+        }
     }
 
     /**
      * 获取所有文物信息列表
      * */
     getAllExhibitsForBuilding() {
+
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) { //读取本地文件
+
+            let data = constants.sw_GetSQLData.GetAllExhibitsForBuildingFun();
+
+            this.ReadAllExhibitsData(data);
+
+            return;
+        }
+
         let urls = `${this.musServerURL}?method=GetAllExhibitsForBuilding&buildingID=${this.displayID}`;
 
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
+                this.ReadAllExhibitsData(json.data.Exhibits);
 
-                if (json.data.Exhibits) {
-
-                    json.data.Exhibits.forEach((obj) => {
-
-                        let allExhibits = new AllExhibitsForBuilding(obj);
-
-                        let markerIDArr = allExhibits.markerID[0];
-
-                        constants.c_allExhibitsForBuildingTable.add(markerIDArr, allExhibits);
-                    });
-                }
             });
+    }
+
+    /**
+     * 读取所有文物信息
+     * @param {Object} data 
+     */
+    ReadAllExhibitsData(data) {
+        if (data) {
+
+            data.forEach((obj) => {
+
+                let allExhibits = new AllExhibitsForBuilding(obj);
+
+                allExhibits.markerID.forEach((markerid) => { //所有标注对应说明表
+
+                    constants.c_allExhibitsForMarkerTable.add(markerid, allExhibits);
+
+                });
+
+                let markerIDArr = allExhibits.markerID[0]; //显示照片墙用
+                constants.c_allExhibitsForBuildingTable.add(markerIDArr, allExhibits);
+            });
+        }
     }
 
     /**
      * 获取单个文物信息
      * */
     getMultiDataByParentID(eid, type) {
-        let urls = `${this.musServerURL}?method=GetMultiDataByParentID&parentID=${eid}`;
+
         let muType = type;
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) { //读取本地文件
+
+            let data = constants.sw_GetSQLData.GetMultiDataByParentIDFun(eid);
+
+            this.ReadMultiData(data, eid, muType);
+
+            return;
+        }
+
+        let urls = `${this.musServerURL}?method=GetMultiDataByParentID&parentID=${eid}`;
 
         axios.get(urls, {
                 responseType: "json"
             })
             .then(json => {
 
-                if (json.data.MultiDatas) {
+                this.ReadMultiData(json.data.MultiDatas, eid, muType);
 
-                    let arr = [];
-
-                    json.data.MultiDatas.forEach((obj) => {
-
-                        let multiData = new MultiDataByParentID(obj);
-
-                        arr.push(multiData);
-                    });
-
-                    constants.c_multiDataByParentIDTable.add(eid, arr);
-
-                    if (muType == 1) { //图文
-
-                        let store = initStore();
-
-                        store.dispatch(show_MarkerInterface_fun({
-                            imglist: arr
-                        }));
-
-                    } else { //图片
-                        let markerImgList = [],
-                            markerthumbs = [];
-
-                        arr.forEach((item) => {
-                            let imgUrl = `${this.resourcesUrl}/${item.filePath}`;
-
-                            let arr1 = item.filePath.split('/');
-
-                            let pp = `${this.resourcesUrl}/${arr1[0]}/${arr1[1]}/${arr1[2]}/phone/${arr1[3]}`;
-
-                            markerImgList.push(imgUrl);
-
-                            markerthumbs.push(pp);
-                        });
-
-                        let store = initStore();
-
-                        store.dispatch(show_ViewPicture_fun({
-                            off: true,
-                            idx: 0,
-                            imageList: markerImgList,
-                            thumbs: markerthumbs
-                        }));
-
-                    }
-                }
             });
+    }
+
+    /**读取单个热点图片 */
+    ReadMultiData(data, eid, muType) {
+        if (data) {
+            let arr = [];
+
+            data.forEach((obj) => {
+
+                let multiData = new MultiDataByParentID(obj);
+
+                let arr1 = multiData.filePath.split('/');
+
+                multiData.PCMax = `${constants.sw_getService.resourcesUrl}/${multiData.filePath}`; //电脑版大图
+
+                multiData.phoneMax = `${constants.sw_getService.resourcesUrl}/${arr1[0]}/${arr1[1]}/${arr1[2]}/phoneMax/${arr1[3]}`; //手机版大图
+
+                multiData.thumbnail = `${constants.sw_getService.resourcesUrl}/${arr1[0]}/${arr1[1]}/${arr1[2]}/phone/${arr1[3]}`;
+
+                arr.push(multiData);
+            });
+
+            constants.c_multiDataByParentIDTable.add(eid, arr);
+
+            if (muType == 1) { //图文
+
+                let store = initStore();
+
+                store.dispatch(show_MarkerInterface_fun({
+                    imglist: arr
+                }));
+
+            } else { //图片
+                let markerImgList = [],
+                    markerthumbs = [];
+
+                arr.forEach((item) => {
+
+                    markerImgList.push(constants.c_currentState == constants.c_currentStateEnum.phoneStatus ? item.phoneMax : item.PCMax);
+
+                    markerthumbs.push(item.thumbnail);
+                });
+
+                let store = initStore();
+
+                store.dispatch(show_ViewPicture_fun({
+                    off: true,
+                    idx: 0,
+                    imageList: markerImgList,
+                    thumbs: markerthumbs
+                }));
+
+            }
+        }
     }
 
     /**
      * 获取所有视频列表
      * */
     getAllVideos() {
+
+        if (constants.c_currentState != constants.c_currentStateEnum.editorStatus) { //读取本地文件
+
+            let data = constants.sw_GetSQLData.getAllVideoFun();
+
+            this.ReadAllVideosData(data);
+
+            return;
+        }
+
         let urls = `${this.musServerURL}?method=getAllVideos`;
 
         axios.get(urls, {
@@ -449,16 +528,34 @@ class ServerData {
             })
             .then(json => {
 
-                if (json.data.videoInfo) {
+                this.ReadAllVideosData(json.data.videoInfo);
 
-                    json.data.videoInfo.forEach((obj) => {
-
-                        let vd = new VideosData(obj);
-
-                        constants.c_allVideoTable.add(vd.videoName, vd);
-                    });
-                }
             });
+    }
+
+    /**
+     * 读取视频文件
+     * @param {Object} data 
+     */
+    ReadAllVideosData(data) {
+        if (data) {
+
+            data.forEach((obj) => {
+
+                let vd = new VideosData(obj);
+
+                let arr = [];
+
+                if (constants.c_allVideoTable.containsKey(vd.panoID)) {
+
+                    arr = constants.c_allVideoTable.getValue(vd.panoID);
+                }
+
+                arr.push(vd);
+
+                constants.c_allVideoTable.add(vd.panoID, arr);
+            });
+        }
     }
 
     /**获取喜欢数 */

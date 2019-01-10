@@ -8,7 +8,8 @@ import {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        off:state.OpenTreeShape
+        off:state.OpenTreeShape,
+        pid: state.OpenPanoMap.pID
     }
 }
 

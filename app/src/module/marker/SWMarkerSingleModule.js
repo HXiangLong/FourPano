@@ -39,6 +39,7 @@ class SWMarkerSingleModule extends SWMarkerModule {
                 };
                 break;
             case 4:
+            case 44: //嵌入視頻，不包含人物講解視頻
                 picurl = external.marker_video_icon;
                 parameters = {
                     fpsNum: 1,
@@ -69,9 +70,15 @@ class SWMarkerSingleModule extends SWMarkerModule {
 
         this.markerObj = obj;
 
-        this.swvg = new SWViewGesture(this.markerObj.centerX, this.markerObj.centerY, 0);
+        if (this.markerObj.type != 44) {
+            this.swvg = new SWViewGesture(this.markerObj.centerX, this.markerObj.centerY, 0);
 
-        this.v3 = VPToVector3(this.swvg);
+            this.v3 = VPToVector3(this.swvg);
+            
+        } else {
+
+            this.v3 = new THREE.Vector3(this.markerObj.centerX, this.markerObj.centerY, this.markerObj.centerZ);
+        }
 
         this.mesh.position.copy(this.v3);
 

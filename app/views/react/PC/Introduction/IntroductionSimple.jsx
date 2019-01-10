@@ -9,11 +9,11 @@ class IntroductionSimple extends Component {
 	}
 
 	componentWillMount() {
-		this.props.IntroductionState({
-			imgurl:  external.server_json.data.resourcePath + external.server_json.data.Introduction.imgUrl,
-			title: external.server_json.data.Introduction.title,
-			content: external.server_json.data.Introduction.content
-		});
+		// this.props.IntroductionState({
+		// 	imgurl:  external.server_json.data.resourcePath + external.server_json.data.Introduction.imgUrl,
+		// 	title: external.server_json.data.Introduction.title,
+		// 	content: external.server_json.data.Introduction.content
+		// });
 	}
 
 	closeIntroductionSimple() {

@@ -9,6 +9,7 @@ class SettingBox extends Component {
 	constructor() {
 		super();
 		this.state = {
+			movingSpeed: 5,
 			lightValue: 10,
 			roamingValue: 5
 		};
@@ -30,6 +31,19 @@ class SettingBox extends Component {
 				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeRoamingBox.bind(this)} />
 				<div className="settingBox">
 					<ul>
+						<li>
+							<p>移动速度：</p>
+							<InputRange
+								maxValue={10}
+								minValue={1}
+								value={this.state.movingSpeed}
+								onChange={(value) => this.setState({ movingSpeed: value })}
+								onChangeComplete={(value) => {
+									constants.c_movingSpeedMultiple = value;
+								}}
+							/>
+							<span>{this.state.movingSpeed}</span>
+						</li>
 						<li>
 							<p>灯光亮度：</p>
 							<InputRange
@@ -53,7 +67,6 @@ class SettingBox extends Component {
 								value={this.state.roamingValue}
 								onChange={(value) => this.setState({ roamingValue: value })}
 								onChangeComplete={(value) => {
-									// console.log(value);
 									constants.c_roamingMultiple = value;
 								}}
 							/>

@@ -35,7 +35,7 @@ class SWRoamingModule {
 
     /**漫游中 需要不停的更新 */
     update() {
-        if (!constants.c_roamingStatus || !constants.c_JumpCompleted) {
+        if (!constants.c_roamingStatus || constants.c_isPreviewImageLoadEnd) {
             return;
         }
 
@@ -114,30 +114,33 @@ class SWRoamingModule {
         //在漫游线路内 就按当前站点为起点漫游
         this.initialFloor = this.floorArr.indexOf(constants.c_StationInfo.panoID);
 
-        if (this.initialFloor < 0) {
+        if (this.initialFloor < 0 && this.floorArr.length > 0) {
 
             this.initialFloor = 0;
 
             jumpSite(this.floorArr[this.initialFloor]);
 
+            return false;
         }
 
         this.picthAngle = this.pitchRotate = constants.sw_cameraManage.picth_Camera;
+
+        return true;
     }
 
     /**开始漫游 */
     StartRoaming(index) {
-
-        constants.c_roamingStatus = true;
-
+        
         this.roamingType = index;
 
-        this.findFloor();
+        if(this.findFloor()){
+            constants.c_roamingStatus = true;
 
-        let store = initStore();
-        store.dispatch(open_roaming_fun({
-            roamingOff: true
-        }));
+            let store = initStore();
+            store.dispatch(open_roaming_fun({
+                roamingOff: true
+            }));
+        }
     }
 
 

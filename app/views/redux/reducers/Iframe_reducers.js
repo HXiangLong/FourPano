@@ -4,7 +4,8 @@ import {
 
 export default function OpenIframe(state = {
     iframeOff: false,
-    iframeUrl: ""
+    iframeUrl: "",
+    iframeName:""
 }, action) {
     switch (action.type) {
         case show_Iframe_state:

@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import './Help.css';
+const external = require('../../../../src/tool/SWExternalConst');
 
 const helpImgs = [
 	require('../../../../commons/img/help/help1.png'), //操作
@@ -17,9 +18,32 @@ const helpImgs = [
 class Help extends Component {
 	constructor() {
 		super();
+		this.helpImgArr = [];
+		this.helpImgArr.push(helpImgs[0]);
+		this.helpImgArr.push(helpImgs[1]);
+
+		if(external.server_json.features.exhibithall){//展厅
+			this.helpImgArr.push(helpImgs[2]);
+		}
+		if(external.server_json.features.summary){//简介
+			this.helpImgArr.push(helpImgs[3]);
+		}
+		if(external.server_json.features.collect){//文物
+			this.helpImgArr.push(helpImgs[4]);
+		}
+		if(external.server_json.features.measure){//测量
+			this.helpImgArr.push(helpImgs[5]);
+		}
+		if(external.server_json.features.roam != 0){//漫游
+			this.helpImgArr.push(helpImgs[6]);
+		}
+		if(external.server_json.features.map){//地图
+			this.helpImgArr.push(helpImgs[7]);
+		}
+
 		this.state = {
 			page: 1,
-			allpage: helpImgs.length,
+			allpage: this.helpImgArr.length,
 			display: true
 		};
 	}
@@ -46,7 +70,7 @@ class Help extends Component {
 
 	showPic() {
 		let list = [];
-		helpImgs.forEach((items, idx) => {
+		this.helpImgArr.forEach((items, idx) => {
 			list.push(
 				<div key={`help${idx}`} className="helpitem">
 					<img src={items} />

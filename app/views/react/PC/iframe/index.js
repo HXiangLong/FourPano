@@ -9,7 +9,8 @@ import {
 const mapStateToProps = (state, ownProps) => {
     return {
         iframeOff: state.OpenIframe.iframeOff,
-        iframeUrl: state.OpenIframe.iframeUrl
+        iframeUrl: state.OpenIframe.iframeUrl,
+        iframeName: state.OpenIframe.iframeName
     }
 }
 

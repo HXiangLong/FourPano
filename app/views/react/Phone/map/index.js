@@ -10,6 +10,8 @@ import {
 const mapStateToProps = (state, ownProps) => {
     return {
         phoneOff: state.OpenPanoMap.phoneOff,
+        imgUrl:state.OpenPanoMap.imgUrl,
+        floorsMapData:state.OpenPanoMap.floorsMapData,
         radarAngle: state.OpenPanoMap.radarAngle,
         pid: state.OpenPanoMap.pID
     }

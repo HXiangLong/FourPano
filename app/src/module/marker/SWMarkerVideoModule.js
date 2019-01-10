@@ -28,7 +28,7 @@ import {
  * @param {*} panoid 视频所在的站点
  */
 class SWMarkerVideoModule {
-    constructor(obj,panoid) {
+    constructor(obj, panoid) {
         this.panoID = panoid;
         this.videoData = obj;
         this.movieScreen;
@@ -39,12 +39,14 @@ class SWMarkerVideoModule {
         this.videoBox;
         this.video;
 
+        this.lastTime = 0;
+
         this.initMarkerVideo();
     }
 
     initMarkerVideo() {
         this.videoBox = document.getElementById("videosBox");
-        let url = `${sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/videos/${this.videoData.url}`;
+        let url = `${sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/Video/${this.videoData.url}`;
         $(this.videoBox).append('<video id="' + this.videoData.url + '" style="display:none" crossorigin="anonymous">' + '<source src="' + url + '" type=' + 'video/webm; codecs="vp8,vorbis"' + '></video>');
 
         this.video = document.getElementById(this.videoData.url);
@@ -92,27 +94,55 @@ class SWMarkerVideoModule {
             let boo = v3.equals(this.startPoint);
 
             if (boo) {
-                if (obj.object.userData.ifPlayBoo) {
+
+                if (this.videoData.openBox) {
 
                     obj.object.userData.ifPlayBoo = false;
 
                     obj.object.userData.video.pause();
 
-                    if(this.videoData.openBox){
+                    let store = initStore();
 
-                        let store = initStore();
-
-                        store.dispatch(show_VideoBox_fun({
-                            off: true,
-                            videoUrl: this.videoData.url
-                        }));
-                    }
+                    store.dispatch(show_VideoBox_fun({
+                        off: true,
+                        videoUrl: this.videoData.url
+                    }));
 
                 } else {
 
-                    obj.object.userData.ifPlayBoo = true;
+                    let nowTime = Date.now();
 
-                    obj.object.userData.video.play();
+                    let differ = nowTime - this.lastTime;
+
+                    if (differ <= 500) {
+                        obj.object.userData.ifPlayBoo = false;
+
+                        obj.object.userData.video.pause();
+
+                        obj.object.visible = false;
+
+                        let store = initStore();
+                        store.dispatch(background_music_fun({
+                            bgMusicOff: true
+                        }));
+
+                        return;
+                    }
+
+                    this.lastTime = Date.now();
+
+                    if (obj.object.userData.ifPlayBoo) {
+
+                        obj.object.userData.ifPlayBoo = false;
+
+                        obj.object.userData.video.pause();
+
+                    } else {
+
+                        obj.object.userData.ifPlayBoo = true;
+
+                        obj.object.userData.video.play();
+                    }
                 }
             }
         }
@@ -140,7 +170,7 @@ class SWMarkerVideoModule {
 
             this.videoImageContext.drawImage(this.video, 0, 0);
 
-            if (this.videoTexture)this.videoTexture.needsUpdate = true;
+            if (this.videoTexture) this.videoTexture.needsUpdate = true;
 
             if (this.loopPlay) {
 

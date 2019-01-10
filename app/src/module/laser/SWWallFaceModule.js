@@ -11,10 +11,20 @@ import {
     sw_wallProbeSurface,
     sw_cameraManage,
     c_isMeasureStatus,
-    sw_measure
+    sw_measure,
+    c_isPreviewImageLoadEnd,
+    sw_GetSQLData,
+    c_currentState,
+    c_currentStateEnum
 } from '../../tool/SWConstants';
-import { getRandomColor, disposeNode, Vector3ToVP, setCameraAngle } from '../../tool/SWTool';
-import { deleteAll } from '../../tool/SWInitializeInstance';
+import {
+    getRandomColor,
+    disposeNode,
+    Vector3ToVP
+} from '../../tool/SWTool';
+import {
+    deleteAll
+} from '../../tool/SWInitializeInstance';
 /**
  * 激光点云墙面片
  */
@@ -111,7 +121,7 @@ class SWWallFaceModule {
         }
 
         //鼠标弹起
-        this.wallmesh.mouseUp = (e, obj) => { 
+        this.wallmesh.mouseUp = (e, obj) => {
 
             let event = e || window.event;
 
@@ -136,15 +146,58 @@ class SWWallFaceModule {
 
                     c_wallClickRotateV3.copy(realPoint);
 
-                    deleteAll();
+                    if (!c_isPreviewImageLoadEnd) { //缩略图加载完毕
 
-                    sw_getService.getOtherPanoByFacadeID(realPoint.x, realPoint.y, realPoint.z, obj.object.name);
+                        deleteAll(); //清除所有
+
+                        if (c_currentState != c_currentStateEnum.editorStatus && sw_GetSQLData.facadeIDTable.containsKey(obj.object.name)) { //读取本地版本
+
+                            let pointV3 = new THREE.Vector3(realPoint.x, realPoint.y, realPoint.z);
+
+                            let panoidArr = sw_GetSQLData.facadeIDTable.getValue(obj.object.name); //获取关联此面片所有站点
+
+                            let shortestNum = 1000000;
+
+                            let panoID = "";
+
+                            panoidArr.forEach((ids, idx) => {
+
+                                let panoObj = sw_GetSQLData.GetPanoByIDTable.getValue(ids);
+
+                                let short = pointV3.clone().distanceTo(new THREE.Vector3(parseFloat(panoObj.X), parseFloat(panoObj.Y), parseFloat(panoObj.Z)));
+
+                                if (short < shortestNum) {
+
+                                    shortestNum = short;
+
+                                    panoID = panoObj.ImageID;
+
+                                }
+
+                            });
+
+                            sw_getService.getOtherPanoByFacadeID({
+                                "type": 1,
+                                "panoID": panoID
+                            });
+
+                            return;
+                        }
+
+                        sw_getService.getOtherPanoByFacadeID({ //网络版本
+                            "type": 2,
+                            "x": realPoint.x,
+                            "y": realPoint.y,
+                            "z": realPoint.z,
+                            "facadeid": obj.object.name
+                        });
+                    }
 
                 } else {
 
                     let vp = Vector3ToVP(obj.point.clone());
 
-                    setCameraAngle(vp.Yaw, vp.Pitch, true);
+                    // setCameraAngle(vp.Yaw, vp.Pitch, true);//看向点击点
 
                     sw_cameraManage.setWallWheel();
 
@@ -161,7 +214,7 @@ class SWWallFaceModule {
 
             this.startPoint.y = event.clientY;
 
-        };        
+        };
     }
 
     /**清除墙面片 */

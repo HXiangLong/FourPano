@@ -4,16 +4,17 @@ import {
 } from 'react-redux'
 import {
     background_music_fun,
-    show_Setting_fun,
-    show_PanoMap_fun
-} from '../../../redux/action'
+    show_Setting_fun
+} from '../../../redux/action';
+import {
+    notify
+} from 'reapop';
 
 const mapStateToProps = (state, ownProps) => {
     return {
         closeYourself: state.BGMusicOff.closeYourself,
         bgMusicOff: state.BGMusicOff.bgMusicOff,
-        audioUrl: state.BGMusicOff.audioUrl,
-        openPanoMapOff: state.OpenPanoMap.phoneOff
+        audioUrl: state.BGMusicOff.audioUrl
     }
 }
 
@@ -22,13 +23,20 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         open_close_Audio: (flag) => {
             dispatch(background_music_fun(flag))
         },
-        show_Setting:()=>{
+        show_Setting: () => {
             dispatch(show_Setting_fun({
-                off:true
+                off: true
             }))
         },
-        showPanoMap: (flag) => {
-            dispatch(show_PanoMap_fun(flag))
+        OpenPrompt: (str) => {
+            dispatch(notify({
+                title: str,
+                message: '',
+                position: 'tc',
+                status: 'success',
+                dismissible: true,
+                dismissAfter: 3000
+            }));
         }
     }
 }

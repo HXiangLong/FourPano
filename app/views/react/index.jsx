@@ -42,6 +42,7 @@ import PVideoBox from './Phone/videoBox';
 import PRoamingBox from './Phone/roaming';
 import PReviewInput from './Phone/reviewInput';
 import PReviewOutput from './Phone/reviewOutput';
+import PHeader from './Phone/header';
 
 class Index extends Component {
 	render() {
@@ -62,6 +63,8 @@ class Index extends Component {
 				<PHotPhotoWall />
 				<PPanoMap />
 				<MapTipBox />
+				<PHeader />
+				<NotificationsSystem theme={theme} />
 				{/* 
 				<PLoading />
 				 */}

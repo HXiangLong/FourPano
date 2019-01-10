@@ -10,8 +10,7 @@ import SWPano from '../src/SWPano';
 import * as constants from '../src/tool/SWConstants';
 import initStore from './redux/store/store';
 import Detector from '../src/libs/Detector';
-require('../src/libs/CSS3DRenderer');
-// require('../src/libs/CanvasRenderer');
+import SWDevice from '../src/tool/SWDevice';
 const swExternalConst = require('../src/tool/SWExternalConst');
 const axios = require('axios');
 
@@ -29,8 +28,24 @@ axios.get(serverPath, {
   })
   .then(json => {
     swExternalConst.server_json = json.data;
+    constants.c_thumbnailsShow = swExternalConst.server_json.features.exhibithallOpen;
+    constants.c_mapShow = swExternalConst.server_json.features.mapOpen;
+    constants.c_siteRepresentation = swExternalConst.server_json.features.arrowType;
+    constants.c_collectAll = swExternalConst.server_json.features.collectAll;
+    document.title = swExternalConst.server_json.projectName;
+
+    render( <Provider store = {
+        initStore()
+      } >
+      <Index />
+      </ Provider>,
+      document.getElementById('app')
+    );
+
     init();
   });
+
+
 
 //初始化底层全景和全景UI
 function init() {
@@ -39,6 +54,26 @@ function init() {
 
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     constants.c_currentState = constants.c_currentStateEnum.phoneStatus;
+
+    let device = new SWDevice();
+    let iPhone_cpu_revision = device.getGlRenderer();
+    let Android_revision = device.get_android_version();
+    constants.c_weixinQQWeibo = device.getBrowser();
+  
+    console.log('==================================');
+    console.log(iPhone_cpu_revision);
+    console.log(Android_revision);
+    console.log(constants.c_weixinQQWeibo);
+    console.log('====================================');
+
+    // if (iPhone_cpu_revision.indexOf('A4') != -1 ||
+    //   iPhone_cpu_revision.indexOf('A5') != -1 ||
+    //   iPhone_cpu_revision.indexOf('A6') != -1 ||
+    //   iPhone_cpu_revision.indexOf('A7') != -1 ||
+    //   iPhone_cpu_revision.indexOf('A8') != -1 ||
+    //   (Android_revision && Android_revision <= 6)) {
+      constants.c_LowendMachine = true;
+    // }
   } else {
     constants.c_currentState = constants.c_currentStateEnum.pcStatus;
   }
@@ -56,27 +91,21 @@ function init() {
 
   //全景底层
   let swPano = new SWPano();
-  // swPano.initStats();
   swPano.initScene();
   swPano.initCamera();
-  // constants.c_currentState == constants.c_currentStateEnum.phoneStatus ? swPano.initCSSRenderer() : swPano.initRenderer();
   swPano.initRenderer();
   swPano.initLight();
-  swPano.initService();
   swPano.initMouseModule();
   swPano.initCameraManage();
   swPano.initSkyBox();
   swPano.initWallModule();
   swPano.initRoaming();
   swPano.initEditor();
-
-  render( < Provider store = {
-      initStore()
-    } >
-    <Index />
-    </Provider>,
-    document.getElementById('app')
-  );
+  swPano.initService();
+  swPano.initModel();
+  swPano.initReticle();
+  swPano.initControls();
+  swPano.initVR();
 
   (function animate() {
     requestAnimationFrame(animate);

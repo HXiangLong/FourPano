@@ -3,22 +3,29 @@
 import * as constants from "./tool/SWConstants";
 import Stats from './libs/Stats';
 import serverData from './server/SWServerData';
+import SWGetSQLData from './server/SWGetSQLData';
 import SWCameraModule from './module/SWCameraModule'
 import SWBoxJumpModule from './module/panoBox/SWBoxJumpModule'
 import SWMouseModule from './module/SWMouseModule'
 import SWWallModule from "./module/laser/SWWallModule";
 import SWGroundModule from "./module/laser/SWGroundModule";
 import SWWallSurfaceModule from "./module/laser/SWWallSurfaceModule";
+import SWWallSiteSurfaceModule from './module/laser/SWWallSiteSurfaceModule';
 import SWMeasureModule from './module/draw/SWMeasureModule';
 import SWMarkerTakePictureModule from "./module/marker/SWMarkerTakePictureModule";
 import SWRoamingModule from "./module/roaming/SWRoamingModule";
+import SWReticle from './tool/SWReticle';
+import SWModel from './module/model/SWModel';
 import initStore from '../views/redux/store/store';
 import {
     background_music_fun,
     show_VideoBox_fun
 } from '../views/redux/action';
-
 const TWEEN = require('@tweenjs/tween.js');
+require('./libs/controls/DeviceOrientationControls');
+require('./libs/controls/OrbitControls');
+require('./libs/controls/CardboardEffect');
+require('./libs/controls/StereoEffect');
 
 class SWPano {
     constructor() {
@@ -87,10 +94,12 @@ class SWPano {
 
     /**屏幕分辨率变化 */
     onWindowResize() {
-        constants.camera.aspect = window.innerWidth / window.innerHeight;
+        constants.c_clientWidth = window.innerWidth;
+        constants.c_clientHeight = window.innerHeight;
+        constants.camera.aspect = constants.c_clientWidth / constants.c_clientHeight;
         constants.camera.updateProjectionMatrix();
         if (constants.c_currentState != constants.c_currentStateEnum.phoneStatus) constants.renderer.setPixelRatio(window.devicePixelRatio);
-        constants.renderer.setSize(window.innerWidth, window.innerHeight);
+        constants.renderer.setSize(constants.c_clientWidth, constants.c_clientHeight);
     }
 
     /**性能监测*/
@@ -105,7 +114,9 @@ class SWPano {
 
     /**初始化相机*/
     initCamera() {
-        constants.camera = new THREE.PerspectiveCamera(constants.c_Maxfov, window.innerWidth / window.innerHeight, 0.1, 10000);
+        constants.c_clientWidth = window.innerWidth;
+        constants.c_clientHeight = window.innerHeight;
+        constants.camera = new THREE.PerspectiveCamera(constants.c_Maxfov, constants.c_clientWidth / constants.c_clientHeight, 0.1, 10000);
 
         //创建6个渲染到WebGLRenderTargetCube的相机。
         //near - 近裁剪距离。 far - 裁剪距离远。 cubeResolution - 设置立方体边缘的长度
@@ -129,13 +140,14 @@ class SWPano {
     initRenderer() {
         // if (this.webglAvailable()) {
         constants.renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            logarithmicDepthBuffer: true,
-            alpha: true
+            antialias: true
         });
         // } else {
         // constants.renderer = new THREE.CanvasRenderer();
         // }
+        if (constants.c_currentState == constants.c_currentStateEnum.phoneStatus) {
+            constants.renderer.setPixelRatio(constants.c_devicePixelRatio);
+        }
         constants.renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas3d').appendChild(constants.renderer.domElement);
         constants.renderer.domElement.style.position = "absolute";
@@ -143,9 +155,6 @@ class SWPano {
         //设置canvas背景色(clearColor)
         constants.renderer.setClearColor(0xffffff, 1.0);
         constants.renderer.shadowMapEnabled = true;
-        // constants.renderer.vr.enabled = true;
-
-        // checkAvailability();
     }
 
     /**初始化CSS渲染 */
@@ -166,8 +175,17 @@ class SWPano {
 
         this.Update();
 
-        constants.renderer.render(constants.scene, constants.camera);
+        if (constants.c_mode == constants.c_modes.NORMAL) {
 
+            constants.renderer.render(constants.scene, constants.camera);
+
+            constants.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        } else {
+
+            constants.c_effect.render(constants.scene, constants.camera);
+
+        }
     }
 
     /**其他需要更新的都在这里*/
@@ -184,11 +202,10 @@ class SWPano {
 
         //箭头动画
         constants.c_arrowArr.forEach((item) => {
-
             item.update(delta);
-
         });
 
+        //标注
         constants.c_markerMeshArr.forEach((item) => {
             item.update(delta);
         })
@@ -197,12 +214,19 @@ class SWPano {
         constants.c_smallVideoArr.forEach((markerVideo) => {
             markerVideo.updataSmallVideo();
         });
+
+        /**陀螺仪控制器 */
+        if (constants.c_control) constants.c_control.update();
+
+        /**鼠标控制器 */
+        if (constants.sw_mouseControl) constants.sw_mouseControl.update();
+
     }
 
     /**初始化读取数据对象*/
     initService() {
+        constants.sw_GetSQLData = new SWGetSQLData();
         constants.sw_getService = new serverData();
-        constants.sw_getService.getConfig();
     }
 
     /**初始化相机控制对象*/
@@ -225,7 +249,7 @@ class SWPano {
     initWallModule() {
         constants.sw_wallMesh = new SWWallModule();
         constants.sw_groundMesh = new SWGroundModule();
-        constants.sw_wallProbeSurface = new SWWallSurfaceModule();
+        constants.sw_wallProbeSurface = constants.c_siteRepresentation ? new SWWallSurfaceModule() : new SWWallSiteSurfaceModule();
         constants.sw_measure = new SWMeasureModule();
     }
 
@@ -239,43 +263,34 @@ class SWPano {
         constants.sw_markPoint = new SWMarkerTakePictureModule();
 
     }
+
+    /**初始化VR */
+    initVR() {
+        constants.c_effect = new THREE.StereoEffect(constants.renderer);
+        constants.c_effect.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    /**初始化十字 */
+    initReticle() {
+        constants.sw_SWReticle = new SWReticle();
+        constants.sw_SWReticle.position.z = -10;
+        constants.camera.add(constants.sw_SWReticle);
+        constants.scene.add(constants.camera);
+    }
+
+    /**初始化控制 */
+    initControls() {
+        let container = document.getElementById('canvas3d');
+        constants.c_control = new THREE.DeviceOrientationControls(constants.camera, container);
+        constants.c_control.name = 'device-orientation';
+        constants.c_control.enabled = false;
+    }
+
+    /**初始化模型 */
+    initModel(){
+        constants.sw_SWModel = new SWModel();
+    }
 }
 
 
 export default SWPano;
-
-
-
-
-function getVRDisplays(onDisplay) {
-
-    if ('getVRDisplays' in navigator) {
-
-        navigator.getVRDisplays()
-            .then(function (displays) {
-                onDisplay(displays[0]);
-            });
-
-    }
-
-}
-
-// getVRDisplay(function (display) {
-//     renderer.vr.setDevice(display);
-// });
-
-function checkAvailability() {
-    return new Promise(function (resolve, reject) {
-        if (navigator.getVRDisplays !== undefined) {
-            navigator.getVRDisplays().then(function (displays) {
-                if (displays.length === 0) {
-                    reject('no vr');
-                } else {
-                    resolve();
-                }
-            });
-        } else {
-            reject('no vr');
-        }
-    });
-}

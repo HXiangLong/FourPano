@@ -15,11 +15,6 @@
     background-size: 50% auto;
 }
 
-
-.index-quickmenu li.map {
-    background-image: url(../../../../commons/img/rmenu-map.png)
-}
-
 .index-quickmenu li.ar {
     background-image: url(../../../../commons/img/rmenu-ar.png)
 }
@@ -33,5 +28,27 @@
 }
 
 .index-quickmenu li.set {
-	background-image: url(../../../../commons/img/rmenu-set.png)
+	background-image: url(../../../../commons/img/rmenu-set.png);
+}
+
+.index-quickmenu li.gyro {
+    background-image: url(../../../../commons/img/rmenu-tly.png);
+    background-size: 60% auto;
+}
+
+.index-quickmenu li.shake {
+    background-image: url(../../../../commons/img/rmenu-yyy.png);
+    background-size: 60% auto;
+}
+
+.index-quickmenu li.ar.active{
+    background-color: #ffc603;
+}
+
+.index-quickmenu li.gyro.active{
+    background-color: #ffc603;
+}
+
+.index-quickmenu li.shake.active{
+    background-color: #ffc603;
 }

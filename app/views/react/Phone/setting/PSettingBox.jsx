@@ -8,6 +8,7 @@ class PSettingBox extends Component {
 	constructor() {
 		super();
 		this.state = {
+			movingSpeed: 5,
 			lightValue: 10,
 			roamingValue: 5
 		};
@@ -28,6 +29,19 @@ class PSettingBox extends Component {
 				/>
 				<div className="PSettingBox">
 					<ul>
+						<li>
+							<p>移动速度：</p>
+							<InputRange
+								maxValue={10}
+								minValue={1}
+								value={this.state.movingSpeed}
+								onChange={(value) => this.setState({ movingSpeed: value })}
+								onChangeComplete={(value) => {
+									constants.c_movingSpeedMultiple = value;
+								}}
+							/>
+							<span>{this.state.movingSpeed}</span>
+						</li>
 						<li>
 							<p>灯光亮度：</p>
 							<InputRange

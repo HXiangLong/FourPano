@@ -2,9 +2,11 @@
 
 import {
     c_FaceDistance,
-    scene,
-    vs_hdr,
-    fs_hdr
+    camera,
+    c_Minfov,
+    c_Maxfov,
+    c_currentState,
+    c_currentStateEnum
 } from '../../tool/SWConstants'
 import {
     disposeNode,
@@ -13,6 +15,7 @@ import {
 } from '../../tool/SWTool'
 import SWBoxTilesModule from './SWBoxTilesModule'
 import HashTable from '../../tool/SWHashTable';
+//import SWBoxPreloadingImage from './SWBoxPreloadingImage';
 /**
  * 全景盒子面对象
  */
@@ -33,19 +36,21 @@ class SWBoxFaceModule {
 
         this.levelplaneTable = new HashTable(); //4等级面数组
 
+        this.levelThreeplaneArr = []; //3等级面数组
+
         this.fourPoint = []; //面的四个顶点坐标
 
-        this.tilesPointArr = []; //所有瓦片四个顶点坐标
 
         this.faceGroup = faceGroup; //全部盒子对象
 
-        this.callFun = callfun;
-
-        this.loadTexture();
+        // this.callFun = callfun;
 
         this.geometry = new THREE.PlaneGeometry(c_FaceDistance, c_FaceDistance, 1, 1);
 
-        this.material = new THREE.MeshBasicMaterial({ map: texture ,depthTest: true});
+        this.material = new THREE.MeshBasicMaterial({
+            map: texture,
+            depthTest: true
+        });
 
         this.thumbnails = new THREE.Mesh(this.geometry, this.material);
 
@@ -53,12 +58,16 @@ class SWBoxFaceModule {
 
         this.thumbnails.userData.depthlevel = 100;
 
-        this.facePosition();
-
         this.faceGroup.add(this.thumbnails);
 
-        this.faceFourVertices();
+        // this.loadTexture();
 
+        this.facePosition();
+
+        this.tiles_4_PointArr = this.faceFourVertices(4); //所有瓦片四个顶点坐标
+        this.tiles_8_PointArr = this.faceFourVertices(8); //所有瓦片四个顶点坐标
+
+        callfun();
     }
 
     /**
@@ -96,11 +105,14 @@ class SWBoxFaceModule {
         }
     }
 
+
     /**
      * 当前瓦片四个顶点世界坐标及所有小瓦片世界坐标
+     * @param {int} tilesNum 每列数量
      */
-    faceFourVertices() {
+    faceFourVertices(tilesNum) {
         let fourPointV3 = [];
+        let tilesPointArr = [];
 
         fourPointV3.push(this.faceMatrix4(this.thumbnails.geometry.vertices[0]));
 
@@ -116,15 +128,15 @@ class SWBoxFaceModule {
             Vector3ToVP(fourPointV3[3])
         ];
 
-        let yawDis = -90 / 8;
+        let yawDis = -90 / tilesNum;
         let minYaw = this.fourPoint[0].Yaw;
 
         let minPitch = this.fourPoint[0].Pitch;
-        let pitchDis = -(this.fourPoint[0].Pitch - this.fourPoint[this.fourPoint.length - 1].Pitch) / 8;
+        let pitchDis = -(this.fourPoint[0].Pitch - this.fourPoint[this.fourPoint.length - 1].Pitch) / tilesNum;
 
-        for (let y = 0; y < 8; y++) {
+        for (let y = 0; y < tilesNum; y++) {
 
-            for (let x = 0; x < 8; x++) {
+            for (let x = 0; x < tilesNum; x++) {
 
                 let y1 = getNumberMax360(minYaw + yawDis * x);
                 let p1 = minPitch + pitchDis * y;
@@ -138,7 +150,7 @@ class SWBoxFaceModule {
                 let y4 = getNumberMax360(minYaw + yawDis * (x + 1));
                 let p4 = minPitch + pitchDis * (y + 1);
 
-                this.tilesPointArr.push([
+                tilesPointArr.push([
                     [y1, p1],
                     [y2, p2],
                     [y3, p3],
@@ -146,6 +158,7 @@ class SWBoxFaceModule {
                 ]);
             }
         }
+        return tilesPointArr;
     }
 
     /**矩阵计算世界坐标 */
@@ -166,51 +179,62 @@ class SWBoxFaceModule {
      */
     loadTexture() {
 
-        let path = `${this.boxPath}/3/sw_${this.faceNo}.jpg`;
+        // let imageName = `sw_${this.faceNo}.jpg`;
+        // new SWBoxPreloadingImage(c_StationInfo.panoID, 2, imageName, (texture) => {
 
-        // 实例化一个加载器
-        let loader = new THREE.TextureLoader();
+        //     texture.mapping = THREE.UVMapping;
 
-        // 加载资源
-        loader.load(
-            // 资源URL
-            path,
-            // 加载成功之后调用
-            (texture) => {
+        //     texture.magFilter = THREE.LinearFilter;
 
-                texture.mapping = THREE.UVMapping;
+        //     texture.minFilter = THREE.LinearFilter;
 
-                texture.magFilter = THREE.LinearFilter;
+        //     this.thumbnails.material.map = texture;
 
-                texture.minFilter = THREE.LinearFilter;
+        //     this.thumbnails.material.map.needsUpdate = true;
 
-                texture.type = THREE.FloatType;
 
-                texture.anisotropy = 1;
 
-                this.thumbnails.material.map = texture;
-
-                this.thumbnails.material.map.needsUpdate = true;
-
-                this.callFun();
-            },
-            // 加载中
-            (xhr) => {},
-            // 加载失败
-            (xhr) => {
-                console.log(`图片加载失败：${path}`);
-            }
-        );
+        this.createThreeTiles();
+        // });
     }
 
-    /**生成瓦片 */
+    /**生成第三级瓦片 */
+    createThreeTiles() {
+
+        let lineNum = 4;
+
+        for (let y = 0; y < lineNum; y++) {
+
+            for (let x = 0; x < lineNum; x++) {
+
+                let key = `${lineNum}_${y}_${x}`;
+
+                let tiles = new SWBoxTilesModule(this.faceNo, y + 1, x + 1, lineNum, 3, this.thumbnails, this.boxPath);
+
+                this.levelThreeplaneArr.push(tiles);
+            }
+        }
+        this.callFun();
+    }
+
+    /**生成第四级瓦片 */
     createTiles(minYaw, maxYaw, minPitch, maxPitch) {
 
-        for (let y = 0; y < 8; y++) {
+        let lineNum = 4;
+        let level = 3;
+        let tilesPointArr = this.tiles_4_PointArr;
 
-            for (let x = 0; x < 8; x++) {
+        if (camera.fov < (c_Maxfov + c_Minfov) * 0.5 && c_currentState != c_currentStateEnum.phoneStatus) {//TODO 手机版只有第三级
+            lineNum = 8;
+            level = 4;
+            tilesPointArr = this.tiles_8_PointArr;
+        }
 
-                let pointArr = this.tilesPointArr[y * 8 + x];
+        for (let y = 0; y < lineNum; y++) {
+
+            for (let x = 0; x < lineNum; x++) {
+
+                let pointArr = tilesPointArr[y * lineNum + x];
 
                 pointArr.forEach((item) => {
 
@@ -227,15 +251,14 @@ class SWBoxFaceModule {
                         if (minYaw < item[0] && item[0] < maxYaw && minPitch < item[1] && item[1] < maxPitch) {
                             boo = true;
                         }
-
                     }
 
                     if (boo) {
-                        let key = y + "_" + x;
+                        let key = `${level}_${y}_${x}`;
 
                         if (!this.levelplaneTable.containsKey(key)) {
 
-                            let tiles = new SWBoxTilesModule(this.faceNo, y + 1, x + 1, this.thumbnails, this.boxPath);
+                            let tiles = new SWBoxTilesModule(this.faceNo, y + 1, x + 1, lineNum, level, this.thumbnails, this.boxPath);
 
                             this.levelplaneTable.add(key, tiles);
                         }
@@ -249,18 +272,39 @@ class SWBoxFaceModule {
      * 清除瓦片及自身
      */
     clearTiles(boo = true) {
+        //TODO 不需要提前清除面片，代码先保留
+        // if (camera.fov > (c_Maxfov + c_Minfov) * 0.5 && c_currentState != c_currentStateEnum.phoneStatus) {
+        //     lineNum = 8;
+        //     level = 4;
 
-        let tilesArr = this.levelplaneTable.getValues();
+        //     for (let y = 0; y < lineNum; y++) {
 
-        tilesArr.forEach((tile) => {
+        //         for (let x = 0; x < lineNum; x++) {
 
-            tile.clearTile();
+        //             let key = `${level}_${y}_${x}`;
 
-        });
+        //             if (this.levelplaneTable.containsKey(key)) {
 
-        this.levelplaneTable.clear();
+        //                 let tile = this.levelplaneTable.getValue(key);
+
+        //                 tile.clearTile();
+        //             }
+        //         }
+        //     }
+        // }
 
         if (boo) {
+
+            let tilesArr = this.levelplaneTable.getValues();
+
+            tilesArr.forEach((tile) => {
+
+                tile.clearTile();
+
+            });
+
+            this.levelplaneTable.clear();
+
             disposeNode(this.thumbnails, true);
         }
     }

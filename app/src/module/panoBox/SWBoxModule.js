@@ -4,8 +4,10 @@ import {
     scene,
     camera,
     c_StationInfo,
-    c_ThumbnailSize,
-    sw_cameraManage
+    sw_cameraManage,
+    c_clientHeight,
+    c_clientWidth,
+    c_panoImageTable
 } from '../../tool/SWConstants';
 import SWBoxFaceModule from './SWBoxFaceModule';
 import {
@@ -22,6 +24,9 @@ import {
  */
 class SWBoxModule {
     constructor(url, textures) {
+
+        this.thumbnailSize = 128;
+
         this.box = new THREE.Group(); //全景内盒子
 
         this.faceArr = []; //面集合
@@ -63,37 +68,41 @@ class SWBoxModule {
 
         newOrderArr.forEach((item) => {
 
-            let canvas = document.createElement("canvas");
+            let texture1 = null;
 
-            canvas.width = canvas.height = c_ThumbnailSize;
+            if (!c_panoImageTable.containsKey(c_StationInfo.panoID + "_" + item)) {
 
-            let context = canvas.getContext("2d");
+                let canvas = document.createElement("canvas");
 
-            //计算图片位置
-            let nint = Math.floor(item / 3);
-            let mint = item % 3;
+                canvas.width = canvas.height = this.thumbnailSize;
 
-            context.drawImage(this.textures.image,
+                let context = canvas.getContext("2d");
 
-                mint * c_ThumbnailSize,
+                //计算图片位置
+                let nint = Math.floor(item / 3);
+                let mint = item % 3;
 
-                nint * c_ThumbnailSize,
+                context.drawImage(this.textures.image,
 
-                c_ThumbnailSize,
+                    mint * this.thumbnailSize,
 
-                c_ThumbnailSize,
+                    nint * this.thumbnailSize,
 
-                0,
+                    this.thumbnailSize,
 
-                0,
-                c_ThumbnailSize,
+                    this.thumbnailSize,
 
-                c_ThumbnailSize);
+                    0,
 
-            let texture1 = new THREE.Texture(canvas);
+                    0,
+                    this.thumbnailSize,
 
-            texture1.needsUpdate = true;
+                    this.thumbnailSize);
 
+                texture1 = new THREE.Texture(canvas);
+
+                texture1.needsUpdate = true;
+            }
 
             let face = new SWBoxFaceModule(item, this.box, texture1, this.url, () => {
 
@@ -112,9 +121,7 @@ class SWBoxModule {
 
     /**相机放大的情况下，有变化时调用此方法 */
     addFaceTiles() {
-
         let yp = this.getWorldFourPoint();
-
         if (yp) {
 
             this.faceArr.forEach((itme) => {
@@ -122,7 +129,6 @@ class SWBoxModule {
                 itme.createTiles(yp[0], yp[1], yp[2], yp[3]);
 
             });
-
         }
     }
 
@@ -135,11 +141,11 @@ class SWBoxModule {
 
         this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(0, 0)));
 
-        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(window.innerWidth, 0)));
+        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(c_clientWidth, 0)));
 
-        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(0, window.innerHeight)));
+        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(0, c_clientHeight)));
 
-        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(window.innerWidth, window.innerWidth)));
+        this.worldFourPoint.push(Vector3ToVP(this.getSceneToWorldRay(c_clientWidth, c_clientHeight)));
 
         let yaw = this.worldFourPoint.sort((a, b) => {
             if (a.Yaw > b.Yaw) {

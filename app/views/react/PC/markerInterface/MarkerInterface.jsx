@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as constants from '../../../../src/tool/SWConstants';
 import './MarkerInterface.css';
+const external = require('../../../../src/tool/SWExternalConst.js');
 
 /**标注介绍界面 */
 class MarkerInterface extends Component {
@@ -149,19 +150,13 @@ class MarkerInterface extends Component {
 		this.markerthumbs = [];
 
 		this.props.imglist.forEach((item, idx) => {
-			let imgUrl = `${constants.sw_getService.resourcesUrl}/${item.filePath}`;
+			this.markerImgList.push(item.PCMax);
 
-			this.markerImgList.push(imgUrl);
-
-			let arr1 = item.filePath.split('/');
-
-			let pp = `${constants.sw_getService.resourcesUrl}/${arr1[0]}/${arr1[1]}/${arr1[2]}/phone/${arr1[3]}`;
-
-			this.markerthumbs.push(pp);
+			this.markerthumbs.push(item.thumbnail);
 
 			imgArr.push(
 				<li key={`markerImg${idx}`}>
-					<img draggable={false} src={pp} onClick={this.enlargeImage.bind(this, idx)} />
+					<img draggable={false} src={item.thumbnail} onClick={this.enlargeImage.bind(this, idx)} />
 				</li>
 			);
 		});
@@ -208,12 +203,37 @@ class MarkerInterface extends Component {
 	}
 
 	render() {
+		let boo = false;
+		if (
+			(this.props.d3 != '' && this.props.d3 != undefined) ||
+			(this.props.video != '' && this.props.video != undefined) ||
+			(this.props.book != '' && this.props.book != undefined) ||
+			(this.props.audio != '' && this.props.audio != undefined) ||
+			external.server_json.features.like ||
+			(this.props.links != '' && this.props.links)
+		) {
+			boo = true;
+		}
+
 		return this.props.off ? (
 			<div className="MarkerInterface">
 				<div className="UIBG" onClick={this.closeMarkerInterface.bind(this)} />
 				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeMarkerInterface.bind(this)} />
 
-				<div className="detailbox">
+				<div
+					className="detailbox"
+					style={
+						boo ? !external.server_json.features.comment ? (
+							{ width: '748px'}
+						) : (
+							{}
+						) : !external.server_json.features.comment ? (
+							{ width: '748px', height: '398px' }
+						) : (
+							{}
+						)
+					}
+				>
 					<div className="imgbox">
 						<div className="num">
 							<span className="current">{this.state.nowItem + 1}</span>/<span className="count">{this.props.imglist.length}</span>
@@ -274,19 +294,27 @@ class MarkerInterface extends Component {
 						<div className="title">{this.props.title}</div>
 						<div className="cont" dangerouslySetInnerHTML={{ __html: this.markerContent() }} />
 						<ul className="detailQuickmenu">
-							<li title="喜欢" className="iconfont icon-xihuan dianzhan" onClick={this.onLike.bind(this)}>
-								<p>{parseInt(this.props.likeNum) >= 99 ? '99+' : this.props.likeNum}</p>
-							</li>
-							{/* <li title="收藏" className="iconfont icon-shoucang1">
-							</li> */}
-							<li
-								title="评论"
-								className="iconfont icon-pinglun gengduo"
-								onClick={this.showComment.bind(this)}
-							/>
-							{/* <li title="分享" className="iconfont icon-fenxiang">
-							</li> */}
-							{this.props.links != '' ? (
+							{external.server_json.features.like ? (
+								<li
+									title="喜欢"
+									className="iconfont icon-xihuan dianzhan"
+									onClick={this.onLike.bind(this)}
+								>
+									<p>{parseInt(this.props.likeNum) >= 99 ? '99+' : this.props.likeNum}</p>
+								</li>
+							) : (
+								''
+							)}
+							{external.server_json.features.comment ? (
+								<li
+									title="评论"
+									className="iconfont icon-pinglun gengduo"
+									onClick={this.showComment.bind(this)}
+								/>
+							) : (
+								''
+							)}
+							{this.props.links != '' && this.props.links ? (
 								<a href={this.props.links} target="_blank">
 									<li title="想了解更多" className="iconfont icon-gengduo-2 gengduo" />
 								</a>
@@ -296,10 +324,14 @@ class MarkerInterface extends Component {
 						</ul>
 					</div>
 
-					<div className="commentbox">
-						<p>最新评论：</p>
-						<ul>{this.onComment()}</ul>
-					</div>
+					{external.server_json.features.comment ? (
+						<div className="commentbox">
+							<p>最新评论：</p>
+							<ul>{this.onComment()}</ul>
+						</div>
+					) : (
+						''
+					)}
 				</div>
 			</div>
 		) : (

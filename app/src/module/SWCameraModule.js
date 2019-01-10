@@ -6,7 +6,8 @@ import {
 	c_Minfov,
 	c_maxPitch,
 	c_minPitch,
-	sw_skyBox
+	sw_skyBox,
+	c_movingSpeedMultiple
 } from '../tool/SWConstants';
 import {
 	YPRToVector3,
@@ -55,11 +56,6 @@ class SWCameraModule {
 		/**旋转速度 */
 		this.rotateSpeed = 0.4;
 
-		/**自动旋转 */
-		this.autoRotate = true;
-		/**自动旋转速度，当fps为60时，每轮30秒 */
-		this.autoRotateSpeed = 2.0;
-
 		//旋转坐标值
 		this.rotateStart = new THREE.Vector2();
 		this.rotateEnd = new THREE.Vector2();
@@ -96,7 +92,6 @@ class SWCameraModule {
 			touchPanSpeedCoeffFactor: 1
 		};
 		this.prevTime;
-		this.animatedMove = {};
 
 		/***********************陀螺仪参数**************************** */
 		/**是否启用陀螺仪 */
@@ -127,18 +122,20 @@ class SWCameraModule {
 		/**相机是否推进放大 */
 		this.ifCameraEnlarge = false;
 
+		/**相机是否在缩放中 */
+		this.ifCameraRun = false;
+
 		this.store = initStore();
 
 		this.setHousesViewAngle(0, 0, true);
 	}
 
 	update() {
-
 		this.config.pitch = Math.max(c_minPitch, Math.min(c_maxPitch, this.config.pitch));
 
 		this.setHousesViewAngle(this.config.yaw, this.config.pitch);
 
-		if (Math.abs(this.speed.yaw) > 0.05 || Math.abs(this.speed.pitch) > 0.05) {
+		if (Math.abs(this.speed.yaw) > 0.01 || Math.abs(this.speed.pitch) > 0.01) {
 
 			let prevPitch = this.config.pitch;
 			let prevYaw = this.config.yaw;
@@ -149,38 +146,27 @@ class SWCameraModule {
 			} else {
 				newTime = Date.now();
 			}
+
 			if (this.prevTime === undefined) {
 				this.prevTime = newTime;
 			}
+
 			let diff = (newTime - this.prevTime) * (camera.fov + 32) / 1700;
 			diff = Math.min(diff, 1.0);
 
+			this.prevTime = newTime;
+
 			// 惯性
-			if (diff > 0 && !this.autoRotate) {
+			if (diff > 0) {
 				// 摩擦
 				let friction = 0.85;
 
-				// Yaw
-				if (!this.animatedMove.yaw) {
-					this.config.yaw += this.speed.yaw * diff * friction;
-				}
-				// Pitch
-				if (!this.animatedMove.pitch) {
-					this.config.pitch += this.speed.pitch * diff * friction;
-				}
-			}
+				this.config.yaw += this.speed.yaw * diff * friction;
+				this.config.pitch += this.speed.pitch * diff * friction;
 
-			this.prevTime = newTime;
-			if (diff > 0) {
 				this.speed.yaw = this.speed.yaw * 0.8 + (this.config.yaw - prevYaw) / diff * 0.2;
 				this.speed.pitch = this.speed.pitch * 0.8 + (this.config.pitch - prevPitch) / diff * 0.2;
-
-				// Limit speed
-				var maxSpeed = this.autoRotate ? Math.abs(this.autoRotate) : 5;
-				this.speed.yaw = Math.min(maxSpeed, Math.max(this.speed.yaw, -maxSpeed));
-				this.speed.pitch = Math.min(maxSpeed, Math.max(this.speed.pitch, -maxSpeed));
 			}
-
 		} else {
 			this.prevTime = undefined;
 		}
@@ -208,25 +194,23 @@ class SWCameraModule {
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onUpdate(function () {
 				camera.fov = this._object.x;
+				camera.updateProjectionMatrix();
 			})
 			.onComplete(() => {
+				camera.fov = fov;
+				camera.updateProjectionMatrix();
 				if (camera.fov > (c_Maxfov + c_Minfov) * 0.5) {
-
 					this.ifCameraEnlarge = false;
 
 					sw_skyBox.panoBox.clearFaceTiles();
 				}
 			})
 			.start();
-
-		camera.updateProjectionMatrix();
 	}
 
 	/**放大 */
 	dollyOut(dollyScale) {
 		let fov = Math.max(c_Minfov, Math.min(c_Maxfov, camera.fov - dollyScale));
-
-		camera.updateProjectionMatrix();
 
 		let from = {
 			x: camera.fov
@@ -241,15 +225,13 @@ class SWCameraModule {
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onUpdate(function () {
 				camera.fov = this._object.x;
+
+				camera.updateProjectionMatrix();
 			})
 			.onComplete(() => {
+				camera.fov = fov;
 
-				if (camera.fov < (c_Maxfov + c_Minfov) * 0.5) {
-
-					this.ifCameraEnlarge = true;
-
-					sw_skyBox.panoBox.addFaceTiles();
-				}
+				camera.updateProjectionMatrix();
 			})
 			.start();
 	}
@@ -266,15 +248,16 @@ class SWCameraModule {
 
 			this.rotateStart.set(event.clientX, event.clientY);
 
-			this.autoRotate = false;
+			this.onPointerDownYaw = this.config.yaw;
+			this.onPointerDownPitch = this.config.pitch;
+
 			this.speed.pitch = this.speed.yaw = 0;
 
 			this.startTime = Date.now();
 
-			this.onPointerDownYaw = this.config.yaw;
-			this.onPointerDownPitch = this.config.pitch;
-
 			this.state = this.STATE.ROTATE;
+
+			this.update();
 		}
 	}
 
@@ -295,15 +278,18 @@ class SWCameraModule {
 
 			this.rotateEnd.set(event.clientX, event.clientY);
 
-			let yaw = -((Math.atan(this.rotateStart.x / canvasWidth * 2 - 1) - Math.atan(this.rotateEnd.x / canvasWidth * 2 - 1)) * 180 / Math.PI * (camera.fov + 32) / 90) + this.onPointerDownYaw;
-			this.speed.yaw = (yaw - this.config.yaw) % 360 * 0.3;
-			this.config.yaw = yaw;
+			let yaw = THREE.Math.radToDeg(Math.atan(this.rotateEnd.x / canvasWidth * 2 - 1) - Math.atan(this.rotateStart.x / canvasWidth * 2 - 1)) * ((camera.fov + 32) / 90);
+			this.speed.yaw = yaw * 0.1 * c_movingSpeedMultiple;
+			this.config.yaw += yaw;
 
-			let vfov = 2 * Math.atan(Math.tan((camera.fov + 32) / 360 * Math.PI) * canvasHeight / canvasWidth) * 180 / Math.PI;
+			let vfov = 2 * THREE.Math.radToDeg(Math.atan(Math.tan((camera.fov + 32) / 360 * Math.PI) * canvasHeight / canvasWidth));
+			let pitch = THREE.Math.radToDeg(Math.atan(this.rotateEnd.y / canvasHeight * 2 - 1) - Math.atan(this.rotateStart.y / canvasHeight * 2 - 1)) * (vfov / 90);
 
-			let pitch = ((Math.atan(this.rotateEnd.y / canvasHeight * 2 - 1) - Math.atan(this.rotateStart.y / canvasHeight * 2 - 1)) * 180 / Math.PI * vfov / 90) + this.onPointerDownPitch;
-			this.speed.pitch = (pitch - this.config.pitch) * 0.3;
-			this.config.pitch = pitch;
+			this.speed.pitch = pitch * 0.1 * c_movingSpeedMultiple;
+			this.config.pitch += pitch;
+
+			this.rotateStart.x = this.rotateEnd.x;
+			this.rotateStart.y = this.rotateEnd.y;
 		}
 	}
 
@@ -312,15 +298,14 @@ class SWCameraModule {
 	 * @param {MouseEvent} event 
 	 */
 	onMouseUp(event) {
-		this.state = this.STATE.NONE;
+		if (this.state == this.STATE.ROTATE) {
 
-		if (Date.now() - this.startTime > 15) {
+			this.state = this.STATE.NONE;
 
-			this.speed.pitch = this.speed.yaw = 0;
-
+			if (Date.now() - this.startTime > 15) {
+				this.speed.pitch = this.speed.yaw = 0;
+			}
 		}
-
-		this.latestInteraction = Date.now();
 	}
 
 	/**
@@ -334,13 +319,9 @@ class SWCameraModule {
 		event.stopPropagation();
 
 		if (event.deltaY < 0) {
-
 			this.dollyOut(this.getZoomScale());
-
 		} else if (event.deltaY > 0) {
-
 			this.dollyIn(this.getZoomScale());
-
 		}
 	}
 
@@ -359,7 +340,6 @@ class SWCameraModule {
 
 				this.startTime = Date.now();
 
-				this.autoRotate = false;
 				this.config.roll = 0;
 				this.speed.pitch = this.speed.yaw = 0;
 
@@ -405,17 +385,23 @@ class SWCameraModule {
 
 				this.startTime = Date.now();
 
+				let canvasWidth = window.innerWidth;
+				let canvasHeight = window.innerHeight;
+
 				this.rotateEnd.set(event.targetTouches[0].clientX, event.targetTouches[0].clientY);
 
-				let touchmovePanSpeedCoeff = ((camera.fov + 32) / 360) * this.config.touchPanSpeedCoeffFactor;
+				let yaw = THREE.Math.radToDeg(Math.atan(this.rotateEnd.x / canvasWidth * 2 - 1) - Math.atan(this.rotateStart.x / canvasWidth * 2 - 1)) * ((camera.fov + 32) / 90);
+				this.speed.yaw = yaw * 0.1 * c_movingSpeedMultiple;
+				this.config.yaw += yaw;
 
-				let yaw = -(this.rotateStart.x - this.rotateEnd.x) * touchmovePanSpeedCoeff + this.onPointerDownYaw;
-				this.speed.yaw = (yaw - this.config.yaw) % 360 * 0.1;
-				this.config.yaw = yaw;
+				let vfov = 2 * THREE.Math.radToDeg(Math.atan(Math.tan((camera.fov + 32) / 360 * Math.PI) * canvasHeight / canvasWidth));
+				let pitch = THREE.Math.radToDeg(Math.atan(this.rotateEnd.y / canvasHeight * 2 - 1) - Math.atan(this.rotateStart.y / canvasHeight * 2 - 1)) * (vfov / 90);
 
-				let pitch = (this.rotateEnd.y - this.rotateStart.y) * touchmovePanSpeedCoeff + this.onPointerDownPitch;
-				this.speed.pitch = (pitch - this.config.pitch) * 0.1;
-				this.config.pitch = pitch;
+				this.speed.pitch = pitch * 0.1 * c_movingSpeedMultiple;
+				this.config.pitch += pitch;
+
+				this.rotateStart.x = this.rotateEnd.x;
+				this.rotateStart.y = this.rotateEnd.y;
 
 				break;
 
@@ -429,9 +415,9 @@ class SWCameraModule {
 
 				this.dollyEnd.set(0, distance);
 
-				this.dollyDelta.set(0, -(this.dollyEnd.y - this.dollyStart.y) * 0.5 / this.zoomSpeed);
+				this.dollyDelta.set(0, (this.dollyEnd.y - this.dollyStart.y) * 8 / this.zoomSpeed);
 
-				this.dollyIn(this.dollyDelta.y);
+				this.dollyIn(-this.dollyDelta.y);
 
 				this.dollyStart.copy(this.dollyEnd);
 				break;
@@ -452,13 +438,10 @@ class SWCameraModule {
 			this.rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
 
 			this.rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
-
 		} else if (event.touches.length === 0) {
-
 			this.state = this.STATE.NONE;
 
 			if (Date.now() - this.startTime > 150) {
-
 				this.speed.pitch = this.speed.yaw = 0;
 			}
 			this.startTime = Date.now();
@@ -466,70 +449,13 @@ class SWCameraModule {
 	}
 
 	/**
-	 * 监听并接收设备方向变化信息,检测手机倾斜旋转
-	 *         z   
-	 *         |   y
-	 *         |  /   
-	 *         | /
-	 *          ————————X
-	 * @param {*} event 
-	 */
-	onDeviceOrientationChangeEvent(event) {
-		if (this.enabledGyro) {
-			if (event) {
-				let alpha = event.alpha ?
-					THREE.Math.degToRad(parseFloat((event.alpha - this.startAlpha).toFixed(2))) + this.alphaOffset :
-					0; // Z
-
-				let beta = event.beta ? THREE.Math.degToRad(parseFloat((event.beta - this.startBeta).toFixed(2))) : 0; // X'
-
-				let gamma = event.gamma ? THREE.Math.degToRad(parseFloat(event.gamma.toFixed(2))) : 0; // Y''
-
-				let orient = this.screenOrientation ? THREE.Math.degToRad(this.screenOrientation) : 0; // O
-
-				this.setObjectQuaternion(camera.quaternion, alpha, beta, gamma, orient);
-			}
-		}
-	}
-
-	/**
-	 * 浏览器横竖屏切换检测
-	 */
-	onScreenOrientationChangeEvent() {
-		this.screenOrientation = window.orientation || 0;
-	}
-
-	/**
-	 * 重新定义相机的四元素
-	 * @param {Quaternion} quaternion 相机的旋转四元素
-	 * @param {Number} alpha 设备沿 Z 轴旋转的弧度值
-	 * @param {Number} beta 设备在 x 轴上的旋转弧度值
-	 * @param {Number} gamma 设备在 y 轴上的旋转弧度值
-	 * @param {Number} orient 浏览器横竖屏朝向的弧度值
-	 */
-	setObjectQuaternion(quaternion, alpha, beta, gamma, orient) {
-		this.euler.set(beta, alpha, -gamma, 'YXZ'); //欧拉角是绕坐标轴旋转的角度和顺序,按照heading , pitch , roll 的顺序，应该是 YXZ
-
-		quaternion.setFromEuler(this.euler); // 从欧拉角设置四元数
-
-		quaternion.multiply(this.q1); //四元数的乘法
-
-		quaternion.multiply(this.q0.setFromAxisAngle(this.zee, -orient)); // 从任意轴的旋转角设置四元数
-	}
-
-	/**
 	 * 有激光点云时点击墙面会放大
 	 */
 	setWallWheel() {
-
 		if (camera.isPerspectiveCamera) {
-
 			if (camera.fov > c_Minfov) {
-
 				this.dollyOut((c_Maxfov - c_Minfov) / 3); //放大
-
 			} else if (camera.fov == c_Minfov) {
-
 				this.dollyIn(100); //还原
 			}
 		}
@@ -545,24 +471,25 @@ class SWCameraModule {
 		if (this.yaw_Camera == getNumberMax360(yaws) && this.picth_Camera == pitch) {
 			return;
 		}
-		if (yaws) this.yaw_Camera = getNumberMax360(yaws);
+		if (yaws || yaws == 0) this.yaw_Camera = getNumberMax360(yaws); //if(0) => false
 
-		if (pitch) this.picth_Camera = pitch;
+		if (pitch || pitch == 0) this.picth_Camera = pitch;
 
 		if (updatas) {
 			this.config.yaw = this.yaw_Camera;
 			this.config.pitch = this.picth_Camera;
 		}
 
-		this.store.dispatch(show_PanoMap_fun({
-			radarAngle: this.yaw_Camera
-		}));
+		this.store.dispatch(
+			show_PanoMap_fun({
+				radarAngle: this.yaw_Camera
+			})
+		);
 
 		camera.lookAt(YPRToVector3(this.yaw_Camera, this.picth_Camera));
 
-		if (this.ifCameraEnlarge) {
-			sw_skyBox.panoBox.addFaceTiles();
-		}
+		if(sw_skyBox.panoBox)sw_skyBox.panoBox.addFaceTiles();
+
 	}
 
 	/**
@@ -571,8 +498,6 @@ class SWCameraModule {
 	 * @param {*} pitch 纬度
 	 */
 	setOverlayViewAngle(yaws, pitch) {
-		// let picthCamera = this.picth_Camera + pitch;
-
 		let yawCamera = getNumberMax360(this.yaw_Camera + yaws);
 
 		this.setHousesViewAngle(yawCamera, pitch, true);

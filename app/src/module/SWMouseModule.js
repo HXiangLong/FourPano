@@ -1,6 +1,10 @@
 /* global THREE*/
 
 import * as constants from '../tool/SWConstants';
+import {
+    ShakeAmbient,
+    jumpSite
+} from '../tool/SWInitializeInstance';
 import initStore from '../../views/redux/store/store';
 import {
     show_Thumbnails_fun,
@@ -28,8 +32,22 @@ class SWMouseModule {
         /**射线 */
         this.raycaster = new THREE.Raycaster();
 
+        /**VR模式下射到的对象 */
+        this.hoverObject;
+
+        this.speed = 25;
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        this.lastX = 0;
+        this.lastY = 0;
+        this.lastZ = 0;
+
+        this.shakeOff = false;
+        this.SHAKE_THRESHOLD = 3000;
+        this.last_update = 0;
+
         if ('ontouchstart' in window) {
-            //this.addGyroEvent();
             this.addTouchEvent();
         } else {
             this.addMosueEvent();
@@ -77,21 +95,60 @@ class SWMouseModule {
         this.canvas3d.removeEventListener("touchend", this.touchEnd.bind(this), false); //触摸结束
     }
 
-    /**添加手机陀螺仪事件 */
-    addGyroEvent() {
-        window.addEventListener('orientationchange', this.screenOrientationChangeEvent.bind(this), false); //浏览器横竖屏切换检测
-        //处理方向事件 接收设备方向变化信息
-        if (window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', this.deviceOrientationChangeEvent.bind(this), false); //检测手机倾斜旋转
+    /**添加摇一摇功能监听事件 */
+    addShakeEvent() {
+        if (window.DeviceMotionEvent) {
+            this.shakeOff = true;
+            window.addEventListener('devicemotion', this.devicemotionEvent.bind(this), false);
         } else {
-            alert('本设备不支持deviceorientation事件');
+            let store = initStore();
+            store.dispatch(notify({
+                title: '无法检测到您设备的陀螺仪，请您更换设备再试。',
+                message: '',
+                position: 'tc',
+                status: 'error',
+                dismissible: true,
+                dismissAfter: 5000
+            }));
         }
     }
 
-    /**清除手机陀螺仪事件 */
-    deleteGyroEvent() {
-        window.removeEventListener('orientationchange', this.screenOrientationChangeEvent.bind(this), false); //浏览器横竖屏切换检测
-        window.removeEventListener('deviceorientation', this.deviceOrientationChangeEvent.bind(this), false); //检测手机倾斜旋转
+    /**删除摇一摇功能监听事件 */
+    deleteShakeEvent() {
+        window.removeEventListener('devicemotion', this.devicemotionEvent.bind(this), false);
+        this.shakeOff = false;
+    }
+
+    devicemotionEvent(event) {
+        if (this.shakeOff) {
+            let acceleration = event.accelerationIncludingGravity;
+
+            let curTime = new Date().getTime();
+            let diffTime = curTime - this.last_update;
+
+            // 固定时间段
+            if (diffTime > 100) {
+
+                this.last_update = curTime;
+
+                this.x = acceleration.x;
+                this.y = acceleration.y;
+                this.z = acceleration.z;
+
+                let speed = Math.abs(this.x + this.y + this.z - this.lastX - this.lastY - this.lastZ) / diffTime * 10000;
+
+                if (speed > this.SHAKE_THRESHOLD) {
+                    ShakeAmbient();
+                    console.log('====================================');
+                    console.log("摇一摇");
+                    console.log('====================================');
+                }
+
+                this.lastX = this.x;
+                this.lastY = this.y;
+                this.lastZ = this.z;
+            }
+        }
     }
 
     /**
@@ -106,15 +163,18 @@ class SWMouseModule {
         this.mouseV2.y = -(ey / window.innerHeight) * 2 + 1;
     }
 
+
     /**
      * 朝着某个点发射线
      * @param {Vector2} mouseXY 屏蔽坐标点
+     * @param {Array} [children = constants.scene.children] 默认射击对象为场景所有 
+     * @param {Boolean} [recursive = false] 是否启用递归 
      */
-    mouseRaycaster(mouseXY) {
+    mouseRaycaster(mouseXY, children = constants.scene.children, recursive = true) {
 
         this.raycaster.setFromCamera(mouseXY, constants.camera);
 
-        let intersects = this.raycaster.intersectObjects(constants.scene.children);
+        let intersects = this.raycaster.intersectObjects(children, recursive);
 
         let intersect, depthlevel;
 
@@ -178,7 +238,11 @@ class SWMouseModule {
 
                 this.intersect.object.mouseUp(e, this.intersect);
 
-            } else if (!this.intersect && constants.c_isMeasureStatus) { //测量状态时点击空白处
+            } else if(this.intersect && this.intersect.object && this.intersect.object.parent && this.intersect.object.parent.mouseUp){
+
+                this.intersect.object.parent.mouseUp(e, this.intersect);
+                
+            }else if (!this.intersect && constants.c_isMeasureStatus) { //测量状态时点击空白处
 
                 let store = initStore();
 
@@ -275,6 +339,10 @@ class SWMouseModule {
 
                 this.intersect.object.mouseDown(e, this.intersect);
 
+            }else if(this.intersect && this.intersect.object && this.intersect.object.parent && this.intersect.object.parent.mouseDown){
+
+                this.intersect.object.parent.mouseDown(e, this.intersect);
+
             }
         }
     }
@@ -304,6 +372,7 @@ class SWMouseModule {
         let store = initStore();
 
         store.dispatch(show_Thumbnails_fun(false));
+
         store.dispatch(show_HotPhotoWall_fun({
             off: false
         }));
@@ -353,64 +422,40 @@ class SWMouseModule {
 
         constants.sw_cameraManage.onTouchMove(e);
 
-        if (e.touches.length == 0) { //一支手指 旋转、点击
-            this.mousePosition(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-
-            let rayObj = this.mouseRaycaster(this.mouseV2);
-
-            if (rayObj) {
-
-                if (this.intersect && this.intersect != rayObj) { //如果再次返回对象不是上次对象，就是离开对象了
-
-                    if (this.intersect.object.mouseOut) { //离开模型事件
-
-                        this.intersect.object.mouseOut(e.changedTouches[0], this.intersect);
-
-                    }
-                }
-
-                if (rayObj.object.mouseOver) { //进入模型事件
-
-                    rayObj.object.mouseOver(e.changedTouches[0], rayObj);
-
-                }
-
-                if (rayObj.object.mouseMove) { //移动事件
-
-                    rayObj.object.mouseMove(e.changedTouches[0], rayObj);
-
-                }
-
-            } else if (this.intersect) {
-
-                if (this.intersect.object.mouseOut) {
-
-                    this.intersect.object.mouseOut(e.changedTouches[0], this.intersect);
-
-                }
-            }
-
-            this.intersect = rayObj;
-        }
-    }
-
-    /**陀螺仪旋转事件-设备定位改变事件 */
-    deviceOrientationChangeEvent(event) {
-
-        constants.sw_cameraManage.onDeviceOrientationChangeEvent(event);
-
-    }
-
-    /**陀螺仪旋转事件-屏幕方向改变事件 */
-    screenOrientationChangeEvent() {
-
-        constants.sw_cameraManage.onScreenOrientationChangeEvent();
-
     }
 
     /**屏蔽右键 */
     contextMenu(e) {
         e.preventDefault();
+    }
+
+    update() {
+
+        if (constants.c_mode != constants.c_modes.STEREO || !window) return;
+
+        this.mousePosition(constants.c_clientWidth * 0.5, constants.c_clientHeight * 0.5);
+
+        let rayIntersect = this.mouseRaycaster(this.mouseV2, constants.c_arrowCurentArr, true);
+
+        if (rayIntersect) {
+
+            if (!this.hoverObject || rayIntersect.object !== this.hoverObject.object) {
+
+                this.hoverObject = rayIntersect;
+
+                constants.sw_SWReticle.startDwelling(() => {
+
+                    jumpSite(this.hoverObject.object.name);
+
+                });
+            }
+        } else {
+
+            this.hoverObject = rayIntersect;
+
+            //离开对象清除动画
+            constants.sw_SWReticle.cancelDwelling();
+        }
     }
 }
 

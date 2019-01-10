@@ -5,14 +5,18 @@ import SWViewGesture from "../../tool/SWViewGesture";
 import {
     camera,
     scene,
-    c_LastStopPanoID
+    c_LastStopPanoID,
+    c_currentState,
+    c_currentStateEnum,
+    c_isPreviewImageLoadEnd,
+    c_arrowCurentArr,
+    c_clientWidth,
+    c_clientHeight
 } from '../../tool/SWConstants';
 import {
-    TextDiv,
     VPToVector3,
     textSize,
-    getWorldToScene,
-    delectTextDiv
+    getWorldToScene
 } from '../../tool/SWTool';
 import {
     jumpSite
@@ -52,11 +56,13 @@ class SWMarkerArrowModule extends SWMarkerModule {
 
         scene.add(this.mesh);
 
+        c_arrowCurentArr.push(this.mesh);
+
         this.mesh.visible = false;
 
         this.mouseDownBoo = false;
 
-        let text = (this.arrowData.dstPanoID == c_LastStopPanoID ? "上一站" : "下一站") + (this.arrowData.dstPanoName == "" ? "" : "：") + this.arrowData.dstPanoName;
+        let text = (this.arrowData.dstPanoID == c_LastStopPanoID ? "上一站" : "下一站") + (this.arrowData.dstPanoName == "" ? this.arrowData.dstPanoName : "：") + this.arrowData.dstPanoName;
 
         this.textDiv.innerHTML = text;
 
@@ -76,8 +82,13 @@ class SWMarkerArrowModule extends SWMarkerModule {
 
         this.mesh.mouseUp = (e, obj) => {
 
-            if (this.mouseDownBoo) jumpSite(obj.object.name);
+            if(!c_isPreviewImageLoadEnd){
 
+                this.textDiv.style.display = "none";
+
+                if (this.mouseDownBoo) jumpSite(obj.object.name);
+
+            }
         };
 
         //鼠标进入
@@ -104,6 +115,38 @@ class SWMarkerArrowModule extends SWMarkerModule {
         }
     }
 
+    update(delta) {
+        if (this.textureAnimator && this.markerType == 2) {
+
+            this.textureAnimator.update(1000 * delta);
+
+        }
+
+        if(c_currentState == c_currentStateEnum.phoneStatus){
+
+            if (this.textDiv && this.mesh.visible) {
+
+                let labelPos = getWorldToScene(this.mesh.position);
+    
+                if(labelPos.z < 1){
+    
+                    this.textDiv.style.display = "block";
+    
+                    this.textDiv.style.left = (labelPos.x - this.textWidth) + "px";
+        
+                    this.textDiv.style.top = (labelPos.y - 60) + "px";
+
+                    if((labelPos.x - this.textWidth) > c_clientWidth || (labelPos.x - this.textWidth) < 0 || (labelPos.y - 60) > c_clientHeight || (labelPos.y - 60) < 0){
+                        this.textDiv.style.display = "none";
+                    }
+
+                }else{
+                    this.textDiv.style.display = "none";
+                }
+            }
+        }
+    }
+
     /**
      * 老箭头已经在的情况下，新箭头校正坐标
      * @param {SWArrowInfo} date 新箭头数据
@@ -123,6 +166,8 @@ class SWMarkerArrowModule extends SWMarkerModule {
     /**清理箭头对象 */
     clearArrow() {
 
+        this.textDiv.style.display = "none";
+        
         this.clear();
 
         this.arrowData = null;

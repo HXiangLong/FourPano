@@ -5,6 +5,7 @@ import './Thumbnails.css';
 import Exhiblistbox from '../exhiblistBox';
 import * as constants from '../../../../src/tool/SWConstants';
 import { jumpSite } from '../../../../src/tool/SWInitializeInstance';
+const external = require('../../../../src/tool/SWExternalConst.js');
 
 class Thumbnails extends Component {
 	constructor() {
@@ -37,19 +38,27 @@ class Thumbnails extends Component {
 
 	createTable() {
 		let museumID, exhibID;
+
+		let mapmarker = constants.c_panoIDTable.getValue(constants.c_StationInfo.panoID);
+
 		for (let i = 0; i < constants.c_FloorsMapTable.getValues().length; i++) {
+
 			let floormap = constants.c_FloorsMapTable.getValue(i + 1);
-			let mapmarker = floormap.rasterMapMarkers.getValues();
-			$.each(mapmarker, (idx, obj) => {
-				if (obj.panoID == constants.c_StationInfo.panoID) {
-					museumID = floormap.displayPriority;
-					exhibID = floormap.floorID;
-				}
-			});
+
+			if (mapmarker.rasterMapID == floormap.floorID) {
+
+				museumID = floormap.displayPriority;
+
+				exhibID = floormap.floorID;
+
+				break;
+			}
 		}
 
 		let table = [];
+
 		constants.c_thumbnailsForMuseum.forEach((item, idx) => {
+			
 			if (museumID == item.sceneID || item.sceneID == '') {
 				//同一楼层需要分展厅列表展示时用到floorInfo的DisplayPriority与Thumbnail的SceneID
 				table.push(
@@ -153,7 +162,7 @@ class Thumbnails extends Component {
 	}
 
 	render() {
-		return this.props.off ? (
+		return external.server_json.features.exhibithall ? this.props.off ? (
 			<div className="ThumbnailsBox">
 				<div className="itemBox">
 					{this.controlArrow ? (
@@ -176,7 +185,7 @@ class Thumbnails extends Component {
 						<ul
 							style={{
 								textAlign: `${this.controlArrow ? 'left' : 'center'}`,
-								width: `${this.controlArrow ? '20000px' : '1195px'}`,
+								width: `${this.controlArrow ? '20000px' : '994px'}`,
 								transform: `translateX(${this.state.translateX}px)`,
 								transition: `-webkit-transform ${this.state.animationTime}ms ease 0s`
 							}}
@@ -196,6 +205,8 @@ class Thumbnails extends Component {
 					)}
 				</div>
 			</div>
+		) : (
+			''
 		) : (
 			''
 		);

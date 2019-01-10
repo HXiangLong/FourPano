@@ -89,8 +89,9 @@
 .PDetailbox .imgbox .quickmenu {
     position: absolute;
     width: 100%;
-    bottom: 5px;
+    bottom: -1px;
     text-align: center;
+    background-color: #191919;
 }
 
 .PDetailbox .imgbox .quickmenu li {

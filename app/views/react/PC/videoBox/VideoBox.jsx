@@ -53,7 +53,7 @@ class VideoBox extends Component {
 				<div className="iconfont icon-guanbi closeIcon" onClick={this.closeVideoBoxs.bind(this)} />
 				<video
 					ref={this.myVideoRef}
-					src={`${constants.sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/videos/${this.props
+					src={`${constants.sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/Video/${this.props
 						.videoUrl}`}
 					autoPlay="autoPlay"
 					controls="true"

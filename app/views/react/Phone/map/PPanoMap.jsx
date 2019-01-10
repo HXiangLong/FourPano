@@ -4,6 +4,7 @@ import './PPanoMap.css';
 import * as constants from '../../../../src/tool/SWConstants';
 import SWKMeans from '../../PC/map/SWKMeans';
 import MapMarker from '../../PC/map/MapMarker';
+const external = require('../../../../src/tool/SWExternalConst.js');
 
 class PPanoMap extends Component {
 	constructor() {
@@ -37,71 +38,59 @@ class PPanoMap extends Component {
 			imgUrl: '',
 			mapboxClass: '',
 			imgStyle: {
-				transform: `scale(${this.imgScale})`
+				transform: `scale(${this.imgScale})`,
+				WebkitTransform: `scale(${this.imgScale})`
 			},
 			markerStyle: {}
 		};
-
-		this.myRef = React.createRef();
 	}
 
 	/**鼠标按下 */
 	_mouseDown(event) {
+		// 防止滚动背景
+		event.preventDefault();
+		event.stopPropagation();
 		this.dragDrop = true;
 
-		if (event.touches.length == 1) {
-			this.apartX = event.touches[0].clientX;
-			this.apartY = event.touches[0].clientY;
-		} else {
-			let dx = event.touches[0].pageX - event.touches[1].pageX;
-			let dy = event.touches[0].pageY - event.touches[1].pageY;
-
-			this.touchZoomDistanceEnd = this.touchZoomDistanceStart = Math.sqrt(dx * dx + dy * dy);
-		}
+		this.apartX = event.touches[0].clientX;
+		this.apartY = event.touches[0].clientY;
 	}
 
 	/**鼠标弹起 */
 	_mouseUp(event) {
+		// 防止滚动背景
+		event.preventDefault();
+		event.stopPropagation();
 		this.dragDrop = false;
 	}
 
 	/**鼠标移动 */
 	_mouseMove(event) {
+		// 防止滚动背景
+		event.preventDefault();
+		event.stopPropagation();
 		if (!this.dragDrop) return;
 
-		if (event.touches.length > 1) {
-			let dx = evt.touches[0].pageX - evt.touches[1].pageX;
-			let dy = evt.touches[0].pageY - evt.touches[1].pageY;
+		this.top += event.touches[0].clientY - this.apartY;
+		this.left += event.touches[0].clientX - this.apartX;
 
-			this.touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy);
-			if (this.touchZoomDistanceEnd > this.touchZoomDistanceStart) {
-				//放大
-				this.plusRotateImg();
-			} else if (this.touchZoomDistanceEnd < this.touchZoomDistanceStart) {
-				//缩小
-				this.minusRotateImg();
+		this.markerLeft += event.touches[0].clientX - this.apartX;
+		this.markerTop += event.touches[0].clientY - this.apartY;
+
+		this.setState({
+			imgStyle: {
+				transform: `translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`,
+				WebkitTransform:`translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`
+			},
+			markerStyle: {
+				top: `${this.markerTop}px`,
+				left: `${this.markerLeft}px`
 			}
-			this.touchZoomDistanceStart = this.touchZoomDistanceEnd;
-		} else {
-			this.top += event.touches[0].clientY - this.apartY;
-			this.left += event.touches[0].clientX - this.apartX;
+		});
 
-			this.markerLeft += event.touches[0].clientX - this.apartX;
-			this.markerTop += event.touches[0].clientY - this.apartY;
+		this.apartX = event.touches[0].clientX;
 
-			this.setState({
-				imgStyle: {
-					transform: `translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`
-				},
-				markerStyle: {
-					top: `${this.markerTop}px`,
-					left: `${this.markerLeft}px`
-				}
-			});
-
-			this.apartX = event.touches[0].clientX;
-			this.apartY = event.touches[0].clientY;
-		}
+		this.apartY = event.touches[0].clientY;
 	}
 
 	/**缩小 */
@@ -113,7 +102,6 @@ class PPanoMap extends Component {
 	/**放大 */
 	zoomIn() {
 		this.plusRotateImg();
-		this.centered();
 	}
 
 	/**放大图像 */
@@ -124,7 +112,8 @@ class PPanoMap extends Component {
 
 		this.setState({
 			imgStyle: {
-				transform: `translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`
+				transform: `translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`,
+				WebkitTransform:`translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`
 			}
 		});
 	}
@@ -137,45 +126,23 @@ class PPanoMap extends Component {
 
 		this.setState({
 			imgStyle: {
-				transform: `translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`
+				transform: `translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`,
+				WebkitTransform:`translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`
 			}
-		});
-	}
-
-	componentWillReceiveProps() {
-		let floorsMapArr = constants.c_FloorsMapTable.getValues();
-
-		this.serverUrl = constants.sw_getService.resourcesUrl + '/';
-
-		floorsMapArr.forEach((obj) => {
-			let mapmarker = obj.rasterMapMarkers.getValues();
-
-			mapmarker.forEach((mapObj) => {
-				if (mapObj.panoID == constants.c_StationInfo.panoID) {
-					this.floorsMapData = obj;
-
-					if (this.rasterMapID != mapObj.rasterMapID) {
-						this.setState({
-							imgUrl: `${this.serverUrl}${obj.rasterMapPath}`
-						});
-
-						this.rasterMapID = mapObj.rasterMapID;
-					}
-				}
-			});
 		});
 	}
 
 	/**关闭 */
 	closePanoMap() {
+		this.centered();
 		this.props.closePanoMap();
 	}
 
 	/**居中 */
 	centered() {
-		this.left = (document.getElementsByClassName('mapMarkerBox')[0].offsetWidth - this.imgWidth) * 0.5;
+		this.left = (window.innerWidth - this.imgWidth) * 0.5;
 
-		this.top = (document.getElementsByClassName('mapMarkerBox')[0].offsetHeight - this.imgHeight) * 0.5;
+		this.top = (window.innerHeight * 0.4 - this.imgHeight) * 0.5;
 
 		this.markerLeft = 0;
 
@@ -183,7 +150,8 @@ class PPanoMap extends Component {
 
 		this.setState({
 			imgStyle: {
-				transform: `translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`
+				transform: `translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`,
+				WebkitTransform:`translate3d(${this.left}px, ${this.top}px, 0px) scale(${this.imgScale})`
 			},
 
 			markerStyle: {
@@ -208,25 +176,27 @@ class PPanoMap extends Component {
 
 		let kmTable = [];
 
-		let mapMarkers = this.floorsMapData.rasterMapMarkers.getValues();
+		let mapMarkers = this.props.floorsMapData.rasterMapMarkers.getValues();
 
-		let left =
-			(document.getElementsByClassName('mapMarkerBox')[0].offsetWidth - this.imgWidth * this.imgScale) * 0.5;
+		let left = (window.innerWidth - this.imgWidth * this.imgScale) * 0.5;
 
-		let top =
-			(document.getElementsByClassName('mapMarkerBox')[0].offsetHeight - this.imgHeight * this.imgScale) * 0.5;
+		let top = (window.innerHeight * 0.4 - this.imgHeight * this.imgScale) * 0.5;
 
 		mapMarkers.forEach((marker) => {
 			let px = left + marker.pixShapeX * this.imgScale - 20;
 
 			let py = top + marker.pixShapeY * this.imgScale - 16;
 
-			kmTable.push([ px, py, marker.panoID, marker.markerTypeCode ]);
+			if (marker.panoID == constants.c_StationInfo.panoID) {
+				kmTable.push([ px, py, marker.panoID, '999' ]);
+			} else {
+				kmTable.push([ px, py, marker.panoID, marker.markerTypeCode ]);
+			}
 		});
 
-		let kmesans = this.SWKMeans.start(kmTable);
+		// let kmesans = this.SWKMeans.start(kmTable);
 
-		kmesans.forEach((item, idx) => {
+		kmTable.forEach((item, idx) => {
 			if (item[3] == '999') {
 				this.radarLeft = item[0];
 				this.radarTop = item[1];
@@ -241,8 +211,11 @@ class PPanoMap extends Component {
 	}
 
 	render() {
-		return this.props.phoneOff ? (
-			<div className={`Pzoom-marker-div ${this.state.mapboxClass}`}>
+		return external.server_json.features.map ? (
+			<div
+				className={`Pzoom-marker-div ${this.state.mapboxClass}`}
+				style={{ display: this.props.phoneOff ? 'block' : 'none' }}
+			>
 				<span className="iconfont icon-svg26 guangbi" title="关闭展示框" onClick={this.closePanoMap.bind(this)} />
 				<span className="iconfont icon-jia big" title="放大展示框" onClick={this.zoomIn.bind(this)} />
 				<span className="iconfont icon-jian small" title="缩小展示框" onClick={this.zoomOut.bind(this)} />
@@ -251,7 +224,7 @@ class PPanoMap extends Component {
 					title="功能说明"
 					onClick={this.description.bind(this)}
 				/>
-				<div className="mapMarkerBox" ref={this.myRef}>
+				<div className="mapMarkerBox">
 					<div
 						className="zoom-marker-img"
 						style={this.state.imgStyle}
@@ -259,7 +232,7 @@ class PPanoMap extends Component {
 						onTouchMove={this._mouseMove.bind(this)}
 						onTouchEnd={this._mouseUp.bind(this)}
 					>
-						<img ref="showPreviewImageWrap" src={this.state.imgUrl} onLoad={this.centered.bind(this)} />
+						<img ref="showPreviewImageWrap" src={this.props.imgUrl} onLoad={this.centered.bind(this)} />
 					</div>
 
 					<div className="zoom-marker" style={this.state.markerStyle}>
@@ -268,6 +241,12 @@ class PPanoMap extends Component {
 							className="mapRadar"
 							style={{
 								transform: `translate3d(${this.radarLeft - 16}px, ${this.radarTop -
+									8}px, 0px) rotate(${-(
+									constants.c_deviationAngle -
+									90 +
+									this.props.radarAngle
+								)}deg)`,
+								WebkitTransform: `translate3d(${this.radarLeft - 16}px, ${this.radarTop -
 									8}px, 0px) rotate(${-(constants.c_deviationAngle - 90 + this.props.radarAngle)}deg)`
 							}}
 						>

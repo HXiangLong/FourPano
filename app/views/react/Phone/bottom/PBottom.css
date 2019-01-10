@@ -2,7 +2,7 @@
     position: absolute;
     bottom: 42px;
     left: 7px;
-    width: 232px;
+    width: 240px;
     height: 20px;
     text-align: center;
     z-index: 10;
@@ -15,13 +15,17 @@
 }
 
 .PMainMenu ul li {
+    margin: 8px;
     margin: 0.5rem;
+    margin-bottom: 16px;
     margin-bottom: 1rem;
     border-radius: 50%;
     background-color: #e8e8e8;
+    width: 32px;
     width: 2rem;
+    height: 32px;
     height: 2rem;
-    background: rgba(31, 30, 30, 0.7) no-repeat center;
+    background: rgba(31, 30, 30, .7) no-repeat center;
     background-size: 50% auto;
     float: left;
     text-align: center;
@@ -67,6 +71,14 @@
 .PMainMenu ul li.collect {
     background-size: 37% auto;
     background-image: url(../../../../commons/img/menuicon-collect.png);
+}
+
+.PMainMenu ul li.map {
+    background-image: url(../../../../commons/img/menuicon-map.png)
+}
+
+.PMainMenu ul li.map.active {
+    background-image: url(../../../../commons/img/menuicon-map-active.png)
 }
 
 .PMainMenu ul li.exhibithall.active {

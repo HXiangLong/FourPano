@@ -39,27 +39,13 @@ export function getSceneToWorld(dx, dy) {
  */
 export function getWorldToScene(v3) {
 
-    let vector = v3.clone();
-
-    let windowWidth = window.innerWidth;
-
-    let minWidth = 1280;
-
-    if (windowWidth < minWidth) {
-
-        windowWidth = minWidth;
-
-    }
-
-    let widthHalf = (windowWidth / 2);
-
-    let heightHalf = (window.innerHeight / 2);
+    var vector = new THREE.Vector3(v3.x, v3.y, v3.z);
 
     vector.project(constants.camera);
 
-    vector.x = (vector.x * widthHalf) + widthHalf;
+    vector.x = (vector.x + 1) / 2 * window.innerWidth;
 
-    vector.y = -(vector.y * heightHalf) + heightHalf;
+    vector.y = -(vector.y - 1) / 2 * window.innerHeight;
 
     return vector;
 }
@@ -69,6 +55,7 @@ export function getWorldToScene(v3) {
  * @param {THREE.Vector3} v3 
  */
 export function Vector3ToVP(v3) {
+
     let yaw = Math.atan2(v3.x, v3.z);
 
     let pitch = Math.atan2(v3.y, (v3.x / Math.sin(yaw)));
@@ -96,6 +83,7 @@ export function Vector3ToVP(v3) {
  * @param {SWViewGesture} vp 球面坐标 yaw,pitch
  */
 export function VPToVector3(vp) {
+
     let vec = new THREE.Vector3(0, 0, 0);
 
     vec.y = Math.sin(THREE.Math.degToRad(vp.Pitch)) * constants.c_FaceDistance * 0.5;
@@ -299,23 +287,28 @@ export function getJudgeOrZoom(obj, type) {
         distances = getPanoRealPoint(obj, 2.5);
 
         dis = -1;
+
     } else {
         distances = getWallRealPoint(obj);
     }
     let dis0 = Math.sqrt(Math.pow((distances.x - constants.c_StationInfo.nx), 2) + Math.pow((distances.y - constants.c_StationInfo.ny), 2)) + dis;
 
-    for (let i = 0; i < constants.c_AdjacentPanoInfoArr.length; i++) {
+    let panoid = "";
 
-        let dis1 = Math.sqrt(Math.pow((distances.x - constants.c_AdjacentPanoInfoArr[i].nX), 2) + Math.pow((distances.y - constants.c_AdjacentPanoInfoArr[i].nY), 2));
+    constants.c_AdjacentPanoInfoArr.forEach((arrowData, idx) => {
+
+        let dis1 = Math.sqrt(Math.pow((distances.x - arrowData.nX), 2) + Math.pow((distances.y - arrowData.nY), 2));
 
         if (dis1 <= dis0) {
 
-            return true;
+            dis0 = dis1;
+
+            panoid = arrowData.dstPanoID;
 
         }
-    }
+    });
 
-    return false;
+    return panoid;
 }
 
 /**
@@ -324,14 +317,23 @@ export function getJudgeOrZoom(obj, type) {
  * @param v2 下一站点
  * */
 export function getArrowsAngle(v1, v2) {
+
     let p2 = new THREE.Vector3(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z).applyMatrix4(constants.c_DS3ToOpenGLMx4);
+
     let v4 = new THREE.Vector3(-1, 0, 0);
+
     let angle = p2.angleTo(v4);
+
     angle = THREE.Math.radToDeg(angle); //转换为角度
+
     let tan = p2.clone().cross(v4).dot(new THREE.Vector3(0, 1, 0));
+
     if (tan > 0) {
+
         angle = 360 - angle;
+
     }
+
     return angle;
 }
 
@@ -341,39 +343,67 @@ export function getArrowsAngle(v1, v2) {
  * @param ifParent 是否用父类删除自己
  * */
 export function disposeNode(node, ifParent = true) {
+
+    if (!node) return;
+
     if (node instanceof THREE.Mesh || node instanceof THREE.Sprite || node instanceof THREE.Line || node instanceof THREE.BoxHelper || node instanceof THREE.Group) {
+
         if (node.geometry) {
+
             node.geometry.dispose();
+
         }
+
         if (node.material) {
+
             if (node.material instanceof THREE.MeshFaceMaterial || node.material instanceof THREE.MultiMaterial) {
+
                 $.each(node.material.materials, function (idx, mtrl) {
+
                     if (mtrl.map) mtrl.map.dispose();
+
                     if (mtrl.lightMap) mtrl.lightMap.dispose();
+
                     if (mtrl.bumpMap) mtrl.bumpMap.dispose();
+
                     if (mtrl.normalMap) mtrl.normalMap.dispose();
+
                     if (mtrl.specularMap) mtrl.specularMap.dispose();
+
                     if (mtrl.envMap) mtrl.envMap.dispose();
 
                     mtrl.dispose(); // disposes any programs associated with the material
                 });
+
             } else {
+
                 if (node.material.map) node.material.map.dispose();
+
                 if (node.material.lightMap) node.material.lightMap.dispose();
+
                 if (node.material.bumpMap) node.material.bumpMap.dispose();
+
                 if (node.material.normalMap) node.material.normalMap.dispose();
+
                 if (node.material.specularMap) node.material.specularMap.dispose();
+
                 if (node.material.envMap) node.material.envMap.dispose();
 
                 node.material.dispose(); // disposes any programs associated with the material
             }
         }
         if (ifParent) {
-            if (node.parent) {
-                node.parent.remove(node);
-            }
+
+            if (node.parent)node.parent.remove(node);
+
             node = null;
         }
+    }
+    // 清除缓存
+    if (THREE.Cache && THREE.Cache.enabled) {
+
+        THREE.Cache.clear();
+
     }
 }
 
@@ -480,10 +510,15 @@ export function delectTextDiv(textdiv) {
  * @param {Function} callFun 回调函数
  */
 export function getFont(fontUrl) {
+
     return new Promise((resolve, reject) => {
+
         let loader = new THREE.FontLoader();
+
         loader.load(fontUrl, (response) => {
+
             resolve(response);
+            
         });
     });
 }
@@ -572,6 +607,6 @@ export function textSize(fontSize, fontFamily, text) {
     result.height = parseFloat(window.getComputedStyle(span).height) - result.height;
 
     delectTextDiv(span);
-    
+
     return result;
 }

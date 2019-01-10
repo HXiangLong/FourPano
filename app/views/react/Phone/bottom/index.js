@@ -6,7 +6,8 @@ import {
     show_Introduction_fun,
     open_roaming_fun,
     show_Thumbnails_fun,
-    show_HotPhotoWall_fun
+    show_HotPhotoWall_fun,
+    show_PanoMap_fun
 } from '../../../redux/action';
 
 const mapStateToProps = (state, ownProps) => {
@@ -14,7 +15,8 @@ const mapStateToProps = (state, ownProps) => {
         brightness:state.OpenSetting.brightness,
         openRoamingOff: state.OpenRoaming.roamingOff,
         OpenThumbnails: state.OpenThumbnails,
-        hotWallOff:state.OpenHotPhotoWall.off
+        hotWallOff:state.OpenHotPhotoWall.off,
+        openPanoMapOff: state.OpenPanoMap.phoneOff
     }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -35,6 +37,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         showHotPhotoWall: (flag) => {
             dispatch(show_HotPhotoWall_fun(flag))
+        },
+        showPanoMap: (flag) => {
+            dispatch(show_PanoMap_fun(flag))
         }
     }
 }

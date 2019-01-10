@@ -64,6 +64,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 dismissible: true,
                 dismissAfter: 5000
             }));
+        },
+        openRoaming:()=>{
+            dispatch(notify({
+                title: "开启漫游功能。",
+                message: '',
+                position: 'tc',
+                status: 'success',
+                dismissible: true,
+                dismissAfter: 5000
+            }));
         }
     }
 }

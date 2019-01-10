@@ -1,0 +1,634 @@
+{
+    "50001": null,
+    "50002": null,
+    "50003": null,
+    "50004": null,
+    "50005": [
+        {
+            "MultiID": "0001",
+            "ParentID": "50005",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/《武汉星期评论》001.jpg"
+        }
+    ],
+    "50006": [
+        {
+            "MultiID": "0002",
+            "ParentID": "50006",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/,1922年广州人民出版社印行列宁著《共产党礼拜六》001-.jpg"
+        }
+    ],
+    "50007": [
+        {
+            "MultiID": "0003",
+            "ParentID": "50007",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/郑凯卿的《武昌五局工人状况》调查报告.jpg"
+        }
+    ],
+    "50008": [
+        {
+            "MultiID": "0004",
+            "ParentID": "50008",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/陈独秀署名的中央局通告-(二大馆)-.jpg"
+        }
+    ],
+    "50009": [
+        {
+            "MultiID": "0005",
+            "ParentID": "50009",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/《关于当前实际工作的决议》（俄文版）（二大馆）.jpg"
+        }
+    ],
+    "50010": [
+        {
+            "MultiID": "0006",
+            "ParentID": "50010",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中共二大通过的第一个党章《中国共产党章程》（二大馆）001.jpg"
+        },
+        {
+            "MultiID": "0007",
+            "ParentID": "50010",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中共二大通过的第一个党章《中国共产党章程》（二大馆）002.jpg"
+        }
+    ],
+    "50011": [
+        {
+            "MultiID": "0008",
+            "ParentID": "50011",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/梁桂华被委任为农民运动特派员的委任状（广东革博）-.jpg"
+        }
+    ],
+    "50012": [
+        {
+            "MultiID": "0009",
+            "ParentID": "50012",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/林伟民在《工人之路》上发表的《实际的经验与教训》（广东革博）-.jpg"
+        }
+    ],
+    "50013": [
+        {
+            "MultiID": "0010",
+            "ParentID": "50013",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/《中国共产党中央执行委员会组织法》（三大馆）.jpg"
+        }
+    ],
+    "50014": [
+        {
+            "MultiID": "0011",
+            "ParentID": "50014",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国国民党一届一中全会到会代表签名.jpg"
+        }
+    ],
+    "50015": [
+        {
+            "MultiID": "0012",
+            "ParentID": "50015",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国共产党第三次全国大会决议案及宣言.jpg"
+        }
+    ],
+    "50016": [
+        {
+            "MultiID": "0013",
+            "ParentID": "50016",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国共产党第一次修正章程001.jpg"
+        }
+    ],
+    "50017": [
+        {
+            "MultiID": "0014",
+            "ParentID": "50017",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中共四大中央委员、候补委员分工名单以及派驻各地的中央委员.jpg"
+        }
+    ],
+    "50018": [
+        {
+            "MultiID": "0015",
+            "ParentID": "50018",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国共产党第四次大会宣言.jpg"
+        }
+    ],
+    "50019": [
+        {
+            "MultiID": "0016",
+            "ParentID": "50019",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国共产党第二次修正章程.jpg"
+        }
+    ],
+    "50020": [
+        {
+            "MultiID": "0017",
+            "ParentID": "50020",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/关于坚决清洗贪污腐化分子的通告.jpg"
+        }
+    ],
+    "50021": [
+        {
+            "MultiID": "0018",
+            "ParentID": "50021",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_292莫斯科中山大学出版中共五大决议（俄罗斯）.jpg"
+        }
+    ],
+    "50022": [
+        {
+            "MultiID": "0019",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）001.jpg"
+        },
+        {
+            "MultiID": "0020",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）002.jpg"
+        },
+        {
+            "MultiID": "0021",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）003.jpg"
+        },
+        {
+            "MultiID": "0022",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）004.jpg"
+        },
+        {
+            "MultiID": "0023",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）005.jpg"
+        },
+        {
+            "MultiID": "0024",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）006.jpg"
+        },
+        {
+            "MultiID": "0025",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）007.jpg"
+        },
+        {
+            "MultiID": "0026",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）008.jpg"
+        },
+        {
+            "MultiID": "0027",
+            "ParentID": "50022",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/514_1_256-苏联塔斯社发自汉口的关于中共五大的报道和共产国际代表参会情况（俄罗斯）009.jpg"
+        }
+    ],
+    "50023": [
+        {
+            "MultiID": "0028",
+            "ParentID": "50023",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/492_1_368共产国际五大代表王荷波、李大钊、刘清扬（俄罗斯）001.jpg"
+        },
+        {
+            "MultiID": "0029",
+            "ParentID": "50023",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/492_1_368共产国际五大代表王荷波、李大钊、刘清扬（俄罗斯）002.jpg"
+        }
+    ],
+    "50024": [
+        {
+            "MultiID": "0030",
+            "ParentID": "50024",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/492_1_368共产国际五大代表王荷波、李大钊、刘清扬（俄罗斯）003.jpg"
+        },
+        {
+            "MultiID": "0031",
+            "ParentID": "50024",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/492_1_368共产国际五大代表王荷波、李大钊、刘清扬（俄罗斯）004.jpg"
+        }
+    ],
+    "50025": [
+        {
+            "MultiID": "0032",
+            "ParentID": "50025",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/492_1_368共产国际五大代表王荷波、李大钊、刘清扬（俄罗斯）005.jpg"
+        },
+        {
+            "MultiID": "0033",
+            "ParentID": "50025",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/492_1_368共产国际五大代表王荷波、李大钊、刘清扬（俄罗斯）006.jpg"
+        }
+    ],
+    "50026": [
+        {
+            "MultiID": "0034",
+            "ParentID": "50026",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国共产党第三次修正章程决案-.jpg"
+        }
+    ],
+    "50027": [
+        {
+            "MultiID": "0035",
+            "ParentID": "50027",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央通告第二十六号——关于监察委员会问题.jpg"
+        }
+    ],
+    "50028": [
+        {
+            "MultiID": "0036",
+            "ParentID": "50028",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中共六大通过的《中国共产党党章》中文（二大馆）-.jpg"
+        }
+    ],
+    "50029": [
+        {
+            "MultiID": "0037",
+            "ParentID": "50029",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/《军队中的支部》（福建革命馆）.jpg"
+        }
+    ],
+    "50030": [
+        {
+            "MultiID": "0038",
+            "ParentID": "50030",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央审查委员会成员名单-.jpg"
+        }
+    ],
+    "50031": [
+        {
+            "MultiID": "0039",
+            "ParentID": "50031",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国共产党党组织决议案草案1.jpg"
+        }
+    ],
+    "50032": [
+        {
+            "MultiID": "0040",
+            "ParentID": "50032",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国共产党党组织决议案草案2.jpg"
+        }
+    ],
+    "50033": [
+        {
+            "MultiID": "0041",
+            "ParentID": "50033",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/关于纠正党内的错误思想001.jpg"
+        },
+        {
+            "MultiID": "0042",
+            "ParentID": "50033",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/关于纠正党内的错误思想002.jpg"
+        }
+    ],
+    "50034": [
+        {
+            "MultiID": "0043",
+            "ParentID": "50034",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/Z10-00010中央工农检察人民委员会部训令第二号，落款：工农检察人民委员何叔衡-1932年12月1日（5页，纸质）001.jpg"
+        },
+        {
+            "MultiID": "0044",
+            "ParentID": "50034",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/Z10-00010中央工农检察人民委员会部训令第二号，落款：工农检察人民委员何叔衡-1932年12月1日（5页，纸质）002.jpg"
+        },
+        {
+            "MultiID": "0045",
+            "ParentID": "50034",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/Z10-00010中央工农检察人民委员会部训令第二号，落款：工农检察人民委员何叔衡-1932年12月1日（5页，纸质）003.jpg"
+        },
+        {
+            "MultiID": "0046",
+            "ParentID": "50034",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/Z10-00010中央工农检察人民委员会部训令第二号，落款：工农检察人民委员何叔衡-1932年12月1日（5页，纸质）004.jpg"
+        },
+        {
+            "MultiID": "0047",
+            "ParentID": "50034",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/Z10-00010中央工农检察人民委员会部训令第二号，落款：工农检察人民委员何叔衡-1932年12月1日（5页，纸质）005.jpg"
+        }
+    ],
+    "50035": [
+        {
+            "MultiID": "0048",
+            "ParentID": "50035",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央苏区《红色中华》报（2张）001.jpg"
+        },
+        {
+            "MultiID": "0049",
+            "ParentID": "50035",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央苏区《红色中华》报（2张）002.jpg"
+        }
+    ],
+    "50036": [
+        {
+            "MultiID": "0050",
+            "ParentID": "50036",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央政府审计委员会审计条例001.jpg"
+        },
+        {
+            "MultiID": "0051",
+            "ParentID": "50036",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央政府审计委员会审计条例002.jpg"
+        },
+        {
+            "MultiID": "0052",
+            "ParentID": "50036",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央政府审计委员会审计条例003.jpg"
+        },
+        {
+            "MultiID": "0053",
+            "ParentID": "50036",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央政府审计委员会审计条例004.jpg"
+        },
+        {
+            "MultiID": "0054",
+            "ParentID": "50036",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央政府审计委员会审计条例005.jpg"
+        },
+        {
+            "MultiID": "0055",
+            "ParentID": "50036",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央政府审计委员会审计条例006.jpg"
+        },
+        {
+            "MultiID": "0056",
+            "ParentID": "50036",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央政府审计委员会审计条例007.jpg"
+        }
+    ],
+    "50037": [
+        {
+            "MultiID": "0057",
+            "ParentID": "50037",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/政治问答第一册001.jpg"
+        },
+        {
+            "MultiID": "0058",
+            "ParentID": "50037",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/政治问答第一册002.jpg"
+        }
+    ],
+    "50038": [
+        {
+            "MultiID": "0059",
+            "ParentID": "50038",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/苏区账本（原展览）001.jpg"
+        },
+        {
+            "MultiID": "0060",
+            "ParentID": "50038",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/苏区账本（原展览）002.jpg"
+        }
+    ],
+    "50039": [
+        {
+            "MultiID": "0061",
+            "ParentID": "50039",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/Z10-00005《关于惩治贪污浪费行为》（中央执行委员会二十六号训令）.jpg"
+        }
+    ],
+    "50040": [
+        {
+            "MultiID": "0062",
+            "ParentID": "50040",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/可爱的中国001.jpg"
+        },
+        {
+            "MultiID": "0063",
+            "ParentID": "50040",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/可爱的中国002.jpg"
+        }
+    ],
+    "50041": [
+        {
+            "MultiID": "0064",
+            "ParentID": "50041",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中央党务委员会的信封.jpg"
+        }
+    ],
+    "50042": [
+        {
+            "MultiID": "0065",
+            "ParentID": "50042",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/中国共产党第一次修正章程010.jpg"
+        }
+    ],
+    "50043": [
+        {
+            "MultiID": "0066",
+            "ParentID": "50043",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/77.jpg"
+        }
+    ],
+    "50044": [
+        {
+            "MultiID": "0067",
+            "ParentID": "50044",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/115.jpg"
+        }
+    ],
+    "50045": [
+        {
+            "MultiID": "0068",
+            "ParentID": "50045",
+            "TypeCode": "1",
+            "DisplayPriority": 1,
+            "FileExt": "jpg",
+            "FilePath": "BusinessData/ExhibitDetails/Picture/59.jpg"
+        }
+    ],
+    "50046": null,
+    "50047": null
+}

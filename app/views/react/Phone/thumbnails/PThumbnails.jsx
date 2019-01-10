@@ -5,6 +5,7 @@ import PExhiblistBox from '../exhiblistBox';
 import Slider from 'react-slick';
 import * as constants from '../../../../src/tool/SWConstants';
 import { jumpSite } from '../../../../src/tool/SWInitializeInstance';
+const external = require('../../../../src/tool/SWExternalConst.js');
 
 class PThumbnails extends Component {
 	constructor() {
@@ -22,15 +23,21 @@ class PThumbnails extends Component {
 
 	createTable() {
 		let museumID, exhibID;
+
+		let mapmarker = constants.c_panoIDTable.getValue(constants.c_StationInfo.panoID);
+
 		for (let i = 0; i < constants.c_FloorsMapTable.getValues().length; i++) {
+
 			let floormap = constants.c_FloorsMapTable.getValue(i + 1);
-			let mapmarker = floormap.rasterMapMarkers.getValues();
-			$.each(mapmarker, (idx, obj) => {
-				if (obj.panoID == constants.c_StationInfo.panoID) {
-					museumID = floormap.displayPriority;
-					exhibID = floormap.floorID;
-				}
-			});
+
+			if (mapmarker.rasterMapID == floormap.floorID) {
+
+				museumID = floormap.displayPriority;
+
+				exhibID = floormap.floorID;
+
+				break;
+			}
 		}
 
 		let table = [];
@@ -104,7 +111,7 @@ class PThumbnails extends Component {
 				}
 			]
 		};
-		return this.props.off ? (
+		return external.server_json.features.exhibithall ? this.props.off ? (
 			<div className="PThumbnailsBox">
 				<div className="exhiblistItem">
 					<Slider
@@ -119,7 +126,7 @@ class PThumbnails extends Component {
 			</div>
 		) : (
 			''
-		);
+		):"";
 	}
 }
 

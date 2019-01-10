@@ -3,8 +3,8 @@ const ffs = require("fs-extra");
 const path = require("path");
 const winston = require("winston");
 
-const api = "http://192.168.10.63:8090/GZXHGM/DigitalMusService/";
-const api2 = "http://192.168.10.63:8090/GZXHGM/DigitalMusBaseServices/";
+const api = "http://192.168.10.63:8090/WHLZ/DigitalMusService/";
+const api2 = "http://192.168.10.63:8090/WHLZ/DigitalMusBaseServices/";
 
 const logger = winston.createLogger({
     transports: [
@@ -25,29 +25,35 @@ function GetAllFloorsForBuilding() {
         `${api}Services.aspx?method=GetAllFloorsForBuilding&buildingID=5101-0010-0001&random=4.51736333816128`
     );
 }
+
 function GetPanoByID(panoID) {
     return axios.get(`${api2}GetPanoByID?ImageID=${panoID}`);
 }
+
 function GetFacadeByPanoID(panoID) {
     return axios.get(
-        `${api2}GetFacadeByPanoID/?Z=-6.463313&PanoID=${panoID}&TolerateZ=5`
+        `${api2}GetFacadeByPanoID/?Z=140&PanoID=${panoID}&TolerateZ=5`
     );
 }
+
 function GetAdjacentPano(panoID) {
     return axios.get(
         `${api2}GetAdjacentPano/?date=24.739729530596666&ImageID=${panoID}`
     );
 }
+
 function GetLinkByByPano(panoID) {
     return axios.get(
         `${api}Services.aspx?method=getLinkByPanoID&panoID=${panoID}`
     );
 }
+
 function GetMarkerByPanoID(panoID) {
     return axios.get(
         `${api}Services.aspx?method=getMarkerByPanoID&panoID=${panoID}`
     );
 }
+
 function GetAllThumbnailsForBuilding() {
     return axios.get(
         `${api}Services.aspx?method=GetAllThumbnailsForBuilding&buildingID=5101-0010-0001 `
@@ -58,11 +64,13 @@ function GetAllExhibitsForBuilding() {
     return axios.get(`
     ${api}Services.aspx?method=GetAllExhibitsForBuilding&buildingID=5101-0010-0001 `);
 }
+
 function GetMultiDataByParentID(parentID) {
     return axios.get(`
     ${api}Services.aspx?method=GetMultiDataByParentID&parentID=${parentID}
     `);
 }
+
 function getAllVideo() {
     return axios.get(`${api}Services.aspx?method=getAllVideos `);
 }
@@ -72,7 +80,7 @@ function getAllVideo() {
 async function main() {
     const res = await GetAllFloorsForBuilding();
     writeToJSON(
-        "../app/commons/json",
+        "../json",
         "GetAllFloorsForBuilding.json",
         res.data
     );
@@ -148,15 +156,15 @@ async function getAllPanoDataFromFloors(Floors) {
     const allVideoData = await buildAllVideo();
     console.log("视频列表获取完毕");
 
-    writeToJSON("../app/commons/json", "GetPanoByID.json", GetPanoByID);
-    writeToJSON("../app/commons/json", "GetFacadeByPanoID.json", GetFacadeByPanoID);
-    writeToJSON("../app/commons/json", "GetAdjacentPano.json", GetAdjacentPano);
-    writeToJSON("../app/commons/json", "getLinkByPanoID.json", getLinkByPanoID);
-    writeToJSON("../app/commons/json", "getMarkByPanoID.json", getMarkByPanoID);
-    writeToJSON("../app/commons/json", "GetAllThumbnailsForBuilding.json", thumbnailsData);
-    writeToJSON("../app/commons/json", "GetAllExhibitsForBuilding.json", exhibitsData);
-    writeToJSON("../app/commons/json", "GetMultiDataByParentID.json", multiData);
-    writeToJSON("../app/commons/json", "getAllVideo.json", allVideoData);
+    writeToJSON("../json", "GetPanoByID.json", GetPanoByID);
+    writeToJSON("../json", "GetFacadeByPanoID.json", GetFacadeByPanoID);
+    writeToJSON("../json", "GetAdjacentPano.json", GetAdjacentPano);
+    writeToJSON("../json", "getLinkByPanoID.json", getLinkByPanoID);
+    writeToJSON("../json", "getMarkByPanoID.json", getMarkByPanoID);
+    writeToJSON("../json", "GetAllThumbnailsForBuilding.json", thumbnailsData);
+    writeToJSON("../json", "GetAllExhibitsForBuilding.json", exhibitsData);
+    writeToJSON("../json", "GetMultiDataByParentID.json", multiData);
+    writeToJSON("../json", "getAllVideo.json", allVideoData);
 }
 
 /**
@@ -193,9 +201,9 @@ async function buildFacadeFromPanoID(panoIDS, Description) {
             logger.info(error.response);
         }
 
-        data[panoID.PanoID] = Facade.data.GetFacadeByPanoIDResult
-            ? Facade.data.GetFacadeByPanoIDResult
-            : null;
+        data[panoID.PanoID] = Facade.data.GetFacadeByPanoIDResult ?
+            Facade.data.GetFacadeByPanoIDResult :
+            null;
     }
     return data;
 }
@@ -206,18 +214,18 @@ async function buildFacadeFromPanoID(panoIDS, Description) {
 async function buildAdjacentFromPanoID(panoIDS, Description) {
     console.log(`正在获取${Description}箭头数据`);
     const data = {};
-    for (const panoID of panoIDS) {
-        let Adjacent;
-        try {
-            Adjacent = await GetAdjacentPano(panoID.PanoID);
-        } catch (error) {
-            logger.info(error.response);
-        }
-
-        data[panoID.PanoID] = Adjacent.data.GetAdjacentPanoResult
-            ? Adjacent.data.GetAdjacentPanoResult
-            : null;
-    }
+    // for (const panoID of panoIDS) {
+    //     let Adjacent;
+    //     try {
+    //         Adjacent = await GetAdjacentPano(panoID.PanoID);
+    //     } catch (error) {
+    //         logger.info(error.response);
+    //     }
+    //     // console.log(`正在获取${panoID.PanoID}箭头数据`);
+    //     data[panoID.PanoID] = (Adjacent && Adjacent.data && Adjacent.data.GetAdjacentPanoResult) ?
+    //         Adjacent.data.GetAdjacentPanoResult :
+    //         null;
+    // }
     return data;
 }
 /**
@@ -235,7 +243,7 @@ async function buildLinkFromPanoID(panoIDS, Description) {
             logger.info(error.response);
         }
 
-        data[panoID.PanoID] = Link.data.Link ? Link.data.Link : null;
+        data[panoID.PanoID] = (Link && Link.data && Link.data.Link) ? Link.data.Link : null;
     }
     return data;
 }
@@ -250,7 +258,7 @@ async function buildMarkFromPanoID(panoIDS, Description) {
             logger.info(error.response);
         }
 
-        data[panoID.PanoID] = Mark.data.MarkerInfo;
+        data[panoID.PanoID] = Mark && Mark.data ? Mark.data.MarkerInfo : null;
     }
     return data;
 }

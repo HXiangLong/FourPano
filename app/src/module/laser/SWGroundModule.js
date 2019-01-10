@@ -7,10 +7,18 @@ import {
     c_StationInfo,
     sw_wallProbeSurface,
     c_isMeasureStatus,
-    sw_measure
+    sw_measure,
+    c_isPreviewImageLoadEnd,
+    c_currentState,
+    c_currentStateEnum
 } from '../../tool/SWConstants';
-import { getPanoRealPoint } from '../../tool/SWTool';
-import { deleteAll } from '../../tool/SWInitializeInstance';
+import {
+    getPanoRealPoint,
+    getJudgeOrZoom
+} from '../../tool/SWTool';
+import {
+    deleteAll
+} from '../../tool/SWInitializeInstance';
 
 /**
  * 地面面片对象
@@ -41,7 +49,7 @@ class SWGroundModule {
             groundMaterial.shading = THREE.SmoothShading;
             groundMaterial.reflectivity = 0;
 
-            var groundGeometry = new THREE.CircleGeometry(c_FaceDistance * 0.45, 32);
+            var groundGeometry = new THREE.CircleGeometry(c_FaceDistance, 32);
             this.groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
             this.groundMesh.position.copy(new THREE.Vector3(0, this.groundDisplaySize, 0));
             this.groundMesh.rotation.x = THREE.Math.degToRad(-90);
@@ -85,11 +93,34 @@ class SWGroundModule {
                         sw_measure.addPoint(obj, 2);
                         return;
                     }
-                    let v3 = getPanoRealPoint(obj, 2.5);
 
-                    deleteAll();
+                    if (!c_isPreviewImageLoadEnd) {
 
-                    sw_getService.getOtherPanoByPosition(v3.x, v3.y, v3.z, c_StationInfo.imageID);
+                        deleteAll();//清除所有
+
+                        if (c_currentState != c_currentStateEnum.editorStatus) { //读取本地版本
+
+                            let jumpPano = getJudgeOrZoom(obj, 1);
+                            if(jumpPano != ""){
+                                sw_getService.getOtherPanoByPosition({
+                                    "type": 1,
+                                    "panoID": jumpPano
+                                });
+                            }else{
+                                return;
+                            }
+                        } else {
+                            let v3 = getPanoRealPoint(obj, 2.5);
+
+                            sw_getService.getOtherPanoByPosition({ //网络版本
+                                "type": 2,
+                                "x": v3.x,
+                                "y": rv3.y,
+                                "z": v3.z,
+                                "panoid": c_StationInfo.panoID
+                            });
+                        }
+                    }
                 }
             }
 

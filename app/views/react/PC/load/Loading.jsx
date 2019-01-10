@@ -1,6 +1,7 @@
 /**loading界面 */
 import React, { Component } from 'react';
 import './Loading.css';
+const external = require('../../../../src/tool/SWExternalConst.js');
 
 class Loading extends Component {
 	constructor() {
@@ -8,14 +9,14 @@ class Loading extends Component {
 
 		this.state = {
 			schedule: 0,
-			show: false,
+			show: external.server_json.features.loading,
 			point: 0
 		};
 	}
 
 	componentWillMount() {
 		let rad, num;
-		let time = setInterval(() =>{
+		let time = setInterval(() => {
 			rad = Math.random() * 3;
 			num = parseInt(this.state.schedule + rad);
 			if (num >= 100) {
@@ -31,7 +32,7 @@ class Loading extends Component {
 					show: false
 				});
 			}
-		}, 60);
+		}, 120);
 	}
 
 	render() {
@@ -40,13 +41,12 @@ class Loading extends Component {
 				<img />
 				<div className="loading">
 					<div className="load">
-						<i className="num" style={{ transform: `translateX(${(15+this.state.point)}px)` }}>
+						<i className="num" style={{ transform: `translateX(${15 + this.state.point}px)` }}>
 							{this.state.schedule}%
 						</i>
 						<div className="loadbar">
 							<i />
-                            <span style={{ transform: `translateX(${(15+this.state.point)}px)` }} /> 
-                            
+							<span style={{ transform: `translateX(${15 + this.state.point}px)` }} />
 						</div>
 					</div>
 					<p>正在加载中...</p>

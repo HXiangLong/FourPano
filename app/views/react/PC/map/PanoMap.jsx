@@ -4,6 +4,7 @@ import './PanoMap.css';
 import * as constants from '../../../../src/tool/SWConstants';
 import SWKMeans from './SWKMeans';
 import MapMarker from './MapMarker';
+const external = require('../../../../src/tool/SWExternalConst.js');
 
 class PanoMap extends Component {
 	constructor() {
@@ -129,30 +130,6 @@ class PanoMap extends Component {
 		});
 	}
 
-	componentWillReceiveProps() {
-		let floorsMapArr = constants.c_FloorsMapTable.getValues();
-
-		this.serverUrl = constants.sw_getService.resourcesUrl + '/';
-
-		floorsMapArr.forEach((obj) => {
-			let mapmarker = obj.rasterMapMarkers.getValues();
-
-			mapmarker.forEach((mapObj) => {
-				if (mapObj.panoID == constants.c_StationInfo.panoID) {
-					this.floorsMapData = obj;
-
-					if (this.rasterMapID != mapObj.rasterMapID) {
-						this.setState({
-							imgUrl: `${this.serverUrl}${obj.rasterMapPath}`
-						});
-
-						this.rasterMapID = mapObj.rasterMapID;
-					}
-				}
-			});
-		});
-	}
-
 	/**关闭 */
 	closePanoMap() {
 		this.props.closePanoMap();
@@ -251,11 +228,13 @@ class PanoMap extends Component {
 
 		let kmTable = [];
 
-		let mapMarkers = this.floorsMapData.rasterMapMarkers.getValues();
+		let mapMarkers = this.props.floorsMapData.rasterMapMarkers.getValues();
 
-		let left =(document.getElementsByClassName('mapMarkerBox')[0].offsetWidth - this.imgWidth * this.imgScale) * 0.5;
+		let left =
+			(document.getElementsByClassName('mapMarkerBox')[0].offsetWidth - this.imgWidth * this.imgScale) * 0.5;
 
-		let top =(document.getElementsByClassName('mapMarkerBox')[0].offsetHeight - this.imgHeight * this.imgScale) * 0.5;
+		let top =
+			(document.getElementsByClassName('mapMarkerBox')[0].offsetHeight - this.imgHeight * this.imgScale) * 0.5;
 
 		mapMarkers.forEach((marker) => {
 			let px = left + marker.pixShapeX * this.imgScale - 20;
@@ -282,7 +261,7 @@ class PanoMap extends Component {
 	}
 
 	render() {
-		return this.props.off ? (
+		return external.server_json.features.map ? this.props.off ? (
 			<div className={`zoom-marker-div ${this.state.mapboxClass}`}>
 				<span className="iconfont icon-svg26 guangbi" title="关闭展示框" onClick={this.closePanoMap.bind(this)} />
 				<span className="iconfont icon-jia big" title="放大展示框" onClick={this.zoomIn.bind(this)} />
@@ -305,7 +284,7 @@ class PanoMap extends Component {
 						onTouchEnd={this._mouseUp.bind(this)}
 						onMouseOut={this._mouseUp.bind(this)}
 					>
-						<img ref="showPreviewImageWrap" src={this.state.imgUrl} onLoad={this.centered.bind(this)} />
+						<img ref="showPreviewImageWrap" src={this.props.imgUrl} onLoad={this.centered.bind(this)} />
 					</div>
 
 					<div className="zoom-marker" style={this.state.markerStyle}>
@@ -322,6 +301,8 @@ class PanoMap extends Component {
 					</div>
 				</div>
 			</div>
+		) : (
+			''
 		) : (
 			''
 		);

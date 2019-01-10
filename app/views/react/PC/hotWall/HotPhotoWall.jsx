@@ -53,7 +53,7 @@ class HotPhotoWall extends Component {
 
 			buildingArr.forEach((item) => {
 				if (this.fuzzyQuery(item.name, this.state.judgeName)) {
-					if (this.props.allShow) {
+					if (constants.c_collectAll) {
 						showArr.push(item);
 					} else {
 						if (item.panoID.split('-')[0] == panoID) {

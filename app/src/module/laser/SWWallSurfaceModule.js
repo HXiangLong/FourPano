@@ -148,7 +148,7 @@ class SWWallSurfaceModule {
 
         this.isgroundFaceJumpBoo = getJudgeOrZoom(obj, 1);
 
-        if (this.isgroundFaceJumpBoo) {
+        if (this.isgroundFaceJumpBoo != "") {
 
             this.wallProbeSurfaceVisible(2);
 
@@ -183,7 +183,7 @@ class SWWallSurfaceModule {
 
         this.wallFaceMash.rotation.y = THREE.Math.degToRad(angle > 180 ? angle - 90 : angle + 90);
 
-        this.isWallFaceJumpBoo = getJudgeOrZoom(obj, 2);
+        this.isWallFaceJumpBoo = (getJudgeOrZoom(obj, 2) != "");
 
         if (!this.isWallFaceJumpBoo) {
 
@@ -203,11 +203,11 @@ class SWWallSurfaceModule {
 
         let fov = camera.fov / c_Maxfov; //相机缩放比例
 
-        let dis = (obj.distance - 14) * 0.0015; //0.008是每一米对应缩放比例
+        let dis = (obj.distance - 14) * 0.015; //0.008是每一米对应缩放比例
 
-        dis = dis < 0.05 ? 0.05 : dis; //0.05是最小缩放比例
+        dis = dis < 0.03 ? 0.03 : dis; //0.05是最小缩放比例
 
-        dis = dis > 2 ? 2 : dis; //3是最大缩放比例
+        dis = dis > 1 ? 1 : dis; //3是最大缩放比例
 
         this.wallFaceMash.scale.set(dis * fov, dis * fov, dis * fov); //缩放
 

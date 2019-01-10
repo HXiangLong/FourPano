@@ -66,14 +66,6 @@ class SWMarkerModule {
 
         this.mesh = new THREE.Mesh(this.geometry, this.material);
 
-        // this.textDiv = new TextDiv(new THREE.Vector3(0, 0, 0), 12, "");
-        // this.textDiv.id = "markerMesh";
-        // this.textDiv.style.display = "none";
-        // this.textDiv.style.color = "#FFF";
-        // this.textDiv.style.borderRadius = "3px";
-        // this.textDiv.style.backgroundColor = "rgba(16, 16, 16, 0.3)";
-        // this.textDiv.style.padding = "3px 10px";
-        // this.textDiv.style.letterSpacing = "2px";
         this.textDiv = new TextDiv(new THREE.Vector3(0, 0, 0));
 
         this.textDiv.id = "markerArrowMesh";
@@ -111,6 +103,8 @@ class SWMarkerModule {
 
             if (this.mouseDownBoo) {
 
+                this.hideTextDiv();
+
                 let v3 = new THREE.Vector2(e.clientX, e.clientY);
 
                 let boo = v3.equals(this.startPoint);
@@ -120,81 +114,73 @@ class SWMarkerModule {
                 if (boo) {
                     let store = initStore();
                     let url;
-                    switch (this.markerObj.type) { //点击弹出的表现形式 1-图文 2-图片 3-三维 4-视频 5-书籍 6-音频 7-环拍 999-跳站点
+                    switch (this.markerObj.type) { //点击弹出的表现形式 1-图文 2-图片 3-三维 4-视频 44-手机版嵌入视频 5-书籍 6-音频 7-环拍 999-跳站点
                         case 1:
                         case 2:
-                            let allExhibits = constants.c_allExhibitsForBuildingTable.getValues();
+                            if (constants.c_allExhibitsForMarkerTable.containsKey(obj.object.userData.markerID)) {
 
-                            allExhibits.forEach((item) => {
+                                let item = constants.c_allExhibitsForMarkerTable.getValue(obj.object.userData.markerID);
 
-                                if (item.markerID.indexOf(obj.object.userData.markerID) != -1) {
+                                if (!constants.c_multiDataByParentIDTable.containsKey(item.exhibitID)) {
 
-                                    if (!constants.c_multiDataByParentIDTable.containsKey(item.exhibitID)) {
+                                    if (this.markerObj.type == 1) {
 
-                                        if (this.markerObj.type == 1) {
+                                        this.showMarkerUI(item, []);
 
-                                            this.showMarkerUI(item,[]);
-                                            
-                                        }
+                                    }
 
-                                        constants.sw_getService.getMultiDataByParentID(item.exhibitID, this.markerObj.type);
+                                    constants.sw_getService.getMultiDataByParentID(item.exhibitID, this.markerObj.type);
+
+                                } else {
+
+                                    let imageArr = constants.c_multiDataByParentIDTable.getValue(item.exhibitID);
+
+                                    if (this.markerObj.type == 1) {
+
+                                        this.showMarkerUI(item, imageArr);
 
                                     } else {
 
-                                        let imageArr = constants.c_multiDataByParentIDTable.getValue(item.exhibitID);
+                                        let markerImgList = [],
+                                            markerthumbs = [];
 
-                                        if (this.markerObj.type == 1) {
+                                        imageArr.forEach((item) => {
 
-                                            this.showMarkerUI(item,imageArr);
-                                            
-                                        } else {
+                                            markerImgList.push(constants.c_currentState == constants.c_currentStateEnum.phoneStatus ? item.phoneMax : item.PCMax);
 
-                                            let markerImgList = [],
-                                                markerthumbs = [];
-
-                                            imageArr.forEach((item) => {
-                                                let imgUrl = `${constants.sw_getService.resourcesUrl}/${item.filePath}`;
-
-                                                let arr1 = item.filePath.split('/');
-
-                                                let pp = `${constants.sw_getService.resourcesUrl}/${arr1[0]}/${arr1[1]}/${arr1[2]}/phone/${arr1[3]}`;
-
-                                                markerImgList.push(imgUrl);
-
-                                                markerthumbs.push(pp);
-                                            });
-                                            store.dispatch(show_ViewPicture_fun({
-                                                off: true,
-                                                idx: 0,
-                                                imageList: markerImgList,
-                                                thumbs: markerthumbs
-                                            }));
-                                        }
+                                            markerthumbs.push(item.thumbnail);
+                                        });
+                                        store.dispatch(show_ViewPicture_fun({
+                                            off: true,
+                                            idx: 0,
+                                            imageList: markerImgList,
+                                            thumbs: markerthumbs
+                                        }));
                                     }
                                 }
-                            });
+                            }
                             break;
                         case 3:
-                            url = constants.sw_getService.resourcesUrl + "/BusinessData/ExhibitDetails/3DModel/" + this.markerObj.markerID + ".html";
-
-                            store.dispatch(show_Iframe_fun({
-                                iframeOff: true,
-                                iframeUrl: url
-                            }));
+                            url = `${constants.sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/3DModel/${this.markerObj.markerID}.html`;
+                            this.showIframeFun(store, url, this.markerObj.name);
                             break;
                         case 4:
+                        case 44:
                             store.dispatch(show_VideoBox_fun({
                                 off: true,
                                 videoUrl: this.markerObj.name
                             }));
                             break;
                         case 5:
-                            url = constants.sw_getService.resourcesUrl + "/BusinessData/ExhibitDetails/Book/" + this.markerObj.markerID + "/index.html";
-
-                            store.dispatch(show_Iframe_fun({
-                                iframeOff: true,
-                                iframeUrl: url
-                            }));
+                            let item = constants.c_allExhibitsForMarkerTable.getValue(this.markerObj.markerID);
+                            url = `${constants.sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/Book/${this.markerObj.markerID}/index.html#page/${item.displayPriority}`;
+                            this.showIframeFun(store, url, this.markerObj.name, 1);
+                            break;
+                        case 6:
+                            break;
+                        case 7:
+                            url = `${constants.sw_getService.resourcesUrl}/BusinessData/ExhibitDetails/Ring/${this.markerObj.markerID}.html`;
+                            this.showIframeFun(store, url, this.markerObj.name);
                             break;
                         case 999:
                             jumpSite(this.markerObj.name);
@@ -220,12 +206,37 @@ class SWMarkerModule {
 
     }
 
+    /**弹出iframe框或者跳出网页 */
+    showIframeFun(store, url, names, type) {
+
+        if (constants.c_LowendMachine) {
+
+            let docURL = document.URL.indexOf("?") != -1 ? document.URL.split('?')[0] : document.URL;
+            let str = type ? '#' : '';
+            let newUrl = `${url}${str}?Source=${docURL}&PanoID=${constants.c_StationInfo.panoID}&dYaw=${constants.sw_cameraManage.yaw_Camera}&dPitch=${constants.sw_cameraManage.picth_Camera}`;
+
+            if (constants.c_weixinQQWeibo) {
+                window.open(newUrl);
+            } else {
+                window.location.href = newUrl;
+            }
+
+        } else {
+
+            store.dispatch(show_Iframe_fun({
+                iframeOff: true,
+                iframeUrl: url,
+                iframeName: names
+            }));
+        }
+    }
+
     /**显示标注UI界面 */
-    showMarkerUI(item,imageArr){
+    showMarkerUI(item, imageArr) {
         let store = initStore();
         store.dispatch(show_MarkerInterface_fun({
             off: true,
-            exhibitID:item.exhibitID,
+            exhibitID: item.exhibitID,
             imglist: imageArr,
             title: item.name,
             content: item.description,
@@ -237,8 +248,8 @@ class SWMarkerModule {
             likeNum: item.likes
         }));
         constants.c_likeToExhibitID = item.exhibitID;
-        constants.sw_getService.GetLikesForExhibitID(item.exhibitID);//获取点赞数
-        constants.sw_getService.GetNewestComment(item.exhibitID);//获取最新20条评论
+        constants.sw_getService.GetLikesForExhibitID(item.exhibitID); //获取点赞数
+        constants.sw_getService.GetNewestComment(item.exhibitID); //获取最新20条评论
     }
 
     /**

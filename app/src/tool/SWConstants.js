@@ -18,10 +18,8 @@ export var cubeCamera = "";
 export var scene = "";
 /**渲染*/
 export var renderer = "";
-/**天空盒子的类型 1为六面体 2为球体*/
-export var c_SkyBoxType = 1;
-/**缩放第几等级*/
-export var c_TileZoom = 2;
+//像素与物理尺寸比例
+export var c_devicePixelRatio = window.devicePixelRatio < 3 ? 3 : window.devicePixelRatio;
 /**最大视角*/
 export var c_Maxfov = 68;
 /**最小视角*/
@@ -30,22 +28,22 @@ export var c_Minfov = 20;
 export var c_maxPitch = 85;
 /**最小俯仰角*/
 export var c_minPitch = -85;
-/**缩略图尺寸*/
-export var c_ThumbnailSize = 128;
 /**面距离*/
 export var c_FaceDistance = 4096;
 /**面片缩放比例*/
 export var c_WallDisplaySize = 20;
-/**地面片缩放比例*/
-export var c_groundDisplaySize = -500;
 /**漫游倍数 */
 export var c_roamingMultiple = 5;
+/**移动速度倍率 */
+export var c_movingSpeedMultiple = 5;
 /**偏差角 */
-export var c_deviationAngle = -145;
+export var c_deviationAngle = -165;
+/**场景宽 */
+export var c_clientWidth;
+/**场景高 */
+export var c_clientHeight;
 /**跳转之后需要看向的标注ID*/
 export var c_JumpMarkerID = "";
-/**小地图点击放大的站点名称*/
-export var c_minMapClickPanoID = "";
 /**当前点赞的是哪个编号 */
 export var c_likeToExhibitID = "";
 /**上一站全景ID */
@@ -53,22 +51,41 @@ export var c_LastStopPanoID = "";
 /**坐标转换矩阵。坐标系 OpenGL -> 3DS*/
 export var c_OpenGLToDS3Mx4 = new THREE.Matrix4().fromArray([1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1]);
 /**坐标转换矩阵。坐标系 3DS -> OpenGL*/
-export var c_DS3ToOpenGLMx4 = new THREE.Matrix4().getInverse(c_OpenGLToDS3Mx4);
+export var c_DS3ToOpenGLMx4 = new THREE.Matrix4().fromArray([1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1]);
 /**跳转之后进行旋转相机看向点击位置*/
 export var c_wallClickRotateV3 = new THREE.Vector3();
-/**墙面鼠标按下位置*/
-export var c_wallStartPoint = new THREE.Vector3();
-
+/** true所有文物显示 false按照楼层显示*/
+export var c_collectAll = false;
 /**初始化完成之后是否弹出展厅推荐列表 */
 export var c_thumbnailsShow = false;
+/**初始化完成之后是否弹出小地图 */
+export var c_mapShow = false;
+/**是否是低端机 */
+export var c_LowendMachine = false;
+/**是否是微信QQ微博内打开的 */
+export var c_weixinQQWeibo = false;
 /**漫游状态 */
 export var c_roamingStatus = false;
 /**是否显示探面 */
 export var c_isDisplayFace = true;
 /**测量状态*/
 export var c_isMeasureStatus = false;
-/**false-网络版，true-单机版 */
-export var c_isSingleVision = false;
+/**站点表现形式 true-箭头 false-点 */
+export var c_siteRepresentation = false;
+/**是否加载缩略图中 */
+export var c_isPreviewImageLoadEnd = false;
+/**是否是编辑状态*/
+export var c_isEditorStatus = false;
+/**是否跳转之后进行旋转相机看向点击位置*/
+export var c_isWallClickRotateBoo = false;
+/**展厅跳转之后看向展厅大门*/
+export var c_isThumbnailsRotateBoo = false;
+/**目录树点击跳转站点 */
+export var c_treeShapeJumpPano = false;
+/**目录树点击跳转站点Yaw Pitch值 */
+export var c_treeShapeJumpPanoStr = "";
+/**初始化时界面数据显示 */
+export var c_initUIData = true;
 /**全景有几种版本 1-默认为PC版 2-手机版 3-编辑版 4-触屏版*/
 export var c_currentStateEnum = {
     pcStatus: 1,
@@ -87,46 +104,24 @@ export var c_editorStateEnum = {
 /**当前运行的是编辑版的什么状态 */
 export var c_editorState = c_editorStateEnum.markerPoint;
 
-/**跳转是否完毕 */
-export var c_JumpCompleted = false;
-/**是否加载缩略图中 */
-export var c_isPreviewImageLoadEnd = true;
-/**墙面探面加减号是否显示*/
-export var c_isWallProbeSurfacePlusShow = false;
-/**是否是编辑状态*/
-export var c_isEditorStatus = false;
-/**是否是编辑状态下的打标注*/
-export var c_isEditorStatus_MarkerPoint = false;
-/**是否是编辑状态下的移动箭头*/
-export var c_isEditorStatus_ArrowPoint = false;
-/**是否是编辑状态下的移动箭头*/
-export var c_isEditorStatus_ArrowPoint_Select = false;
-/**是否是编辑状态下的移动箭头*/
-export var c_isEditorStatus_ArrowObj = undefined;
-/**是否3D模型显示状态*/
-export var c_isModelDisplayStatus = false;
-/**是否跳转之后进行旋转相机看向点击位置*/
-export var c_isWallClickRotateBoo = false;
-/**展厅跳转之后看向展厅大门*/
-export var c_isThumbnailsRotateBoo = false;
-/**是否读取本地数据类型（适用于没有面片数据的单机版）*/
-export var c_isloadLocalDataBoo = false;
+/**当前运行模式 正常/VR */
+export var c_modes = {
+    NORMAL: 1,
+    STEREO: 2
+}
+/**当前模型 */
+export var c_mode = c_modes.NORMAL;
 
-
-/**面数组*/
-export var c_faceArr = [];
-/**当前已经加载瓦片*/
-export var c_viewTileArr = [];
-/**基础属性值 */
-export var c_datGuiArr = [];
+/**计时器*/
+export var c_clock = new THREE.Clock();
+/**当前站点基本信息*/
+export var c_StationInfo;
+/**跳转过程中的过渡球*/
+export var c_jumpSphere = undefined;
 /**所有箭头对象*/
 export var c_arrowArr = [];
-/**楼层集合*/
-export var c_FloorsMapTable = new HashTable();
-/**所有站点集合 */
-export var c_panoIDTable = new HashTable();
-/**所有墙面片集合*/
-export var c_allFacadeByPanoIDInfoTbale = new HashTable();
+/**所有箭头Mash对象 */
+export var c_arrowCurentArr = [];
 /**当前站点所需要的墙面片集合*/
 export var c_facadeByPanoIDInfoArr = [];
 /**老箭头集合*/
@@ -143,21 +138,26 @@ export var c_markerMeshArr = [];
 export var c_thumbnailsForMuseum = [];
 /**所有推荐文物信息列表*/
 export var c_allExhibitsForBuildingTable = new HashTable();
+/**所有推荐文物对应标注列表*/
+export var c_allExhibitsForMarkerTable = new HashTable();
 /**单个文物详细信息*/
 export var c_multiDataByParentIDTable = new HashTable();
-/**计时器*/
-export var c_clock = new THREE.Clock();
-/**当前站点基本信息*/
-export var c_StationInfo;
-/**缩略图对象*/
-export var c_previewImage = undefined;
-/**跳转过程中的过渡球*/
-export var c_jumpSphere = undefined;
 /**所有视频集合 */
 export var c_allVideoTable = new HashTable();
+/**楼层集合*/
+export var c_FloorsMapTable = new HashTable();
+/**所有站点集合 */
+export var c_panoIDTable = new HashTable();
+/**第三层贴图集合 */
+export var c_panoImageTable = new HashTable();
 
-
+/**当前控制器 */
+export var c_control;
+/**字板界面 */
+export var c_effect;
 //实例化对象
+/**本地数据读取 */
+export var sw_GetSQLData;
 /**数据*/
 export var sw_getService;
 /**相机控制*/
@@ -188,48 +188,146 @@ export var sw_markPoint;
 export var sw_hotPhotoWall;
 /**漫游 */
 export var sw_roamingModule;
+/**十字点 */
+export var sw_SWReticle;
+/**三维模型 */
+export var sw_SWModel;
 
-export var fs_hdr = `
-    uniform sampler2D   tDiffuse;
-    uniform float       exposure;
-    uniform float       brightMax;
+/**小行星全景Shader */
+export var StereographicShader = {
 
-    varying vec2  vUv;
+    uniforms: {
 
-    vec3 decode_pnghdr( const in vec4 color ) {
+        "tDiffuse": {
+            value: new THREE.Texture()
+        },
+        "resolution": {
+            value: 1.0
+        },
+        "transform": {
+            value: new THREE.Matrix4()
+        },
+        "zoom": {
+            value: 1.0
+        }
 
-        // remove gamma correction
-        vec4 res = color * color;
+    },
 
-        // decoded RI
-        float ri = pow( 2.0, res.w * 32.0 - 16.0 );
+    vertexShader: [
 
-        // decoded HDR pixel
-        res.xyz = res.xyz * ri;
-        return res.xyz;
+        "varying vec2 vUv;",
 
-    }
+        "void main() {",
 
-    void main()	{
+        "vUv = uv;",
+        "gl_Position = vec4( position, 1.0 );",
 
-        vec4 color = texture2D( tDiffuse, vUv );
-        color.xyz  = decode_pnghdr( color );
+        "}"
 
-        // apply gamma correction and exposure
-        //gl_FragColor = vec4( pow( exposure * color.xyz, vec3( 0.474 ) ), 1.0 );
+    ].join("\n"),
 
-        // Perform tone-mapping
-        float Y = dot(vec4(0.30, 0.59, 0.11, 0.0), color);
-        float YD = exposure * (exposure/brightMax + 1.0) / (exposure + 1.0);
-        color *= YD;
+    fragmentShader: [
 
-        gl_FragColor = vec4( color.xyz, 1.0 );
-    }`;
+        "uniform sampler2D tDiffuse;",
+        "uniform float resolution;",
+        "uniform mat4 transform;",
+        "uniform float zoom;",
 
-export var vs_hdr = `
-    varying vec2 vUv;
+        "varying vec2 vUv;",
 
-    void main()	{
-        vUv  = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    }`;
+        "const float PI = 3.141592653589793;",
+
+        "void main(){",
+
+        "vec2 position = -1.0 +  2.0 * vUv;",
+
+        "position *= vec2( zoom * resolution, zoom * 0.5 );",
+
+        "float x2y2 = position.x * position.x + position.y * position.y;",
+        "vec3 sphere_pnt = vec3( 2. * position, x2y2 - 1. ) / ( x2y2 + 1. );",
+
+        "sphere_pnt = vec3( transform * vec4( sphere_pnt, 1.0 ) );",
+
+        "vec2 sampleUV = vec2(",
+        "(atan(sphere_pnt.y, sphere_pnt.x) / PI + 1.0) * 0.5,",
+        "(asin(sphere_pnt.z) / PI + 0.5)",
+        ");",
+
+        "gl_FragColor = texture2D( tDiffuse, sampleUV );",
+
+        "}"
+
+    ].join("\n")
+
+};
+
+var e = ["#ifdef",
+    "GL_ES",
+    "#ifdef",
+    "GL_FRAGMENT_PRECISION_HIGH",
+    "precision highp float;",
+    "#else",
+    "precision mediump float;",
+    "#endif",
+    "#endif",
+    "uniform sampler2D sm;",
+    "varying vec2 tx;",
+    "uniform float ca;",
+    "uniform float ol;",
+    "void main()",
+    "{",
+    "float g = texture2D(sm,tx).g;",
+    "vec2 center = vec2(0.5 + (0.5 - ol)*(step(0.5,tx.x) - 0.5), 0.5);",
+    "vec2 v = tx - center;",
+    "vec2 vR = center + v * ca;",
+    "float r = texture2D(sm,vR).r;",
+    "vec2 vB = center + v / ca;",
+    "float b = texture2D(sm,vB).b;",
+    "gl_FragColor=vec4(r,g,b,1.0);",
+    "}"
+];
+
+var s = ["#ifdef",
+    "GL_ES",
+    "#ifdef",
+    "GL_FRAGMENT_PRECISION_HIGH",
+    "precision highp float;",
+    "#else",
+    "precision mediump float;",
+    "#endif",
+    "#endif",
+    "uniform sampler2D sm;",
+    "varying vec2 tx;",
+    "uniform vec2 sz;",
+    "uniform float ss;",
+    "uniform float ca;",
+    "uniform float ol;",
+    "uniform float vg;",
+    "uniform vec4 dd;",
+    "void main()",
+    "{",
+    "float vig = 0.015;",
+    "float side = step(0.5,tx.x) - 0.5;",
+    "float aspect = (sz.x / sz.y);",
+    "vec2 center = vec2(0.5 + (0.5 - ol)*side, 0.5);",
+    "vec2 v = tx - center;",
+    "v.x = v.x * aspect;",
+    "v *= 2.0 * ss;",
+    "float rs = dot(v,v);",
+    "v = v * (dd.x + rs*(dd.y + rs*(dd.z + rs*dd.w)));",
+    "v /= 2.0 * ss;",
+    "v.x = v.x / aspect;",
+    "vec2 vG = center + v;",
+    "float a = (1.0 - smoothstep(vG.x-vig - side*ol, vG.x - side*ol, center.x - 0.25)) * ",
+    "(1.0 - smoothstep(center.x + 0.25 - vG.x + side*ol - vig, center.x + 0.25 - vG.x + side*ol, 0.0)) * ",
+    "(1.0 - smoothstep(vG.y-vig, vG.y, 0.0)) * ",
+    "(1.0 - smoothstep(1.0 - vG.y-vig,1.0 - vG.y, 0.0));",
+    "a *= smoothstep(rs-vig, rs+vig, vg);",
+    "vec2 vR = center + v * ca;",
+    "vec2 vB = center + v / ca;",
+    "float r = texture2D(sm,vR).r;",
+    "float g = texture2D(sm,vG).g;",
+    "float b = texture2D(sm,vB).b;",
+    "gl_FragColor=vec4(a*r,a*g,a*b,1.0);",
+    "}"
+];

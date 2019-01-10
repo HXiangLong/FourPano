@@ -1,19 +1,10 @@
 /**简介*/
 import React, { Component } from 'react';
 import './PIntroductionSimple.css';
-const external = require('../../../../src/tool/SWExternalConst.js');
 
 class PIntroductionSimple extends Component {
 	constructor() {
 		super();
-	}
-
-	componentWillMount() {
-		this.props.IntroductionState({
-			imgurl: external.server_json.data.resourcePath + external.server_json.data.Introduction.imgUrl,
-			title: external.server_json.data.Introduction.title,
-			content: external.server_json.data.Introduction.content
-		});
 	}
 
 	closeIntroductionSimple() {

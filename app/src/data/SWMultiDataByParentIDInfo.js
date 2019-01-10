@@ -17,6 +17,13 @@ class MultiDataByParentID {
         this.parentID = obj.ParentID; //对应着 AllExhibitsForBuilding.exhibitID
         
         this.typeCode = obj.TypeCode; //显示类型
+
+        this.thumbnail = "";//缩略图
+
+        this.phoneMax = "";//手机大图
+
+        this.PCMax = "";//PC版大图
+
     }
 }
 
