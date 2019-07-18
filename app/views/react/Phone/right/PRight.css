@@ -1,0 +1,54 @@
+.index-quickmenu {
+    position: absolute;
+    right: 0;
+    top: 0.5rem;
+    z-index: 10;
+}
+
+.index-quickmenu li {
+    margin: 0.8rem;
+    border-radius: 50%;
+    background-color: #e8e8e8;
+    width: 1.7rem;
+    height: 1.7rem;
+    background: #e8e8e8 no-repeat center;
+    background-size: 50% auto;
+}
+
+.index-quickmenu li.ar {
+    background-image: url(../../../../commons/img/rmenu-ar.png)
+}
+
+.index-quickmenu li.music {
+    background-image: url(../../../../commons/img/rmenu-music-close.png)
+}
+
+.index-quickmenu li.music.close {
+    background-image: url(../../../../commons/img/rmenu-music.png);
+}
+
+.index-quickmenu li.set {
+	background-image: url(../../../../commons/img/rmenu-set.png);
+}
+
+.index-quickmenu li.gyro {
+    background-image: url(../../../../commons/img/rmenu-tly.png);
+    background-size: 60% auto;
+}
+
+.index-quickmenu li.shake {
+    background-image: url(../../../../commons/img/rmenu-yyy.png);
+    background-size: 60% auto;
+}
+
+.index-quickmenu li.ar.active{
+    background-color: #ffc603;
+}
+
+.index-quickmenu li.gyro.active{
+    background-color: #ffc603;
+}
+
+.index-quickmenu li.shake.active{
+    background-color: #ffc603;
+}

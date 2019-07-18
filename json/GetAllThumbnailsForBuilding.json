@@ -1,0 +1,14 @@
+[
+    {
+        "ThumbnailID": "1",
+        "MuseumID": "5101-0001",
+        "BuildingID": "5101-0010-0001",
+        "FloorID": "5101-0010-0001-0001",
+        "SceneID": "",
+        "PanoID": "W101-20180903000001",
+        "Name": "第一展厅",
+        "DisplayPriority": 1,
+        "Description": "",
+        "FilePath": "BusinessData/PanoThumbnails/W101-20180903000001.jpg"
+    }
+]

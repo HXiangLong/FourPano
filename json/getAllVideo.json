@@ -1,0 +1,17 @@
+[
+    {
+        "PanoID": "W101-20180903000028",
+        "VideoName": "gutianwancheng.mp4",
+        "Details": "{\"url\":\"gutianwancheng.mp4\",\"width\":\"1278\",\"height\":\"720\",\"posX\":\"-574.500\",\"posY\":\"-34.000\",\"posZ\":\"-202.600\",\"rotX\":\"-2.150\",\"rotY\":\"-291.450\",\"rotZ\":\"1.900\",\"scale\":\"0.5\",\"loop\":true,\"openBox\":true}"
+    },
+    {
+        "PanoID": "W101-20180903000009",
+        "VideoName": "jiandangweiye.mp4",
+        "Details": "{\"url\":\"jiandangweiye.mp4\",\"width\":\"1912\",\"height\":\"1080\",\"posX\":\"451.500\",\"posY\":\"-2.000\",\"posZ\":\"-1199.600\",\"rotX\":\"-1.750\",\"rotY\":\"-21.350\",\"rotZ\":\"-0.600\",\"scale\":\"0.5\",\"loop\":true,\"openBox\":true}"
+    },
+    {
+        "PanoID": "W101-20180903000023",
+        "VideoName": "zhonggongliuda.mp4",
+        "Details": "{\"url\":\"zhonggongliuda.mp4\",\"width\":\"1278\",\"height\":\"720\",\"posX\":\"870.500\",\"posY\":\"26.000\",\"posZ\":\"-442.600\",\"rotX\":\"-1.750\",\"rotY\":\"-64.350\",\"rotZ\":\"-2.100\",\"scale\":\"0.5\",\"loop\":true,\"openBox\":true}"
+    }
+]

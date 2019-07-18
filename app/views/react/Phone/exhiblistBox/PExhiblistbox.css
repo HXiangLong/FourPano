@@ -1,0 +1,52 @@
+.PExhiblistBox {
+    margin: 10px;
+    border: 1px solid;
+    position: relative;
+    color: #e8e8e8;
+}
+
+.PExhiblistBox:hover {
+    border: 2px solid #ffc603;
+}
+
+.PExhiblistBox.active {
+    color: #ffc603;
+}
+
+.PExhiblistBox .sanwei {
+    background: url('../../../../commons/img/3D.png') no-repeat;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    background-size: 100%;
+    z-index: 2;
+}
+
+.PExhiblistBox .imgstyle {
+    position: relative;
+}
+
+.PExhiblistBox .imgstyle img {
+    width: 100%;
+    height: 70px;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+.PExhiblistBox p {
+    text-align: center;
+    font-size: 12px;
+    color: #e8e8e8;
+    background-color: rgba(0, 0, 0, .8);
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.PExhiblistBox:hover img {
+    transform: scale(1.1, 1.1);
+}

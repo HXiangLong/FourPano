@@ -1,0 +1,205 @@
+.PDetailbox {
+    width: 82%;
+    height: 70%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    border: 1px solid #323131;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    background-color: rgba(5, 5, 5, .6);
+    border-radius: 5px;
+}
+
+.PDetailbox .imgbox {
+    width: 100%;
+    height: 40%;
+    position: relative;
+    top: 5px;
+}
+
+.PDetailbox .imgbox .wwimglist {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(1, 0, 0, .4);
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.PDetailbox .imgbox .wwimglist ul {
+    width: 20000px;
+    height: 100%;
+}
+
+.PDetailbox .imgbox .wwimglist li {
+    display: inline-block;
+    text-align: center;
+    position: relative;
+}
+
+.PDetailbox .imgbox .wwimglist img {
+    max-width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.PDetailbox .wwimglistLeft {
+    font-size: 45px;
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.PDetailbox .wwimglistRight {
+    font-size: 45px;
+    position: absolute;
+    top: 50%;
+    right: -5px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.PDetailbox .imgbox .num {
+    width: 44px;
+    height: 21px;
+    position: absolute;
+    font-size: 14px;
+    color: #e8e8e8;
+    background: rgba(0, 0, 0, .7);
+    text-align: center;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.PDetailbox .imgbox .quickmenu {
+    position: absolute;
+    width: 100%;
+    bottom: -1px;
+    text-align: center;
+    background-color: #191919;
+}
+
+.PDetailbox .imgbox .quickmenu li {
+    display: inline-block;
+    margin: 0px 5px;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 12px;
+    color: #e8e8e8;
+}
+
+.PDetailbox .detail {
+    color: #e8e8e8;
+    width: 100%;
+    height: calc(60% - 0.3rem);
+}
+
+.PDetailbox .detail .title {
+    line-height: 45px;
+    overflow: hidden;
+    color: #eddc9b;
+    font-size: 16px;
+    text-align: center;
+    height: 45px;
+}
+
+.PDetailbox .detail .cont {
+    font-size: 14px;
+    line-height: 26px;
+    height: calc(100% - 4.4rem);
+    outline: 0;
+    position: relative;
+    overflow: auto;
+    padding: 0 5px;
+}
+
+.PDetailbox .detail .cont p {
+    text-indent: 2em;
+}
+
+.PDetailbox .detail .detailQuickmenu {
+    position: absolute;
+    right: 0;
+    height: 27px;
+    bottom: 5px;
+    right: 0px;
+}
+
+.PDetailbox .detail .detailQuickmenu li {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 0px 10px;
+    cursor: pointer;
+}
+
+.PDetailbox .detail .detailQuickmenu li p {
+    font-size: 12px;
+    display: inline-block;
+    padding-left: 1px;
+    color: #e8e8e8;
+    position: absolute;
+    top: -4px;
+    left: 27px;
+}
+
+.PDetailbox .commentbox {
+    width: 235px;
+    height: 428px;
+    position: absolute;
+    right: 0px;
+    border-left: 1px solid rgba(255, 255, 255, .5);
+    -webkit-box-sizing: border-box;
+    background-color: rgba(0, 0, 0, .7);
+    border-radius: 3px;
+    color: #e8e8e8;
+}
+
+.PDetailbox .commentbox p {
+    color: #eddc9b;
+    font-size: 14px;
+    margin: 7px;
+}
+
+.PDetailbox .commentbox ul {
+    position: absolute;
+    top: 35px;
+    left: 8px;
+    right: 8px;
+    bottom: 5px;
+    overflow: auto;
+}
+
+.PDetailbox .commentbox li {
+    font-size: 13px;
+    color: #e8e8e8;
+    line-height: 1.4;
+    padding: 9px;
+    border-bottom: 1px dashed #565656;
+}
+
+.dianzhan1 {
+    color: rgb(247, 4, 4);
+    font-size: 20px;
+    top: 2px;
+    position: relative;
+}
+
+.gengduo1 {
+    font-size: 16px;
+    color: #e8e8e8;
+}

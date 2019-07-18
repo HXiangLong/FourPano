@@ -1,0 +1,473 @@
+{
+    "Floors": [
+        {
+            "FloorID": "5101-0010-0001-0001",
+            "BuildingID": "5101-0010-0001",
+            "Storey": 1,
+            "DisplayPriority": 1,
+            "Description": "一层",
+            "RasterMapID": "5101-0010-0001-0001",
+            "PanoIDs": null,
+            "RasterMapInfoModel": {
+                "RasterMapID": "5101-0010-0001-0001",
+                "Name": "一层",
+                "RasterMapPath": "BusinessData/FloorMaps/1.jpg",
+                "Description": "",
+                "RasterMapMarkers": null
+            },
+            "RasterMapMarkers": [
+                {
+                    "MarkerID": "1089",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000001",
+                    "PixShapeX": 620,
+                    "PixShapeY": 702,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1090",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000002",
+                    "PixShapeX": 544,
+                    "PixShapeY": 723,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1091",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000003",
+                    "PixShapeX": 522,
+                    "PixShapeY": 703,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1092",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000004",
+                    "PixShapeX": 524,
+                    "PixShapeY": 683,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1093",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000005",
+                    "PixShapeX": 536,
+                    "PixShapeY": 655,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1094",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000006",
+                    "PixShapeX": 623,
+                    "PixShapeY": 665,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1095",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000007",
+                    "PixShapeX": 637,
+                    "PixShapeY": 584,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1096",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000008",
+                    "PixShapeX": 587,
+                    "PixShapeY": 584,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1097",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000009",
+                    "PixShapeX": 547,
+                    "PixShapeY": 569,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1098",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000010",
+                    "PixShapeX": 506,
+                    "PixShapeY": 572,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1099",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000011",
+                    "PixShapeX": 450,
+                    "PixShapeY": 590,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1100",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000012",
+                    "PixShapeX": 491,
+                    "PixShapeY": 587,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1101",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000013",
+                    "PixShapeX": 459,
+                    "PixShapeY": 608,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1102",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000014",
+                    "PixShapeX": 411,
+                    "PixShapeY": 631,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1103",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000015",
+                    "PixShapeX": 430,
+                    "PixShapeY": 691,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1104",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000016",
+                    "PixShapeX": 373,
+                    "PixShapeY": 691,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1105",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000017",
+                    "PixShapeX": 366,
+                    "PixShapeY": 723,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1106",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000018",
+                    "PixShapeX": 355,
+                    "PixShapeY": 763,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1107",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000019",
+                    "PixShapeX": 389,
+                    "PixShapeY": 775,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1108",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000020",
+                    "PixShapeX": 442,
+                    "PixShapeY": 733,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1109",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000021",
+                    "PixShapeX": 463,
+                    "PixShapeY": 763,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1110",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000022",
+                    "PixShapeX": 484,
+                    "PixShapeY": 779,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1111",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000023",
+                    "PixShapeX": 505,
+                    "PixShapeY": 799,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1112",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000024",
+                    "PixShapeX": 501,
+                    "PixShapeY": 829,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1113",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000025",
+                    "PixShapeX": 458,
+                    "PixShapeY": 861,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1114",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000026",
+                    "PixShapeX": 505,
+                    "PixShapeY": 872,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1115",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000027",
+                    "PixShapeX": 453,
+                    "PixShapeY": 881,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1116",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000028",
+                    "PixShapeX": 449,
+                    "PixShapeY": 909,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1117",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000029",
+                    "PixShapeX": 499,
+                    "PixShapeY": 919,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1118",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000030",
+                    "PixShapeX": 493,
+                    "PixShapeY": 958,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1119",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000031",
+                    "PixShapeX": 452,
+                    "PixShapeY": 960,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1120",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000032",
+                    "PixShapeX": 392,
+                    "PixShapeY": 960,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1121",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000033",
+                    "PixShapeX": 343,
+                    "PixShapeY": 960,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1122",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000034",
+                    "PixShapeX": 319,
+                    "PixShapeY": 960,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1123",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000035",
+                    "PixShapeX": 276,
+                    "PixShapeY": 955,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1124",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000036",
+                    "PixShapeX": 371,
+                    "PixShapeY": 951,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1125",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000037",
+                    "PixShapeX": 321,
+                    "PixShapeY": 951,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1126",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000038",
+                    "PixShapeX": 579,
+                    "PixShapeY": 671,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1127",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000039",
+                    "PixShapeX": 584,
+                    "PixShapeY": 608,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1128",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000040",
+                    "PixShapeX": 467,
+                    "PixShapeY": 594,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1129",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000041",
+                    "PixShapeX": 414,
+                    "PixShapeY": 667,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1130",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000042",
+                    "PixShapeX": 400,
+                    "PixShapeY": 739,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1131",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "3",
+                    "PanoID": "W101-20180903000043",
+                    "PixShapeX": 474,
+                    "PixShapeY": 837,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1132",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000044",
+                    "PixShapeX": 475,
+                    "PixShapeY": 874,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                },
+                {
+                    "MarkerID": "1133",
+                    "Name": "",
+                    "RasterMapID": "5101-0010-0001-0001",
+                    "MarkerTypeCode": "1",
+                    "PanoID": "W101-20180903000045",
+                    "PixShapeX": 455,
+                    "PixShapeY": 951,
+                    "MarkerContent": "第一部分 创立与探索（1921-1949）"
+                }
+            ]
+        }
+    ],
+    "Method": "GetAllFloorsForBuilding"
+}

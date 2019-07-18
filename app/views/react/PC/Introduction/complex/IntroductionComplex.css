@@ -1,0 +1,172 @@
+.IntroductionComplex {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+}
+
+.closecolor{
+    color: #313131;
+}
+
+.IntroductionComplex .bg{
+    width: 100%;
+    height: 100%;
+}
+
+.IntroductionComplex .bg>img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.IntroductionComplex .listUl {
+    position: absolute;
+    right: 0;
+    top: 15px;
+    width: 200px;
+    z-index: 10;
+}
+
+.IntroductionComplex .listUl li {
+    position: relative;
+    margin: 20px 0;
+    cursor: pointer;
+    z-index: 10;
+    height: 40px;
+    line-height: 40px;
+}
+
+.IntroductionComplex .listUl li i {
+    width: 40px;
+    height: 40px;
+    float: left;
+    background: url(../../../../../commons/img/jianjie/qietu.png) no-repeat 0 -40px;
+    transition: box-shadow 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+    margin-right: 10px;
+}
+
+.IntroductionComplex .listUl li p {
+    font-size: 13px;
+    color: #313131;
+    margin-top: 7px;
+}
+
+.IntroductionComplex .listUl li.wenbenjieshao i {
+    background-position-x: -5px;
+}
+
+.IntroductionComplex .listUl li.tupianjieshao i {
+    background-position-x: -55px;
+}
+
+.IntroductionComplex .listUl li.shipinjieshao i {
+    background-position-x: -106px;
+}
+
+.IntroductionComplex .listUl li.niaokanjieshao i {
+    background-position-x: -207px;
+}
+
+.IntroductionComplex .listUl li.guanneijieshao i {
+    background-position-x: -157px;
+}
+
+.IntroductionComplex .listUl li.zaixianditu i {
+    background-position-x: -257px;
+}
+
+.IntroductionComplex .listUl li.jinruquanjing i {
+    background-position-x: -307px;
+}
+
+.IntroductionComplex .listUl li:hover i,
+.IntroductionComplex .listUl li.active i {
+    background-position-y: 0;
+}
+
+.IntroductionComplex .listUl li:hover p,
+.IntroductionComplex .listUl li.active p {
+    color: #f48664;
+}
+
+.IntroductionComplex .wenbenjieshaoBox {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 850px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 525.3px;
+    overflow: auto;
+}
+
+.wenbenjieshaoBox .title {
+    font-size: 26px;
+    color: #000000;
+    text-align: center;
+    margin: 10px 10px;
+}
+
+.wenbenjieshaoBox .cont {
+    font-size: 18px;
+    color: #000000;
+}
+
+.wenbenjieshaoBox .cont p {
+    margin-top: 7px;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-indent: 2em;
+}
+
+.IntroductionComplex .tupianjieshaoBox {
+    top: 3%;
+    width: 100%;
+    height: 650px;
+    position: absolute;
+}
+
+.IntroductionComplex .tupianjieshaoBox .ReactSlickBox{
+    min-height: 525px;
+    padding: 2em;
+    margin: 0em 4em 4em -0.7em;
+    border-radius: 5px;
+    width: 850px;
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+}
+
+
+.IntroductionComplex .shipinjieshaoBox {
+    position: absolute;
+    top: 3%;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    border-radius: 5px;
+    height: 525.3px;
+}
+
+.IntroductionComplex .zaixiandituBox {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 850px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 525.3px;
+    overflow: auto;
+}
+
+.IntroductionComplex .zaixiandituBox iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+

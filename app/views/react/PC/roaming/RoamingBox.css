@@ -1,0 +1,58 @@
+.roaming {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 12;
+}
+
+.roamingBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -250px;
+    width: 500px;
+    border: 1px solid #ccc;
+    margin-top: -140px;
+    background: #fff;
+    border-radius: 5px;
+}
+
+.roamingBox ul {
+    padding: 10px 0;
+}
+
+.roamingBox li {
+    position: relative;
+    margin: 15px 20px;
+    background: #cccccc6b;
+    padding: 10px;
+    padding-right: 80px;
+    border-radius: 4px;
+    transition: all .3s ease;
+    cursor: pointer;
+}
+
+.roamingBox li h3 {
+    font-size: 16px;
+    color: #000000;
+}
+
+.roamingBox li p {
+    font-size: 13px;
+    color: #737373;
+    margin-top: 5px;
+}
+
+.roamingBox li i {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    background: url(../../../../commons/img/liulian.png) no-repeat center/30px;
+    margin-top: -15px;
+}
+
+.roamingBox li:hover {
+    box-shadow: 1px 1px 12px #00000052;
+}
